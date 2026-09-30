@@ -14,7 +14,7 @@
 - Сервер проверяет владение/участие; публичные экраны получают только активный этап без решений, заметок и чужих ответов. Правильные ответы видны отдельной карточкой только ведущему.
 - Версионный manifest 19 общих иллюстраций: 18 существующих файлов UI-Design/1–6,11–22 и новая сцена взаимопомощи assets/library/mutual-help-v1.png; промпт/происхождение в assets/library/README.md. Макеты страниц/логотип не предлагаются как содержание урока.
 - Приватные медиа вне public, UUID пути и точные asset/version; GD полностью декодирует проверенный PNG/JPEG/WebP, сервер ограничивает bytes/pixels/dimensions. Owner/participant/projector получают разные разрешённые URL; публичный доступ только к текущему этапу immutable снимка. Новая версия или архив не меняют старые ссылки.
-- Additive migrations, readonly CLI checks БД/схемы, initial empty-schema deployment flag. Для непустой БД deployment --migrate создаёт приватный полный dump вне httpdocs перед миграцией; credentials не передаются в argv/environment и удаляются после работы. Реальный restore пока не проверен.
+- Additive migrations, readonly CLI checks БД/схемы, initial empty-schema deployment flag. Для непустой БД deployment --migrate создаёт приватный bundle SQL и всех committed immutable private media versions с проверкой размера/SHA256 и manifest. Ошибка блокирует миграции, cleanup ограничен новым partial; credentials не передаются в argv/environment. SQL-only backup сохраняется отдельной командой. Реальный restore пока не проверен.
 
 ## Принятые решения
 
@@ -33,6 +33,7 @@
 
 ## Проверки
 
+- Bundle backup: BackupBundleTest + DatabaseBackupTest — 26 tests, 22 passed, 130 assertions, 4 Windows POSIX/symlink skips; scoped Pint, Bash syntax и diff checks прошли. Проверены все сохранённые версии/архивы, SHA/размер, unsafe paths/symlinks, failure cleanup с сохранением прежних файлов, отсутствие private content в CLI. SQL process в bundle tests подменён явно; реальный dump и restore этой операции пока не проверены.
 - Visual alignment пульта: 14 frontend tests, Vue typecheck, Vite build и diff check прошли; новый тест проверяет уникальный подсчёт ответивших текущего этапа. Браузер: timer start → pause из compact → reload сохраняет 32 секунды; подтверждённое отделение во вкладку/возврат, меню Enter/закрытие. Основной пульт 360/768/1366 px и compact DE 360 px без горизонтального overflow; compact не содержит большого preview. Popup browser matrix остаётся отдельной приёмке.
 - Этап 4: полный Composer test до заключительной правки — 159 тестов, 157 passed, 1300 assertions, 2 Windows POSIX skips; полный Pint, Composer validate, Vue typecheck/Vite build и 13 frontend tests прошли. Local additive migrations новых пяти таблиц и lessons:check прошли. Заключительная правка приоритета revision conflict при полной квоте проверена отдельно: MediaLibraryTest — 16 passed, 216 assertions, scoped Pint и git diff --check прошли; новый regression сохраняет quota/версии/файлы при 409.
 - Браузер этапа 4 локально: реальный upload → выбор private exact version → сохранение/reload → создание заготовки → вставка в две технические сборки. Правка копии независима; заготовка v2 не меняет v1 экземпляр. Изображение v2 не меняет запущенный проектор со старым v1; архив/restore сохраняют ссылку. Показаны quota, две версии и места использования; RU/DE и 360 px library/media без горизонтального overflow, console errors не обнаружены.
@@ -52,13 +53,13 @@
 ## Git и production
 
 - Ветка main; upstream origin/main, https://github.com/VAtapin/lessons.git. Implementation commit этапа 2: fc75ab62bb5c7d47e02355b854080137e76bbbc6 — Build the minimal lesson studio and runtime; отправлен в upstream и установлен на production.
-- Последний связанный implementation commit и подтверждённая версия production: 38025bca8778bcf7dd00f0683a174fe524b491dd — Add reusable block library and versioned private media; main → origin/main, CI и deployment проверены. Предыдущий пульт/backup implementation — 4f3d8e4a017e366821b21e78c2291fe76e85bf17; результаты записаны в 40fa1bb645a219ea23e831347a981dd5c92b0109.
+- Последний связанный implementation commit и подтверждённая версия production: 435635bf003a85bb35615defc29bc29291d818df — Align lesson controls with the approved teacher panel; main → origin/main, CI 36790418706 и Git deployment прошли: PHP platform requirements, typecheck/build, lessons:check/MariaDB и /up. Этап 4 — 38025bca8778bcf7dd00f0683a174fe524b491dd.
 - SSH lessons.atapin.de:2377, проект /var/www/vhosts/lessons.atapin.de/httpdocs; document root httpdocs/public. Исходники доставляются только Git.
 - .env production private 600, debug выключен, secure HTTPS session cookie, APP_KEY уже создан один раз и не меняется. Секреты/локальное окружение/БД/build исключены из Git.
 - Windows PHP child commands требуют PHPRC=D:\Projekte\lessons\.local\php.ini. Переносимый Node 22 — .local/node/node-v22.23.3-win-x64; служебные файлы не коммитятся.
 
 ## Следующий этап и ограничения
 
-- Следующие ограниченные блоки: приватный backup SQL+media перед следующими миграциями и этап 5 — остальные общие интерактивные типы, состояния и модерация. Они в разработке, ещё не являются подтверждёнными возможностями production.
+- Следующий ограниченный блок: этап 5 — остальные общие интерактивные типы, состояния и модерация. Domain/runtime/UI интегрируются; это ещё не подтверждённые возможности production. Bundle backup реализован отдельно перед его миграциями; production создание пока не проверено.
 - Ещё нет регистрации, остальных интерактивных типов, совместного учителя, кабинета истории и публичного каталога/фильтров. Завершение сохраняется в runtime; история как пользовательский workflow ещё не реализована.
-- SQL backup не включает storage/app/media: требуется отдельное приватное резервирование файлов; полноценный restore пока не проверен. Нагрузка, доставка почты и поддерживаемая browser matrix остаются приёмке. Технические сборки не являются готовыми учебными уроками; этап 4 не означает готовность всей платформы.
+- SQL-only backup не включает storage/app/media; полный bundle требует immutable файлов и исключения physical cleanup/DDL на время копирования. Полноценный restore пока не проверен. Нагрузка, доставка почты и поддерживаемая browser matrix остаются приёмке. Технические сборки не являются готовыми учебными уроками; этап 4 не означает готовность всей платформы.

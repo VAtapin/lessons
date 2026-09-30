@@ -68,7 +68,7 @@ final readonly class DatabaseBackup
         }
     }
 
-    private function safeDirectory(string $directory, string $applicationRoot): string
+    public function safeDirectory(string $directory, string $applicationRoot): string
     {
         $directory = str_replace('\\', '/', $directory);
         if (! preg_match('~\A(?:[A-Za-z]:/|/)~', $directory) || str_contains($directory, "\0")

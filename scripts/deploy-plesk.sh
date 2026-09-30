@@ -35,9 +35,9 @@ if $initialize_database; then
     php artisan lessons:database-preflight --empty
     php artisan migrate --force --no-interaction
 elif $migrate_database; then
-    # No migration may proceed unless the private full dump succeeded.
+    # No migration may proceed unless the private SQL + immutable media bundle succeeded.
     php artisan lessons:database-preflight
-    php artisan lessons:database-backup
+    php artisan lessons:backup
     php artisan migrate --force --no-interaction
 fi
 php artisan lessons:check

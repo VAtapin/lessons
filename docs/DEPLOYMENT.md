@@ -19,7 +19,7 @@ PHP CLI и выбранный PHP 8.5 FPM должны иметь `ext-gd`. Comp
 
 Private media disk по умолчанию — `storage/app/media`; FPM-владельцу нужны права записи. Файлы создаются с private permissions (0600, каталоги 0700), не публикуются через `storage:link`. Встроенные 19 иллюстраций поставляются Git из `UI-Design` и `assets/library`, выдаются через version manifest. Uploads и архивные версии не удаляются deployment script; архив в приложении не означает физическое удаление.
 
-Изменения этапа 4 требуют additive migrations заготовок/медиа; для уже инициализированной production использовать описанный ниже `--migrate`. Перед обновлением сделать отдельную приватную файловую копию media disk вместе с копией БД. Этот раздел описывает подготовку: CI и production-приёмка этапа 4 здесь не объявлены выполненными.
+Изменения этапа 4 требуют additive migrations заготовок/медиа; для уже инициализированной production использовать описанный ниже `--migrate`. Следующие миграции предваряются полным приватным bundle SQL и immutable media, описанным ниже. Подтверждённое состояние CI/production записывается в PROJECT_STATUS.md.
 
 ## Первоначальный запуск
 
@@ -73,7 +73,7 @@ git pull --ff-only && \
 bash scripts/deploy-plesk.sh --migrate
 ```
 
-После установки locked dependencies/build и очистки кешей script проверяет подключение БД, выполняет `lessons:database-backup` и только после успешного backup запускает `migrate --force --no-interaction`. Флаги `--migrate` и `--initialize-database` взаимоисключающие. Без флага migrations не выполняются. Migration failure не снимает maintenance и не запускает автоматический rollback/fresh/reset.
+После установки locked dependencies/build и очистки кешей script проверяет подключение БД, выполняет `lessons:backup` и только после успешного полного bundle запускает `migrate --force --no-interaction`. Флаги `--migrate` и `--initialize-database` взаимоисключающие. Без флага migrations не выполняются. Migration failure не снимает maintenance и не запускает автоматический rollback/fresh/reset.
 
 ### Приватная резервная копия
 
@@ -85,7 +85,11 @@ Dump включает всю выбранную schema и данные, views, t
 
 Timeout по умолчанию — 300 секунд, допустимый `--timeout` — 1–3600 секунд. Успех требует нулевого exit code и непустого regular SQL-файла; временное расширение `.sql.partial` меняется на `.sql` только после этих проверок. Команда сообщает путь и SHA256. Это проверка создания файла, а не доказательство успешного restore. Backup не архивируется и не удаляется автоматически; хранение и отдельная копия за пределами сервера остаются задачами владельца.
 
-**Database backup не включает private media files.** `lessons:database-backup` и `deploy-plesk.sh --migrate` создают только SQL dump; они не резервируют `storage/app/media`. Для восстановления медиатеки нужны согласованные копии БД и всего настроенного media disk, включая старые/архивные версии. Создавать файловую копию в maintenance, исключив параллельные uploads и CLI-записи, хранить вне `httpdocs` с private permissions и отдельной копией за пределами сервера. После копирования проверить целостность; восстановление обоих компонентов требует отдельной проверки. Не считать успешный SQL dump полным backup медиатеки.
+**SQL-only команда `lessons:database-backup` сохраняется для диагностики и не включает media.** Для миграций применяется `php artisan lessons:backup`: каталог bundle содержит `database.sql`, `media/versions/{assetId}/{versionId}.{ext}` и `manifest.json` формата 1. Manifest фиксирует UTC-время, размер/SHA256 SQL и точные IDs, versionNo, относительные пути, размер/SHA256 каждой сохранённой private версии, включая старые и архивные. Builtins восстанавливаются Git; `.env`, credentials и незарегистрированные файлы в bundle не копируются.
+
+Bundle поддерживает MySQL/MariaDB и настроенный local media disk. SQL создаётся первым; затем потоково копируются committed immutable версии с проверкой source и destination по размеру и SHA256. Отсутствующий/повреждённый файл, неизвестная media schema, неверный storage key или symlink прекращают операцию до migrations. Неиспользованный media disk может отсутствовать, если в БД нет версий. Временный каталог `.partial` становится завершённым только после проверки всех файлов и записи manifest; directories имеют 0700, files — 0600. Штатный отказ удаляет только созданный partial, сохраняя источники и прежние backups. Команда выводит путь bundle и SHA256 manifest, без SQL/медиа/credentials.
+
+Операция предполагает неизменность сохранённых версий и отсутствие физического удаления файлов. Более поздние committed версии могут попасть в bundle как безопасные дополнительные файлы относительно SQL snapshot. На время backup исключить параллельные DDL, сторонние записи и физическую очистку media; будущая очистка должна координироваться с backup. `--timeout=300` ограничивает dump, а не всё копирование файлов. Автоматическое удаление backups и offsite copy пока не реализованы. Проверка checksum не заменяет тест восстановления SQL и media в изолированной среде.
 
 Дамп выполняется в maintenance до изменения schema. `--single-transaction` даёт согласованный snapshot данных InnoDB; для nontransactional tables такой гарантии нет. Параллельные DDL и внешние записи в nontransactional tables недопустимы. Maintenance блокирует HTTP-запросы приложения, но не другие CLI-команды и внешние DB-клиенты: на время backup/migrations владелец должен исключить их записи и schema changes. Application DB user должен иметь права чтения schema/data, views, triggers, routines и events; нехватка прав прекращает deployment до migrations. Права БД автоматически не меняются.
 
@@ -93,7 +97,7 @@ Timeout по умолчанию — 300 секунд, допустимый `--ti
 
 Если backup завершился ошибкой, migrations не выполнялись: исправить доступ к dump utility/БД, приватные permissions или свободное место и повторить `--migrate`. Если CLI был аварийно убит, проверить приватный каталог на оставшиеся credentials/`.partial`; не считать такой файл завершённой копией и не раскрывать его содержимое.
 
-Если миграция завершилась ошибкой, MariaDB DDL могла примениться частично. Сохранить первоначальный `.sql` и SHA256, оставить maintenance, проверить `php artisan migrate:status` и причину отказа. После согласованного исправления продолжить additive migrations через `--migrate` либо выполнить отдельно разрешённое восстановление из первоначального backup. Повторный backup после частичной миграции не заменяет исходный снимок. Не запускать `migrate:fresh`, `reset` или автоматический rollback. Возвращать сайт online только после успешных `lessons:check` и deployment. Реальное восстановление backup требует отдельного разрешения и проверки; здесь оно не выполняется.
+Если миграция завершилась ошибкой, MariaDB DDL могла примениться частично. Сохранить первоначальный bundle и SHA256 manifest, оставить maintenance, проверить `php artisan migrate:status` и причину отказа. После согласованного исправления продолжить additive migrations через `--migrate` либо выполнить отдельно разрешённое восстановление SQL и media из первоначального bundle. Повторный backup после частичной миграции не заменяет исходный снимок. Не запускать `migrate:fresh`, `reset` или автоматический rollback. Возвращать сайт online только после успешных `lessons:check` и deployment. Production restore требует отдельного разрешения и здесь не выполняется.
 
 ## Последующие обновления без новых migrations
 
