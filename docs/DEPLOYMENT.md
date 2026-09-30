@@ -126,3 +126,13 @@ Composer platform requirements, Node 22 typecheck/build, additive migrations и 
 В production браузере создана явно техническая сборка трёх блоков/двух этапов, сохранена, восстановлена после перезагрузки и запущена. Изображение и закрытая карточка ведущего работают, console errors не обнаружены. Проектор проверен только чтением: закрытые заметки/решения отсутствуют. После отдельного явного разрешения владельца тестовый ученик вошёл в занятие, отправил ответ; ответ дошёл ведущему и сохранился после перехода вперёд/назад. Тестовые данные не удалялись; schema/data reset и SQL-удаления не выполнялись.
 
 GitHub CI прошёл, включая реальную MariaDB 10.6: [run 36778205368](https://github.com/VAtapin/lessons/actions/runs/36778205368). Это подтверждает минимальную вертикаль этапа 2, а не остальные этапы платформы или нагрузочную готовность.
+
+## Подтверждённый запуск этапа 3 — 2026-10-01
+
+Implementation commit `4f3d8e4a017e366821b21e78c2291fe76e85bf17` (`Add reliable conducting controls and private database backups`) установлен через Git и `deploy-plesk.sh --migrate`. Composer platform requirements, Node 22 typecheck/build, preflight, additive migration, `lessons:check`, Laravel caches и HTTPS health check прошли. Server main чистый; APP_KEY и production credentials сохранены.
+
+Перед migration создан приватный backup `/var/www/vhosts/lessons.atapin.de/private/lessons-backups/lessons-20260930-220534-a0c20e20547a4753.sql`: 21 972 байта, SHA256 `ac83b29fc3069d1ffd28a40245f46167e399747c5d52e821e154014caf0f2a7d`, файл 0600, каталоги 0700. Временные credentials и partial-файлы отсутствуют. Restore не выполнялся. HTTP `/up`, RU/DE studio и join — 200; `.env`, `.git/config`, исходник RuntimeService и URL private backup — 404.
+
+В production браузере проверен отдельный технический запуск: подготовка/начало, QR, вход/ответ ученика, таймер, пауза/перезагрузка/продолжение. Compact controller управляет тем же состоянием, сообщение отображается literal текстом; завершение через inline confirmation подтверждено сервером. Старые занятия и данные других участников не изменялись. Native popup подключение/возврат и потеря связи проверены локально; полная browser matrix и backup restore остаются отдельными проверками.
+
+GitHub CI: PHP 8.4/8.5, Node 22 и MariaDB 10.6 прошли — [run 36783228232](https://github.com/VAtapin/lessons/actions/runs/36783228232).
