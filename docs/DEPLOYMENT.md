@@ -57,3 +57,16 @@ Health endpoint: `https://lessons.atapin.de/up`. Он проверяет заг�
 После первого запуска проверить HTTPS, Vue и изображения, RU/DE, отсутствие доступа к `.env`, `.git` и исходникам. Проверка базы при необходимости — только подключение и `SELECT VERSION()`, без schema/data mutations.
 
 Commit/push и зелёная локальная проверка не означают успешный deployment. Статус production подтверждается отдельно после выполнения команд и HTTP-проверки.
+
+## Подтверждённый первый запуск — 2026-09-30
+
+Implementation commit `c0341cffb502c65f26d33e5d55cbbd8db42dbbb1` (`Initialize lesson platform foundation`) отправлен в `origin/main` и получен сервером через Git. Initial Git setup сохранил пустую папку `public`, созданную Plesk.
+
+- Production Composer install и platform requirements на PHP 8.5.11 прошли; Node 22.23.3 typecheck и Vite build завершены, Laravel configuration/routes/views закешированы.
+- `.env`: режим production, debug выключен, HTTPS URL и secure session cookie; права 600. Ключ создан один раз. Содержимое и credentials не выводились и не коммитились.
+- HTTPS `/up` — HTTP 200. RU/DE, Vue и обе иллюстрации проверены в браузере, console errors не обнаружены.
+- `/.env`, `/.git/config`, `/app/Domain/Lessons/LessonDocument.php`, `/UI-Design/UI-Design.png` — HTTP 404.
+- MariaDB-подключение проверено `SELECT VERSION()`: 10.6.23-MariaDB. Migrations, seed и изменения таблиц/данных не выполнялись.
+- GitHub CI implementation commit прошёл: [run 36771254689](https://github.com/VAtapin/lessons/actions/runs/36771254689).
+
+Это deployment основы этапа 1 и временной стартовой страницы. Конструктор, проведение занятий и остальные возможности платформы не запущены и не выдаются за готовые.
