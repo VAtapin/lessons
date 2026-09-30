@@ -1,0 +1,4 @@
+{
+    "preset": "laravel",
+    "exclude": ["OLD", "UI-Design", ".bootstrap", ".local"]
+}

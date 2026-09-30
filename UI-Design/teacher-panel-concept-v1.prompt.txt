@@ -1,0 +1,20 @@
+Use case: ui-mockup.
+Create one high-fidelity generated raster design mockup of the teacher workspace and live teaching control panel for lessons.atapin.de. This is a visual concept, not code. Wide desktop screen, landscape approximately 16:10, straight-on edge-to-edge interface, no device frame, crisp legible Russian typography.
+
+STYLE: Match a warm Christian education website with an open-book logo, ivory parchment paper, subtle watercolor texture, dark walnut brown serif headings, readable clean sans-serif interface labels, muted amber and burnt orange primary buttons, fine beige borders, small olive watercolor branches at outer corners, very restrained biblical countryside watercolor imagery. Beautiful calm editorial design, generous spacing, useful functional workspace; texture faint under text. Rounded cream cards and subtle shadows. Avoid dark dashboard, purple, blue corporate UI, excessive ornament, illegible tiny text. Main typography rich brown, high contrast.
+
+LAYOUT:
+Top header: small illustrated open-book logo and exact domain "lessons.atapin.de" on left; "Кабинет учителя" nearby. On right language selector "RU", discreet notification bell and profile circle with initial "В".
+Left sidebar about 220 px: navigation with fine brown outline icons. "Обзор", highlighted "Пульт занятия", "Мои уроки", "Конструктор", "Библиотека блоков", "Медиатека", "История". Bottom quiet "Помощь". Light ivory sidebar, active row warm ochre fill.
+
+MAIN WORKSPACE:
+Top title "Пульт занятия"; subtitle "Пробное занятие из блоков". Status chip green dot "Занятие идёт". Top right outlined button "Пригласить учителя" and primary "Открыть общий экран".
+Compact status strip with "18 участников", "Код: 482 719", button "Показать QR", autosave label "Сохранено".
+Below a balanced three-column work area: narrow block sequence left, big central projector preview and controls, medium-width control column right.
+Left card title "Этапы занятия" with five numbered items and small thumbnails/icons: "Приветствие", "Иллюстрация", active "Вопрос классу", "Обсуждение", "Итог". Caption "Этап 3 из 5". These are reusable blocks, not a specific existing lesson.
+Central card label "Общий экран". Inside a generous presentation preview, softly illustrated watercolor children cooperating to plant a small tree on the right, readable large heading on left "Как мы можем помочь друг другу?" and smaller line "Поделитесь своей идеей". Plenty of whitespace. Small tasteful "Ответили 12 из 18" chip. Beneath preview aligned stage buttons "Назад" and orange "Далее", plus secondary "Показать ответы".
+Right stacked compact cards: "Таймер" large "03:45", pause and reset icon controls. "Быстрые действия" with three clean buttons "Волна добра" with little amber heart/sparkle icon, "Сообщение классу", "Пауза занятия". "Соведущий" card with circle "А", "Анна", role "Помощник", outlined button "Передать управление".
+
+BOTTOM CONTENT within same desktop screen:
+Wide card beneath central area title "Ответы учеников" and amber badge "2 новых". Two compact short sample answer rows with fictional initials instead of full names: "Поддержать того, кому трудно" and "Спросить, нужна ли помощь"; clear outlined "Показать" action for each and discreet secondary menu. Next to it a smaller card "Заметка ведущему" text "Дайте время подумать. Затем обсудите несколько ответов вместе." with subtle bookmark icon.
+Keep the entire screen composition polished, purposeful, coherent, no unrelated analytics charts, no lesson-specific legacy content, no extra marketing hero. Show one unified detailed realistic interface. All essential labels in correct Russian, no lorem ipsum, no watermark.

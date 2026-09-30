@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Вход ученика в интерактивный урок христианской этики «Кто мой ближний?».">
+  <meta name="theme-color" content="#193b3a">
+  <title>Вход в класс — Кто мой ближний?</title>
+  <script>
+    (() => {
+      const target = new URL('student.html', window.location.href);
+      target.search = window.location.search;
+      target.hash = window.location.hash;
+      window.location.replace(target);
+    })();
+  </script>
+  <link rel="stylesheet" href="entry.css">
+</head>
+<body>
+  <main class="entry-card">
+    <div class="role-mark" aria-hidden="true">✦</div>
+    <p class="kicker">Версия для ученика</p>
+    <h1>Войти<br>в класс</h1>
+    <p class="lead">Если переход не произошёл автоматически, откройте страницу входа.</p>
+    <a class="entry-button" href="student.html">Войти в класс</a>
+    <a class="entry-help-link" href="student-guide.html">Как пользоваться программой →</a>
+    <p class="entry-credit">Разработано <a href="https://atapin.de" target="_blank" rel="noopener">atapin.de</a></p>
+  </main>
+</body>
+</html>

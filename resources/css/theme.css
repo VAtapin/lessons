@@ -1,0 +1,11 @@
+/* Shared visual tokens from the approved watercolor references. */
+:root {
+    --paper: #fbf3e4;
+    --card: #fffaf0;
+    --ink: #4c2b18;
+    --muted: #786b52;
+    --accent: #a54b1b;
+    --olive: #777244;
+    --border: #e4d4b8;
+    --shadow: 0 10px 30px rgb(89 58 25 / 8%);
+}
