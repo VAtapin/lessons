@@ -34,7 +34,7 @@ final class WorkspacePageTest extends TestCase
     public function test_unknown_locale_does_not_match_any_workspace_page(): void
     {
         $id = (string) Str::uuid();
-        foreach (['studio', 'join', 'studio/lessons/'.$id, 'teach/'.$id, 'participate/'.$id, 'project/unknown'] as $path) {
+        foreach (['studio', 'join', 'studio/lessons/'.$id, 'teach/'.$id, 'control/'.$id, 'participate/'.$id, 'project/unknown'] as $path) {
             $this->get('/xx/'.$path)->assertNotFound();
         }
     }
@@ -56,6 +56,21 @@ final class WorkspacePageTest extends TestCase
             ->assertDontSee('data-page="teacher"', false);
         $this->get('/ru/studio/lessons/'.Str::uuid())->assertNotFound();
         $this->get('/ru/teach/'.Str::uuid())->assertNotFound();
+    }
+
+    public function test_detached_controller_uses_the_same_owner_access_without_a_public_control_credential(): void
+    {
+        [$owner, , $session] = $this->createClassroom();
+        foreach (['ru', 'de'] as $locale) {
+            $this->withoutVite()->get('/'.$locale.'/control/'.$session['id'].'?instance='.Str::uuid())
+                ->assertOk()->assertViewHas('page', 'control')
+                ->assertViewHas('context', ['sessionId' => $session['id']])
+                ->assertDontSee($owner)->assertDontSee('Private teacher notes');
+        }
+        $this->withSession(['studio_owner_key' => (string) Str::uuid()]);
+        $this->get('/ru/control/'.$session['id'].'?owner_key='.$owner.'&code='.$session['joinCode'])
+            ->assertNotFound()->assertDontSee('data-page="control"', false);
+        $this->get('/de/control/'.Str::uuid())->assertNotFound();
     }
 
     public function test_student_html_checks_real_membership_in_the_requested_session(): void

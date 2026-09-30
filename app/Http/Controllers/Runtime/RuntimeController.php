@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Runtime;
 
+use App\Application\Runtime\RuntimeConflict;
 use App\Application\Runtime\RuntimeService;
 use App\Application\Shared\GuestIdentity;
 use App\Http\Controllers\Controller;
@@ -18,9 +19,9 @@ final class RuntimeController extends Controller
 
     public function start(Request $request, string $id): JsonResponse
     {
-        $input = $request->validate(['expectedRevision' => ['required', 'integer', 'min:1'], 'locale' => ['sometimes', 'string', 'max:35']]);
+        $input = $request->validate(['expectedRevision' => ['required', 'integer', 'min:1'], 'locale' => ['sometimes', 'string', 'max:35'], 'prepare' => ['sometimes', 'boolean']]);
 
-        return response()->json(['session' => $this->runtime->start($this->identity->key($request), $id, (int) $input['expectedRevision'], $input['locale'] ?? null)], 201);
+        return response()->json(['session' => $this->runtime->start($this->identity->key($request), $id, (int) $input['expectedRevision'], $input['locale'] ?? null, (bool) ($input['prepare'] ?? false))], 201);
     }
 
     public function teacher(Request $request, string $id): JsonResponse
@@ -33,6 +34,21 @@ final class RuntimeController extends Controller
         $input = $request->validate(['expectedRevision' => ['required', 'integer', 'min:1'], 'stageId' => ['required', 'string', 'max:128']]);
 
         return response()->json(['session' => $this->runtime->navigate($this->identity->key($request), $id, (int) $input['expectedRevision'], $input['stageId'])]);
+    }
+
+    public function command(Request $request, string $id): JsonResponse
+    {
+        $input = $request->validate([
+            'commandId' => ['required', 'uuid'],
+            'expectedRevision' => ['required', 'integer:strict', 'min:1'],
+            'action' => ['required', 'string', 'max:64'], 'payload' => ['present', 'array'],
+        ]);
+        $extraFields = array_diff_key($request->json()->all(), array_flip(['commandId', 'expectedRevision', 'action', 'payload']));
+        try {
+            return response()->json($this->runtime->command($this->identity->key($request), $id, $input['commandId'], $input['expectedRevision'], $input['action'], $input['payload'], $extraFields));
+        } catch (RuntimeConflict $conflict) {
+            return response()->json(['error' => ['code' => $conflict->problemCode], 'session' => $conflict->state], 409);
+        }
     }
 
     public function join(Request $request): JsonResponse

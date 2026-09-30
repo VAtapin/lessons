@@ -11,17 +11,19 @@ use App\Domain\Lessons\BlockRegistry;
 use App\Domain\Lessons\LessonDocument;
 use App\Domain\Lessons\Stage;
 use App\Models\SessionAnswer;
+use App\Models\SessionCommandReceipt;
 use App\Models\SessionParticipant;
 use App\Models\TeachingSession;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
 final class RuntimeService
 {
-    public function __construct(private StudioService $studio, private BlockRegistry $registry) {}
+    public function __construct(private StudioService $studio, private BlockRegistry $registry, private RuntimeCommands $commands, private SessionTimer $timer) {}
 
-    public function start(string $ownerKey, string $lessonId, int $expectedRevision, ?string $locale): array
+    public function start(string $ownerKey, string $lessonId, int $expectedRevision, ?string $locale, bool $prepare = false): array
     {
-        return DB::transaction(function () use ($ownerKey, $lessonId, $expectedRevision, $locale): array {
+        return DB::transaction(function () use ($ownerKey, $lessonId, $expectedRevision, $locale, $prepare): array {
             $version = $this->studio->release($ownerKey, $lessonId, $expectedRevision);
             $document = LessonDocument::fromArray($version->document, $this->registry);
             $locale ??= $document->defaultLocale;
@@ -35,11 +37,12 @@ final class RuntimeService
                 'locale' => $locale,
                 'current_stage_id' => $document->stages[0]->id,
                 'revision' => 1,
+                'status' => $prepare ? 'prepared' : 'running',
                 'join_code' => $this->newJoinCode(),
                 'projector_token' => bin2hex(random_bytes(32)),
             ]);
 
-            return $this->teacherState($session);
+            return $this->teacherState($session->refresh());
         });
     }
 
@@ -63,14 +66,51 @@ final class RuntimeService
                 throw new ApiProblem('revision_conflict', 409);
             }
 
-            $this->stage($this->document($session), $stageId);
-            if ($session->current_stage_id !== $stageId) {
-                $session->current_stage_id = $stageId;
+            $previousStage = $session->current_stage_id;
+            $this->commands->apply($session, $this->document($session), 'stage', ['stageId' => $stageId], CarbonImmutable::now('UTC'));
+            if ($previousStage !== $stageId) {
                 $session->revision++;
                 $session->save();
             }
 
             return $this->teacherState($session);
+        });
+    }
+
+    public function command(string $ownerKey, string $sessionId, string $commandId, int $expectedRevision, string $action, array $payload, array $extraFields = []): array
+    {
+        return DB::transaction(function () use ($ownerKey, $sessionId, $commandId, $expectedRevision, $action, $payload, $extraFields): array {
+            $session = TeachingSession::query()->whereKey($sessionId)->where('owner_key', $ownerKey)->lockForUpdate()->first()
+                ?? throw new ApiProblem('not_found', 404);
+            $commandId = strtolower($commandId);
+            $fingerprint = $this->commands->fingerprint($expectedRevision, $action, $payload, $extraFields);
+            $receipt = SessionCommandReceipt::query()->where('teaching_session_id', $sessionId)->where('command_id', $commandId)->first();
+            if ($receipt !== null) {
+                if (! hash_equals($receipt->fingerprint, $fingerprint)) {
+                    throw new RuntimeConflict('command_conflict', $this->teacherState($session));
+                }
+
+                return ['session' => $this->teacherState($session), 'acknowledgedCommandId' => $commandId];
+            }
+            if ($session->revision !== $expectedRevision) {
+                throw new RuntimeConflict('revision_conflict', $this->teacherState($session));
+            }
+            if ($extraFields !== []) {
+                throw new ApiProblem('invalid_action', 422);
+            }
+            try {
+                $this->commands->apply($session, $this->document($session), $action, $payload, CarbonImmutable::now('UTC'));
+            } catch (ApiProblem $problem) {
+                if ($problem->status === 409) {
+                    throw new RuntimeConflict($problem->problemCode, $this->teacherState($session));
+                }
+                throw $problem;
+            }
+            $session->revision++;
+            $session->save();
+            SessionCommandReceipt::create(['teaching_session_id' => $sessionId, 'command_id' => $commandId, 'fingerprint' => $fingerprint]);
+
+            return ['session' => $this->teacherState($session), 'acknowledgedCommandId' => $commandId];
         });
     }
 
@@ -89,7 +129,10 @@ final class RuntimeService
             $participant = is_string($participantId)
                 ? SessionParticipant::query()->whereKey($participantId)->where('teaching_session_id', $session->id)->first()
                 : null;
-            $participant ??= SessionParticipant::create(['teaching_session_id' => $session->id, 'name' => $name]);
+            if ($participant === null && $session->status === 'finished') {
+                throw new ApiProblem('invalid_state', 409);
+            }
+            $participant ??= SessionParticipant::create(['teaching_session_id' => $session->id, 'name' => $name, 'last_seen_at' => CarbonImmutable::now('UTC')]);
 
             return ['participant' => ['id' => $participant->id, 'name' => $participant->name], 'sessionId' => $session->id];
         });
@@ -99,6 +142,11 @@ final class RuntimeService
     {
         $session = TeachingSession::query()->find($sessionId) ?? throw new ApiProblem('not_found', 404);
         $participant = $this->participant($sessionId, $participantId);
+        $now = CarbonImmutable::now('UTC');
+        // Conditional SQL prevents concurrent polls from bypassing the throttle.
+        SessionParticipant::query()->whereKey($participant->id)->where(function ($query) use ($now): void {
+            $query->whereNull('last_seen_at')->orWhere('last_seen_at', '<=', $now->subSeconds(config('lessons.runtime.activity_write_seconds'))->format('Y-m-d H:i:s.u'));
+        })->update(['last_seen_at' => $now->format('Y-m-d H:i:s.u')]);
 
         return $this->publicState($session, Audience::Student, $participant);
     }
@@ -118,6 +166,9 @@ final class RuntimeService
             $session = TeachingSession::query()->whereKey($sessionId)->lockForUpdate()->first()
                 ?? throw new ApiProblem('not_found', 404);
             $participant = $this->participant($sessionId, $participantId);
+            if ($session->status !== 'running') {
+                throw new ApiProblem('invalid_state', 409);
+            }
             if ($session->current_stage_id !== $stageId) {
                 throw new ApiProblem('invalid_action', 422);
             }
@@ -155,6 +206,7 @@ final class RuntimeService
 
     private function teacherState(TeachingSession $session): array
     {
+        $document = $this->document($session);
         $uiLocales = config('lessons.ui_locales');
         $uiLocale = config('app.locale');
         if (! in_array($uiLocale, $uiLocales, true)) {
@@ -162,12 +214,16 @@ final class RuntimeService
         }
 
         return $this->baseState($session) + [
-            'document' => $this->document($session)->project(Audience::Teacher, $session->locale),
+            'document' => $document->project(Audience::Teacher, $session->locale),
             'joinCode' => $session->join_code,
             'projectorUrl' => url('/'.$uiLocale.'/project/'.$session->projector_token),
+            'joinUrl' => url('/'.$uiLocale.'/join').'?code='.rawurlencode($session->join_code),
+            'publicStage' => $this->stage($document, $session->current_stage_id)->project(Audience::Projector, $session->locale),
             'participants' => SessionParticipant::query()->where('teaching_session_id', $session->id)
                 ->orderBy('created_at')->orderBy('id')->get()->map(fn (SessionParticipant $participant) => [
                     'id' => $participant->id, 'name' => $participant->name,
+                    'connected' => $participant->last_seen_at !== null && $participant->last_seen_at->greaterThanOrEqualTo(CarbonImmutable::now('UTC')->subSeconds(config('lessons.runtime.connected_seconds'))),
+                    'lastSeenAt' => $participant->last_seen_at?->utc()->toISOString(),
                 ])->all(),
             'answers' => SessionAnswer::query()->where('teaching_session_id', $session->id)
                 ->orderBy('id')->get()->map(fn (SessionAnswer $answer) => [
@@ -192,7 +248,15 @@ final class RuntimeService
 
     private function baseState(TeachingSession $session): array
     {
-        return ['id' => $session->id, 'revision' => $session->revision, 'locale' => $session->locale, 'currentStageId' => $session->current_stage_id];
+        $now = CarbonImmutable::now('UTC');
+
+        return [
+            'id' => $session->id, 'revision' => $session->revision, 'locale' => $session->locale, 'currentStageId' => $session->current_stage_id,
+            'status' => $session->status, 'serverNow' => $now->toISOString(), 'timer' => $this->timer->project($session, $now),
+            'message' => $session->message,
+            'wave' => $session->wave_expires_at !== null && $session->wave_expires_at->greaterThan($now)
+                ? ['id' => $session->wave_id, 'expiresAt' => $session->wave_expires_at->utc()->toISOString()] : null,
+        ];
     }
 
     private function document(TeachingSession $session): LessonDocument

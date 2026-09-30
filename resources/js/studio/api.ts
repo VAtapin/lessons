@@ -2,7 +2,7 @@ import { onBeforeUnmount } from 'vue';
 import type { Messages } from './types';
 
 export class ApiError extends Error {
-    constructor(public code: string, public status: number) { super(code); }
+    constructor(public code: string, public status: number, public data?: unknown) { super(code); }
 }
 
 export async function api<T>(path: string, method = 'GET', body?: unknown, signal?: AbortSignal): Promise<T> {
@@ -18,8 +18,8 @@ export async function api<T>(path: string, method = 'GET', body?: unknown, signa
         throw new ApiError('network', 0);
     }
     const data = await response.json().catch(() => null);
-    if (!response.ok) throw new ApiError(data?.error?.code ?? (response.status === 422 ? 'invalid_action' : response.status === 419 ? 'expired' : 'request'), response.status);
-    if (!data) throw new ApiError('request', response.status);
+    if (!response.ok) throw new ApiError(data?.error?.code ?? (response.status === 422 ? 'invalid_action' : response.status === 419 ? 'expired' : 'request'), response.status, data);
+    if (!data) throw new ApiError('request', response.status, data);
     return data as T;
 }
 

@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { api, errorMessage } from './api';
 import type { Messages } from './types';
 const props = defineProps<{ locale: string; messages: Messages }>();
-const code = ref('');
+const code = ref(new URLSearchParams(window.location.search).get('code') ?? '');
 const name = ref('');
 const busy = ref(false);
 const error = ref('');

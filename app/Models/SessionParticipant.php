@@ -11,5 +11,12 @@ class SessionParticipant extends Model
 {
     use HasUuids;
 
-    protected $fillable = ['teaching_session_id', 'name'];
+    protected $dateFormat = 'Y-m-d H:i:s.u';
+
+    protected $fillable = ['teaching_session_id', 'name', 'last_seen_at'];
+
+    protected function casts(): array
+    {
+        return ['last_seen_at' => 'immutable_datetime'];
+    }
 }

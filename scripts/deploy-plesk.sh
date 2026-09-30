@@ -5,10 +5,13 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 export PATH="/opt/plesk/php/8.5/bin:/opt/plesk/node/22/bin:$PATH"
 composer_phar="/opt/psa/var/modules/composer/composer.phar"
 initialize_database=false
+migrate_database=false
 if [[ "${1:-}" == "--initialize-database" && $# == 1 ]]; then
     initialize_database=true
+elif [[ "${1:-}" == "--migrate" && $# == 1 ]]; then
+    migrate_database=true
 elif [[ $# != 0 ]]; then
-    echo "Usage: bash scripts/deploy-plesk.sh [--initialize-database]" >&2
+    echo "Usage: bash scripts/deploy-plesk.sh [--initialize-database|--migrate]" >&2
     exit 1
 fi
 
@@ -30,6 +33,11 @@ php artisan optimize:clear
 if $initialize_database; then
     # Only a metadata-verified empty schema may be initialized without a backup.
     php artisan lessons:database-preflight --empty
+    php artisan migrate --force --no-interaction
+elif $migrate_database; then
+    # No migration may proceed unless the private full dump succeeded.
+    php artisan lessons:database-preflight
+    php artisan lessons:database-backup
     php artisan migrate --force --no-interaction
 fi
 php artisan lessons:check

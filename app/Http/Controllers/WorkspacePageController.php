@@ -44,6 +44,13 @@ final class WorkspacePageController extends Controller
         return $this->page($locale, 'teacher', ['sessionId' => $sessionId]);
     }
 
+    public function control(Request $request, GuestIdentity $identity, RuntimeService $runtime, string $locale, string $sessionId): View
+    {
+        $runtime->findOwned($identity->key($request), $sessionId);
+
+        return $this->page($locale, 'control', ['sessionId' => $sessionId]);
+    }
+
     public function join(string $locale): View
     {
         return $this->page($locale, 'join');

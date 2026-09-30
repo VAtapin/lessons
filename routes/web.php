@@ -25,6 +25,7 @@ Route::prefix('{locale}')->where(['locale' => implode('|', config('lessons.ui_lo
     Route::get('/studio', [WorkspacePageController::class, 'studio']);
     Route::get('/studio/lessons/{lessonId}', [WorkspacePageController::class, 'editor']);
     Route::get('/teach/{sessionId}', [WorkspacePageController::class, 'teacher']);
+    Route::get('/control/{sessionId}', [WorkspacePageController::class, 'control']);
     Route::get('/join', [WorkspacePageController::class, 'join']);
     Route::get('/participate/{sessionId}', [WorkspacePageController::class, 'student']);
     Route::get('/project/{projectorToken}', [WorkspacePageController::class, 'projector']);

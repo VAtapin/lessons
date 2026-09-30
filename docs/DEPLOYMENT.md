@@ -53,7 +53,37 @@ bash scripts/deploy-plesk.sh --initialize-database
 
 Флаг разрешает первый запуск additive migrations только на проверенной пустой БД. Он создаёт базовые Laravel-таблицы и пять domain-таблиц; не делает seed, fresh/reset или удаления данных. После создания таблиц этот флаг повторно не использовать.
 
-Для непустой БД перед новыми migrations нужна проверенная резервная копия средствами Plesk, включая schema, данные, triggers/routines/events. Хранить backup вне `httpdocs`, например `/var/www/vhosts/lessons.atapin.de/private/lessons-backups`, с закрытыми правами; никогда не в Git. После подтверждения backup выполнить `php artisan migrate --force --no-interaction` в подготовленном Plesk environment, затем обычный deployment. Восстановление существующих данных — отдельное подтверждаемое действие; автоматический rollback/fresh не предусмотрен.
+## Обновление непустой БД с новыми migrations
+
+Production уже инициализирована: для новых additive migrations использовать `--migrate`, а не повторную инициализацию.
+
+```bash
+cd /var/www/vhosts/lessons.atapin.de/httpdocs && \
+export PATH="/opt/plesk/php/8.5/bin:/opt/plesk/node/22/bin:$PATH" && \
+php artisan down --retry=30 && \
+git pull --ff-only && \
+bash scripts/deploy-plesk.sh --migrate
+```
+
+После установки locked dependencies/build и очистки кешей script проверяет подключение БД, выполняет `lessons:database-backup` и только после успешного backup запускает `migrate --force --no-interaction`. Флаги `--migrate` и `--initialize-database` взаимоисключающие. Без флага migrations не выполняются. Migration failure не снимает maintenance и не запускает автоматический rollback/fresh/reset.
+
+### Приватная резервная копия
+
+`php artisan lessons:database-backup` использует конфигурацию активного Laravel connection; поддерживаются только MySQL/MariaDB. На подтверждённом сервере доступны `/usr/bin/mariadb-dump` и `/usr/bin/mysqldump` версии MariaDB 10.6.23. Команда предпочитает `mariadb-dump`, при его отсутствии ищет `mysqldump`; отсутствие обоих — ошибка до migrations.
+
+Default directory: `/var/www/vhosts/lessons.atapin.de/private/lessons-backups`, вне `httpdocs`. При первом запуске отсутствующие приватные каталоги создаются с правами 0700. SQL-файл и временный defaults-file создаются эксклюзивно с правами 0600 под umask 077. Уже существующий backup directory с другими POSIX-правами отклоняется. Произвольный `--directory` должен быть абсолютным, вне приложения, без traversal и symbolic links. Тестовые backups также сохраняются вне checkout; SQL и credentials не включаются в Git и не выводятся в терминал.
+
+Dump включает всю выбранную schema и данные, views, triggers, routines и events; используется `--single-transaction --quick`. Credentials записываются в временный приватный файл: первым аргументом передаётся `--defaults-file`, чтобы dump читал только этот файл, без глобальных defaults и `~/.my.cnf` ([MariaDB: mariadb-dump](https://mariadb.com/docs/server/clients-and-utilities/backup-restore-and-import-clients/mariadb-dump)). Password не передаётся через argv или environment дочернего процесса. Symfony Process запускает массив аргументов без shell и получает минимальное окружение без Laravel DB credentials. Credentials и частичный dump удаляются при штатной ошибке/timeout; процессные diagnostics не выводятся, так как могут содержать данные.
+
+Timeout по умолчанию — 300 секунд, допустимый `--timeout` — 1–3600 секунд. Успех требует нулевого exit code и непустого regular SQL-файла; временное расширение `.sql.partial` меняется на `.sql` только после этих проверок. Команда сообщает путь и SHA256. Это проверка создания файла, а не доказательство успешного restore. Backup не архивируется и не удаляется автоматически; хранение и отдельная копия за пределами сервера остаются задачами владельца.
+
+Дамп выполняется в maintenance до изменения schema. `--single-transaction` даёт согласованный snapshot данных InnoDB; для nontransactional tables такой гарантии нет. Параллельные DDL и внешние записи в nontransactional tables недопустимы. Maintenance блокирует HTTP-запросы приложения, но не другие CLI-команды и внешние DB-клиенты: на время backup/migrations владелец должен исключить их записи и schema changes. Application DB user должен иметь права чтения schema/data, views, triggers, routines и events; нехватка прав прекращает deployment до migrations. Права БД автоматически не меняются.
+
+### Восстановление после ошибки
+
+Если backup завершился ошибкой, migrations не выполнялись: исправить доступ к dump utility/БД, приватные permissions или свободное место и повторить `--migrate`. Если CLI был аварийно убит, проверить приватный каталог на оставшиеся credentials/`.partial`; не считать такой файл завершённой копией и не раскрывать его содержимое.
+
+Если миграция завершилась ошибкой, MariaDB DDL могла примениться частично. Сохранить первоначальный `.sql` и SHA256, оставить maintenance, проверить `php artisan migrate:status` и причину отказа. После согласованного исправления продолжить additive migrations через `--migrate` либо выполнить отдельно разрешённое восстановление из первоначального backup. Повторный backup после частичной миграции не заменяет исходный снимок. Не запускать `migrate:fresh`, `reset` или автоматический rollback. Возвращать сайт online только после успешных `lessons:check` и deployment. Реальное восстановление backup требует отдельного разрешения и проверки; здесь оно не выполняется.
 
 ## Последующие обновления без новых migrations
 
@@ -64,7 +94,7 @@ git pull --ff-only && \
 bash scripts/deploy-plesk.sh
 ```
 
-Script проверяет ветку, чистоту дерева и версии среды, включает maintenance, получает Git-изменения, устанавливает locked зависимости, проверяет требования PHP, собирает Vue, очищает кеши и выполняет `lessons:check` перед кешированием Laravel/возвращением сайта online. Без флага migrations не запускаются. Workers/scheduler ещё не используются. При ошибке сайт остаётся в maintenance: устранить причину и повторить deployment без initialization-флага, если таблицы уже созданы; не делать `artisan up`, пока проверка хранения не прошла.
+Script проверяет ветку, чистоту дерева и версии среды, включает maintenance, получает Git-изменения, устанавливает locked зависимости, проверяет требования PHP, собирает Vue, очищает кеши и выполняет `lessons:check` перед кешированием Laravel/возвращением сайта online. Без флага migrations не запускаются. При ошибке до возвращения online сайт остаётся в maintenance: устранить причину, выбрать соответствующий режим обновления; не делать `artisan up`, пока проверка хранения не прошла. Если итоговый HTTP check завершился ошибкой после `artisan up`, maintenance уже снят: сообщить об этом отдельно и проверить приложение; такой deployment не считать проверенным.
 
 ## Проверка
 
@@ -93,6 +123,6 @@ Implementation commit `fc75ab62bb5c7d47e02355b854080137e76bbbc6` (`Build the min
 
 Composer platform requirements, Node 22 typecheck/build, additive migrations и `lessons:check` на MariaDB 10.6.23 прошли. Подтверждена binary collation block ID. Maintenance снят после успешных проверок; HTTPS `/up`, `/ru/studio`, `/de/studio`, `/ru/join` отвечают HTTP 200, `.env`, `.git/config` и исходник runtime — HTTP 404. Server main чистый.
 
-В production браузере создана явно техническая сборка трёх блоков/двух этапов, сохранена, восстановлена после перезагрузки и запущена. Изображение и закрытая карточка ведущего работают, console errors не обнаружены. Проектор проверен только чтением: закрытые заметки/решения отсутствуют. Добавление тестового ученика/ответа остановлено automatic approval review и ожидает отдельного разрешения владельца; эта часть production-проверки пока не выполнена. Полная цепочка проверена локально.
+В production браузере создана явно техническая сборка трёх блоков/двух этапов, сохранена, восстановлена после перезагрузки и запущена. Изображение и закрытая карточка ведущего работают, console errors не обнаружены. Проектор проверен только чтением: закрытые заметки/решения отсутствуют. После отдельного явного разрешения владельца тестовый ученик вошёл в занятие, отправил ответ; ответ дошёл ведущему и сохранился после перехода вперёд/назад. Тестовые данные не удалялись; schema/data reset и SQL-удаления не выполнялись.
 
 GitHub CI прошёл, включая реальную MariaDB 10.6: [run 36778205368](https://github.com/VAtapin/lessons/actions/runs/36778205368). Это подтверждает минимальную вертикаль этапа 2, а не остальные этапы платформы или нагрузочную готовность.

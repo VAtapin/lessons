@@ -60,7 +60,7 @@ async function action(kind: 'save' | 'release' | 'start') {
             adopt(response.lesson); notice.value = props.messages.released_notice;
         }
         if (kind === 'start') {
-            const response = await api<{ session: TeacherState }>(`/api/studio/lessons/${props.lessonId}/sessions`, 'POST', { expectedRevision: lesson.value.revision, locale: contentLocale.value });
+            const response = await api<{ session: TeacherState }>(`/api/studio/lessons/${props.lessonId}/sessions`, 'POST', { expectedRevision: lesson.value.revision, locale: contentLocale.value, prepare: true });
             window.location.assign(`/${props.locale}/teach/${response.session.id}`);
         }
     } catch (problem) { conflict.value = problem instanceof ApiError && problem.code === 'revision_conflict'; error.value = errorMessage(problem, props.messages); }

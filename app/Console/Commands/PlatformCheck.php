@@ -26,9 +26,11 @@ final class PlatformCheck extends Command
             $tables = [
                 'lesson_materials' => ['id', 'owner_key', 'revision', 'current_version_id'],
                 'lesson_versions' => ['id', 'lesson_material_id', 'status', 'document'],
-                'teaching_sessions' => ['id', 'lesson_version_id', 'owner_key', 'locale', 'current_stage_id', 'revision', 'join_code', 'projector_token'],
-                'session_participants' => ['id', 'teaching_session_id', 'name'],
+                'teaching_sessions' => ['id', 'lesson_version_id', 'owner_key', 'locale', 'current_stage_id', 'revision', 'join_code', 'projector_token',
+                    'status', 'timer_status', 'timer_ends_at', 'timer_remaining_seconds', 'timer_resume_on_session_resume', 'message', 'wave_id', 'wave_expires_at'],
+                'session_participants' => ['id', 'teaching_session_id', 'name', 'last_seen_at'],
                 'session_answers' => ['id', 'teaching_session_id', 'session_participant_id', 'block_id', 'option_id'],
+                'session_command_receipts' => ['id', 'teaching_session_id', 'command_id', 'fingerprint'],
             ];
             foreach ($tables as $table => $columns) {
                 $connection->table($table)->select($columns)->limit(0)->get();
