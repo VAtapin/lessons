@@ -9,9 +9,17 @@
 - PHP CLI: `/opt/plesk/php/8.5/bin/php`, версия 8.5.11; выбран PHP 8.5.11 FPM.
 - Node: `/opt/plesk/node/22/bin/node`, версия 22.23.3.
 - Composer PHAR: `/opt/psa/var/modules/composer/composer.phar`. `/usr/local/bin/composer` является shell-обёрткой; передавать её PHP нельзя.
-- MariaDB 10.6.23, `localhost:3306`. На этапе 2 БД обязательна для материалов и занятий.
+- MariaDB 10.6.23, `localhost:3306`. БД обязательна для материалов, занятий, заготовок и метаданных медиа.
 
 Исходники доставляются только через Git. `.env` и ключ приложения создаются на сервере, не коммитятся и не передаются через SFTP. `vendor`, `node_modules` и `public/build` собираются на сервере и исключены из Git. Файлы хранилища и конфигурация Plesk сохраняются при обновлении.
+
+## Требования библиотеки и медиатеки — этап 4
+
+PHP CLI и выбранный PHP 8.5 FPM должны иметь `ext-gd`. Composer platform requirements проверяет CLI; наличие расширения и настройки FPM проверить отдельно в Plesk. Для загрузки 20 MiB с multipart-метаданными установить `upload_max_filesize` и `post_max_size` не ниже `32M`, `memory_limit` — `512M`. Эти параметры задаются в PHP configuration, не в Laravel `.env`; HTTP/proxy body limit также должен пропускать разрешённую загрузку. Лимиты приложения заданы в `config/lessons.php` и перечислены в `.env.example`: guest quota 100 MiB, file limit 20 MiB, до 8192 по стороне и 32 × 1024² пикселей. Изменять pixel limits вместе с доступной памятью для полного декодирования GD.
+
+Private media disk по умолчанию — `storage/app/media`; FPM-владельцу нужны права записи. Файлы создаются с private permissions (0600, каталоги 0700), не публикуются через `storage:link`. Встроенные 19 иллюстраций поставляются Git из `UI-Design` и `assets/library`, выдаются через version manifest. Uploads и архивные версии не удаляются deployment script; архив в приложении не означает физическое удаление.
+
+Изменения этапа 4 требуют additive migrations заготовок/медиа; для уже инициализированной production использовать описанный ниже `--migrate`. Перед обновлением сделать отдельную приватную файловую копию media disk вместе с копией БД. Этот раздел описывает подготовку: CI и production-приёмка этапа 4 здесь не объявлены выполненными.
 
 ## Первоначальный запуск
 
@@ -27,14 +35,14 @@ cp .env.example .env && \
 chmod 600 .env
 ```
 
-Перед запуском отредактировать `.env` в терминале: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://lessons.atapin.de`, `LOG_LEVEL=warning`, `SESSION_SECURE_COOKIE=true`. Задать MariaDB-параметры, если проверяется подключение, но не запускать migrations на этапе 1. Пароли вводить только в серверном файле/безопасном менеджере, не в Git и не в командной строке. Для первого этапа оставить `SESSION_DRIVER=file`, `CACHE_STORE=file`, `QUEUE_CONNECTION=sync`.
+Перед запуском отредактировать `.env` в терминале: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://lessons.atapin.de`, `LOG_LEVEL=warning`, `SESSION_SECURE_COOKIE=true`. Задать параметры отдельной MariaDB-БД. Пароли вводить только в серверном файле/безопасном менеджере, не в Git и не в командной строке. Оставить `SESSION_DRIVER=file`, `CACHE_STORE=file`, `QUEUE_CONNECTION=sync`.
 
 ```bash
 cd /var/www/vhosts/lessons.atapin.de/httpdocs && \
 export PATH="/opt/plesk/php/8.5/bin:/opt/plesk/node/22/bin:$PATH" && \
 php /opt/psa/var/modules/composer/composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-interaction && \
 php artisan key:generate --force && \
-bash scripts/deploy-plesk.sh
+bash scripts/deploy-plesk.sh --initialize-database
 ```
 
 Ключ создаётся один раз; повторно `key:generate` при обновлениях не выполнять. Права записи нужны владельцу FPM на `storage` и `bootstrap/cache`; не использовать `chmod 777`. Установку Composer dev dependencies и PHPUnit на production не выполнять.
@@ -51,7 +59,7 @@ git pull --ff-only && \
 bash scripts/deploy-plesk.sh --initialize-database
 ```
 
-Флаг разрешает первый запуск additive migrations только на проверенной пустой БД. Он создаёт базовые Laravel-таблицы и пять domain-таблиц; не делает seed, fresh/reset или удаления данных. После создания таблиц этот флаг повторно не использовать.
+Флаг разрешает первый запуск additive migrations только на проверенной пустой БД. Он создаёт базовые Laravel-таблицы и domain-таблицы текущей версии; не делает seed, fresh/reset или удаления данных. После создания таблиц этот флаг повторно не использовать.
 
 ## Обновление непустой БД с новыми migrations
 
@@ -77,6 +85,8 @@ Dump включает всю выбранную schema и данные, views, t
 
 Timeout по умолчанию — 300 секунд, допустимый `--timeout` — 1–3600 секунд. Успех требует нулевого exit code и непустого regular SQL-файла; временное расширение `.sql.partial` меняется на `.sql` только после этих проверок. Команда сообщает путь и SHA256. Это проверка создания файла, а не доказательство успешного restore. Backup не архивируется и не удаляется автоматически; хранение и отдельная копия за пределами сервера остаются задачами владельца.
 
+**Database backup не включает private media files.** `lessons:database-backup` и `deploy-plesk.sh --migrate` создают только SQL dump; они не резервируют `storage/app/media`. Для восстановления медиатеки нужны согласованные копии БД и всего настроенного media disk, включая старые/архивные версии. Создавать файловую копию в maintenance, исключив параллельные uploads и CLI-записи, хранить вне `httpdocs` с private permissions и отдельной копией за пределами сервера. После копирования проверить целостность; восстановление обоих компонентов требует отдельной проверки. Не считать успешный SQL dump полным backup медиатеки.
+
 Дамп выполняется в maintenance до изменения schema. `--single-transaction` даёт согласованный snapshot данных InnoDB; для nontransactional tables такой гарантии нет. Параллельные DDL и внешние записи в nontransactional tables недопустимы. Maintenance блокирует HTTP-запросы приложения, но не другие CLI-команды и внешние DB-клиенты: на время backup/migrations владелец должен исключить их записи и schema changes. Application DB user должен иметь права чтения schema/data, views, triggers, routines и events; нехватка прав прекращает deployment до migrations. Права БД автоматически не меняются.
 
 ### Восстановление после ошибки
@@ -98,9 +108,13 @@ Script проверяет ветку, чистоту дерева и верси�
 
 ## Проверка
 
-Health endpoint: `https://lessons.atapin.de/up` проверяет загрузку приложения. `php artisan lessons:check` отдельно проверяет подключение, обязательные domain-таблицы/колонки и binary collation block ID на MariaDB. Это не нагрузочный тест или проверка backup restore. Страницы `/ru/studio`, `/de/studio` открывают конструктор; `/ru/join`, `/de/join` — вход ученика.
+Health endpoint: `https://lessons.atapin.de/up` проверяет загрузку приложения. `php artisan lessons:check` отдельно проверяет подключение, обязательные domain-таблицы/колонки (включая заготовки/медиа) и binary collation block ID на MariaDB. Это не нагрузочный тест или проверка backup restore. Страницы `/ru/studio`, `/de/studio` открывают конструктор; `/ru/library`, `/de/library` — заготовки; `/ru/media`, `/de/media` — медиатеку; `/ru/join`, `/de/join` — вход ученика.
 
 После запуска проверить HTTPS, Vue и изображения, RU/DE, отсутствие доступа к `.env`, `.git` и исходникам. Пройти создание → сохранение → запуск → проектор → ответ ученика в браузере; подтвердить отсутствие закрытых данных на публичных экранах. CLI checks не раскрывают конфигурацию/пароли и ученические ответы.
+
+Для этапа 4 дополнительно пройти upload → выбор своей версии → save/reload → заготовка → две независимые вставки → runtime с private image. Проверить замену/архив/восстановление без потери старой версии. Owner URL `/media/owned/{assetId}/{versionId}` требует владельца; `/media/participation/{sessionId}/{assetId}/{versionId}` и `/media/projection/{token}/{assetId}/{versionId}` разрешают только references активного этапа соответствующего занятия. Прямой storage URL и чужие/future references не должны отдавать файл. API библиотеки и медиатеки описаны в [STAGE4_API.md](STAGE4_API.md).
+
+Подтверждённые решения следующих этапов: отправитель `lessons@atapin.de` через PHP; guest sessions и имена/подробные ответы — 30 дней, история аккаунта без них — 2 года, репетиции — 7 дней, технические события — 30 дней. Сейчас `.env.example` использует mail log; реальная отправка и автоматическая очистка ещё не реализованы и не проверены. Не включать их в deployment-проверку как готовые функции.
 
 Commit/push и зелёная локальная проверка не означают успешный deployment. Статус production подтверждается отдельно после выполнения команд и HTTP-проверки.
 

@@ -18,8 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $authoredDocument = fn (Request $request) => $request->isMethod('POST') && $request->is('api/studio/lessons')
             || $request->isMethod('PUT') && $request->is('api/studio/lessons/*');
         $runtimeCommand = fn (Request $request) => $request->isMethod('POST') && $request->is('api/studio/sessions/*/commands');
-        $middleware->trimStrings(except: [$authoredDocument, $runtimeCommand]);
-        $middleware->convertEmptyStringsToNull(except: [$authoredDocument, $runtimeCommand]);
+        $libraryContent = fn (Request $request) => in_array($request->method(), ['POST', 'PUT'], true)
+            && ($request->is('api/studio/templates', 'api/studio/templates/*', 'api/studio/media', 'api/studio/media/*'));
+        $middleware->trimStrings(except: [$authoredDocument, $runtimeCommand, $libraryContent]);
+        $middleware->convertEmptyStringsToNull(except: [$authoredDocument, $runtimeCommand, $libraryContent]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(fn (ApiProblem $problem) => response()->json(

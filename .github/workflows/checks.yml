@@ -21,7 +21,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, fileinfo, pdo_sqlite, curl
+          extensions: mbstring, fileinfo, gd, pdo_sqlite, curl
           tools: composer:v2
           coverage: none
       - run: composer validate --strict
@@ -60,7 +60,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
-          extensions: mbstring, fileinfo, pdo_sqlite, pdo_mysql, curl
+          extensions: mbstring, fileinfo, gd, pdo_sqlite, pdo_mysql, curl
           tools: composer:v2
           coverage: none
       - run: composer validate --strict

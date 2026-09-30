@@ -1,3 +1,4 @@
+import { imageResources } from './library';
 import type { Block, BlockType, LessonDocument, Media, ProjectedStage, Stage, Messages } from './types';
 
 export const newId = () => crypto.randomUUID();
@@ -20,9 +21,9 @@ export function newStage(locales: string[], messages: Messages): Stage {
 export function newDocument(locale: string, messages: Messages): LessonDocument {
     return { id: newId(), schemaVersion: 1, defaultLocale: locale, locales: [locale], content: { [locale]: { title: messages.template_title } }, stages: [newStage([locale], messages)] };
 }
-export function projectStage(stage: Stage, locale: string): ProjectedStage {
+export function projectStage(stage: Stage, locale: string, media: Media[] = []): ProjectedStage {
     // Preview uses precisely the selected translation; text is always rendered by Vue interpolation.
-    return { id: stage.id, config: stage.config, content: { title: stage.content[locale]!.title }, blocks: stage.blocks.map(block => ({ ...block, content: block.content[locale]!, solution: undefined, origin: undefined })) };
+    return { id: stage.id, config: stage.config, content: { title: stage.content[locale]!.title }, blocks: stage.blocks.map(block => ({ ...block, content: block.content[locale]!, solution: undefined, origin: undefined, resources: imageResources(media, block.media.image?.assetId, block.media.image?.versionId) })) };
 }
 export function move<T>(items: T[], index: number, direction: number): void {
     const other = index + direction;

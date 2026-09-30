@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
 
 final class RuntimeService
 {
-    public function __construct(private StudioService $studio, private BlockRegistry $registry, private RuntimeCommands $commands, private SessionTimer $timer) {}
+    public function __construct(private StudioService $studio, private BlockRegistry $registry, private RuntimeCommands $commands, private SessionTimer $timer, private RuntimeMediaProjection $mediaProjection) {}
 
     public function start(string $ownerKey, string $lessonId, int $expectedRevision, ?string $locale, bool $prepare = false): array
     {
@@ -207,6 +207,11 @@ final class RuntimeService
     private function teacherState(TeachingSession $session): array
     {
         $document = $this->document($session);
+        $teacherDocument = $document->project(Audience::Teacher, $session->locale);
+        $teacherDocument['stages'] = array_map(
+            fn (array $stage): array => $this->mediaProjection->stage($stage, $session, Audience::Teacher),
+            $teacherDocument['stages'],
+        );
         $uiLocales = config('lessons.ui_locales');
         $uiLocale = config('app.locale');
         if (! in_array($uiLocale, $uiLocales, true)) {
@@ -214,11 +219,14 @@ final class RuntimeService
         }
 
         return $this->baseState($session) + [
-            'document' => $document->project(Audience::Teacher, $session->locale),
+            'document' => $teacherDocument,
             'joinCode' => $session->join_code,
             'projectorUrl' => url('/'.$uiLocale.'/project/'.$session->projector_token),
             'joinUrl' => url('/'.$uiLocale.'/join').'?code='.rawurlencode($session->join_code),
-            'publicStage' => $this->stage($document, $session->current_stage_id)->project(Audience::Projector, $session->locale),
+            'publicStage' => $this->mediaProjection->stage(
+                $this->stage($document, $session->current_stage_id)->project(Audience::Projector, $session->locale),
+                $session, Audience::Projector,
+            ),
             'participants' => SessionParticipant::query()->where('teaching_session_id', $session->id)
                 ->orderBy('created_at')->orderBy('id')->get()->map(fn (SessionParticipant $participant) => [
                     'id' => $participant->id, 'name' => $participant->name,
@@ -235,7 +243,10 @@ final class RuntimeService
     private function publicState(TeachingSession $session, Audience $audience, ?SessionParticipant $participant = null): array
     {
         $state = $this->baseState($session) + [
-            'stage' => $this->stage($this->document($session), $session->current_stage_id)->project($audience, $session->locale),
+            'stage' => $this->mediaProjection->stage(
+                $this->stage($this->document($session), $session->current_stage_id)->project($audience, $session->locale),
+                $session, $audience,
+            ),
         ];
         if ($participant !== null) {
             $state['ownAnswers'] = SessionAnswer::query()->where('teaching_session_id', $session->id)

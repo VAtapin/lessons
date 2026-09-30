@@ -2,7 +2,7 @@
 import type { Messages, ProjectedBlock } from './types';
 defineProps<{ block: ProjectedBlock; messages: Messages; interactive?: boolean; selected?: string; disabled?: boolean }>();
 defineEmits<{ answer: [blockId: string, optionId: string] }>();
-const imageUrl = (block: ProjectedBlock) => block.media.image ? `/media/builtin/${encodeURIComponent(block.media.image.versionId)}` : '';
+const imageUrl = (block: ProjectedBlock) => block.resources?.image ?? '';
 </script>
 
 <template>

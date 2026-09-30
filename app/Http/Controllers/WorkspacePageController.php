@@ -30,6 +30,20 @@ final class WorkspacePageController extends Controller
         return $this->page($locale, 'studio');
     }
 
+    public function library(Request $request, GuestIdentity $identity, string $locale): View
+    {
+        $identity->key($request);
+
+        return $this->page($locale, 'library');
+    }
+
+    public function media(Request $request, GuestIdentity $identity, string $locale): View
+    {
+        $identity->key($request);
+
+        return $this->page($locale, 'media');
+    }
+
     public function editor(Request $request, GuestIdentity $identity, StudioService $studio, string $locale, string $lessonId): View
     {
         $studio->findOwned($identity->key($request), $lessonId);

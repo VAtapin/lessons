@@ -41,7 +41,8 @@ final class DatabaseCommandsTest extends TestCase
     public function test_schema_check_accepts_the_migrated_domain_schema_without_writing_rows(): void
     {
         $this->artisan('lessons:check')->expectsOutputToContain('Database connection and lesson schema checks passed.')->assertSuccessful();
-        foreach (['lesson_materials', 'lesson_versions', 'teaching_sessions', 'session_participants', 'session_answers', 'session_command_receipts'] as $table) {
+        foreach (['lesson_materials', 'lesson_versions', 'teaching_sessions', 'session_participants', 'session_answers', 'session_command_receipts',
+            'media_owner_quotas', 'media_assets', 'media_versions', 'block_template_records', 'block_template_versions'] as $table) {
             $this->assertDatabaseCount($table, 0);
         }
     }

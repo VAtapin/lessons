@@ -19,7 +19,7 @@ final class WorkspacePageTest extends TestCase
     public function test_public_studio_and_join_pages_bootstrap_both_interface_languages(): void
     {
         foreach (['ru' => 'Мастерская занятий', 'de' => 'Unterrichtswerkstatt'] as $locale => $workspace) {
-            foreach (['studio', 'join'] as $page) {
+            foreach (['studio', 'library', 'media', 'join'] as $page) {
                 $this->withoutVite()->get('/'.$locale.'/'.$page)->assertOk()
                     ->assertSee('lang="'.$locale.'"', false)->assertSee('data-page="'.$page.'"', false)
                     ->assertSee('name="csrf-token"', false)->assertSee($workspace)
@@ -34,7 +34,7 @@ final class WorkspacePageTest extends TestCase
     public function test_unknown_locale_does_not_match_any_workspace_page(): void
     {
         $id = (string) Str::uuid();
-        foreach (['studio', 'join', 'studio/lessons/'.$id, 'teach/'.$id, 'control/'.$id, 'participate/'.$id, 'project/unknown'] as $path) {
+        foreach (['studio', 'library', 'media', 'join', 'studio/lessons/'.$id, 'teach/'.$id, 'control/'.$id, 'participate/'.$id, 'project/unknown'] as $path) {
             $this->get('/xx/'.$path)->assertNotFound();
         }
     }
@@ -109,15 +109,23 @@ final class WorkspacePageTest extends TestCase
 
     public function test_builtin_media_catalogue_and_its_versioned_file_are_public_and_real(): void
     {
-        $this->getJson('/api/studio/media')->assertOk()->assertExactJson(['media' => [[
+        $this->getJson('/api/studio/media')->assertOk()->assertJsonFragment([
             'assetId' => 'builtin-conversation', 'versionId' => 'builtin-conversation-v1',
             'url' => '/media/builtin/builtin-conversation-v1', 'labelKey' => 'media_conversation',
-        ]]]);
+        ])->assertJsonFragment([
+            'assetId' => 'builtin-mutual-help', 'versionId' => 'builtin-mutual-help-v1',
+            'url' => '/media/builtin/builtin-mutual-help-v1', 'labelKey' => 'media_mutual_help',
+        ])->assertJsonPath('quota.limitBytes', 100 * 1024 * 1024)
+            ->assertJsonPath('quota.maxFileBytes', 20 * 1024 * 1024)
+            ->assertDontSee('storage_key')->assertDontSee('assets/library/');
         $response = $this->get('/media/builtin/builtin-conversation-v1')->assertOk()
             ->assertHeader('Content-Type', 'image/png')->assertHeader('X-Content-Type-Options', 'nosniff');
         $this->assertInstanceOf(BinaryFileResponse::class, $response->baseResponse);
         $this->assertSame(realpath(base_path('UI-Design/1.png')), $response->baseResponse->getFile()->getRealPath());
         $this->assertGreaterThan(0, $response->baseResponse->getFile()->getSize());
+        $new = $this->get('/media/builtin/builtin-mutual-help-v1')->assertOk()
+            ->assertHeader('Content-Type', 'image/png')->assertHeader('X-Content-Type-Options', 'nosniff');
+        $this->assertSame(realpath(base_path('assets/library/mutual-help-v1.png')), $new->baseResponse->getFile()->getRealPath());
         $this->get('/media/builtin/unknown-version')->assertNotFound();
         $this->get('/media/builtin/.env')->assertNotFound();
     }

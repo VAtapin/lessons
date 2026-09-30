@@ -39,7 +39,7 @@ final readonly class StudioService
 
     public function create(string $ownerKey, array $payload): LessonMaterial
     {
-        $document = $this->validate($payload);
+        $document = $this->validate($payload, $ownerKey);
 
         return DB::transaction(function () use ($ownerKey, $document): LessonMaterial {
             $material = LessonMaterial::query()->create(['owner_key' => $ownerKey, 'revision' => 1]);
@@ -55,7 +55,7 @@ final readonly class StudioService
     {
         return DB::transaction(function () use ($ownerKey, $lessonId, $expectedRevision, $payload): LessonMaterial {
             $material = $this->lockOwned($ownerKey, $lessonId, $expectedRevision);
-            $document = $this->validate($payload);
+            $document = $this->validate($payload, $ownerKey);
             $version = $material->currentVersion;
             if ($version->status === 'released') {
                 $version = $this->newDraft($material, $document);
@@ -79,7 +79,7 @@ final readonly class StudioService
         return DB::transaction(function () use ($ownerKey, $lessonId, $expectedRevision): LessonVersion {
             $material = $this->lockOwned($ownerKey, $lessonId, $expectedRevision);
             $version = $material->currentVersion;
-            $this->validate($version->document);
+            $this->validate($version->document, $ownerKey);
             if ($version->status === 'draft') {
                 $version->status = 'released';
                 $version->save();
@@ -99,6 +99,24 @@ final readonly class StudioService
             'versionId' => $version->id, 'document' => $version->document];
     }
 
+    /** Copy a saved block under the same owner/revision lock used by editing. */
+    public function ownedBlockSnapshot(string $ownerKey, string $lessonId, int $expectedRevision, string $blockId): array
+    {
+        return DB::transaction(function () use ($ownerKey, $lessonId, $expectedRevision, $blockId): array {
+            $material = $this->lockOwned($ownerKey, $lessonId, $expectedRevision);
+            $document = $this->validate($material->currentVersion->document, $ownerKey);
+            foreach ($document->stages as $stage) {
+                foreach ($stage->blocks as $block) {
+                    if ($block->id === $blockId) {
+                        return ['block' => $block, 'locales' => $document->locales, 'defaultLocale' => $document->defaultLocale];
+                    }
+                }
+            }
+
+            throw new ApiProblem('not_found', 404);
+        });
+    }
+
     private function lockOwned(string $ownerKey, string $lessonId, int $expectedRevision): LessonMaterial
     {
         $material = LessonMaterial::query()->where('owner_key', $ownerKey)->lockForUpdate()->find($lessonId)
@@ -110,14 +128,14 @@ final readonly class StudioService
         return $material;
     }
 
-    private function validate(array $payload): LessonDocument
+    private function validate(array $payload, string $ownerKey): LessonDocument
     {
         try {
             $document = LessonDocument::fromArray($payload, $this->registry);
         } catch (ValidationException) {
             throw new ApiProblem('invalid_document', 422);
         }
-        $this->media->assertDocument($document);
+        $this->media->assertDocument($document, $ownerKey);
 
         return $document;
     }

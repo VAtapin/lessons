@@ -31,6 +31,11 @@ final class PlatformCheck extends Command
                 'session_participants' => ['id', 'teaching_session_id', 'name', 'last_seen_at'],
                 'session_answers' => ['id', 'teaching_session_id', 'session_participant_id', 'block_id', 'option_id'],
                 'session_command_receipts' => ['id', 'teaching_session_id', 'command_id', 'fingerprint'],
+                'media_owner_quotas' => ['owner_key', 'used_bytes'],
+                'media_assets' => ['id', 'owner_key', 'title', 'revision', 'current_version_id', 'archived'],
+                'media_versions' => ['id', 'media_asset_id', 'version_no', 'storage_key', 'mime', 'bytes', 'width', 'height', 'sha256', 'attribution'],
+                'block_template_records' => ['id', 'owner_key', 'title', 'revision', 'current_version_id', 'archived'],
+                'block_template_versions' => ['id', 'block_template_record_id', 'version_no', 'block', 'locales', 'default_locale', 'attribution'],
             ];
             foreach ($tables as $table => $columns) {
                 $connection->table($table)->select($columns)->limit(0)->get();

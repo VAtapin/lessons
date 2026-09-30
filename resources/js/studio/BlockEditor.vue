@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Block, Media, Messages } from './types';
 import { newId } from './document';
+import MediaPicker from './MediaPicker.vue';
 const props = defineProps<{ block: Block; locale: string; locales: string[]; media: Media[]; messages: Messages }>();
 const emit = defineEmits<{ edited: [] }>();
 function addOption() {
@@ -16,10 +17,6 @@ function removeOption(optionId: string) {
     if (props.block.solution?.optionId === optionId) props.block.solution = null;
     emit('edited');
 }
-function selectMedia(event: Event) {
-    const selected = props.media.find(item => item.versionId === (event.target as HTMLSelectElement).value);
-    if (selected) props.block.media = { image: { assetId: selected.assetId, versionId: selected.versionId } };
-}
 function selectSolution(event: Event) {
     const optionId = (event.target as HTMLSelectElement).value;
     props.block.solution = optionId ? { optionId } : null;
@@ -28,7 +25,7 @@ function selectSolution(event: Event) {
 <template>
     <label v-if="block.type === 'core.text'">{{ messages.text }}<textarea v-model="block.content[locale]!.text" rows="5" required /></label>
     <template v-else-if="block.type === 'core.image'">
-        <label>{{ messages.image }}<select :value="block.media.image?.versionId" @change="selectMedia"><option v-for="item in media" :key="item.versionId" :value="item.versionId">{{ messages[item.labelKey] }}</option></select></label>
+        <MediaPicker :media="media" :current="block.media.image" :messages="messages" @select="block.media = { image: { assetId: $event.assetId, versionId: $event.versionId } }; $emit('edited')" />
         <p class="field-hint">{{ messages.media_notice }}</p>
         <label>{{ messages.alt }}<input v-model="block.content[locale]!.alt" required /></label>
         <label>{{ messages.caption }}<input v-model="block.content[locale]!.caption" /></label>
