@@ -20,6 +20,11 @@ return [
 
     'driver' => env('SESSION_DRIVER', 'database'),
 
+    // Every session request takes the same lock, including reads, so polling
+    // cannot overwrite the identity or participant map saved by another tab.
+    'block' => true,
+    'block_store' => env('SESSION_BLOCK_STORE', 'file'),
+
     /*
     |--------------------------------------------------------------------------
     | Session Lifetime

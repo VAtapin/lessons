@@ -1,5 +1,6 @@
 <?php
 
+use App\Application\Shared\ApiProblem;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,9 +13,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // The domain validates authored JSON; optional empty captions/notes and
+        // deliberate text whitespace must survive the standard form transforms.
+        $authoredDocument = fn (Request $request) => $request->isMethod('POST') && $request->is('api/studio/lessons')
+            || $request->isMethod('PUT') && $request->is('api/studio/lessons/*');
+        $middleware->trimStrings(except: [$authoredDocument]);
+        $middleware->convertEmptyStringsToNull(except: [$authoredDocument]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(fn (ApiProblem $problem) => response()->json(
+            ['error' => ['code' => $problem->problemCode]], $problem->status,
+        ));
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );

@@ -24,6 +24,10 @@ defineProps<{ locale: string; messages: InterfaceMessages }>();
                     <p class="eyebrow">{{ messages.eyebrow }}</p>
                     <h1>{{ messages.title }}</h1>
                     <p class="description">{{ messages.description }}</p>
+                    <div class="home-actions">
+                        <a class="home-action primary" :href="`/${locale}/studio`">{{ messages.open_studio }}</a>
+                        <a class="home-action" :href="`/${locale}/join`">{{ messages.join_session }}</a>
+                    </div>
                     <div class="preparation">
                         <span class="status-dot" aria-hidden="true"></span><span>{{ messages.status }}</span>
                     </div>

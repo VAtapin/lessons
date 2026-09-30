@@ -1,0 +1,30 @@
+<script setup lang="ts">
+import { ref } from 'vue';
+import StudioList from './StudioList.vue';
+import LessonEditor from './LessonEditor.vue';
+import TeacherPanel from './TeacherPanel.vue';
+import JoinForm from './JoinForm.vue';
+import PublicSession from './PublicSession.vue';
+import type { Messages, PageContext } from './types';
+import logo from '../../../UI-Design/logo_kl.png';
+import '../../css/studio.css';
+defineProps<{ page: string; context: PageContext; locale: string; messages: Messages }>();
+const menuOpen = ref(false);
+</script>
+<template>
+    <div :class="['studio-shell', { 'menu-open': menuOpen }]">
+        <header class="studio-header"><button v-if="page !== 'projector'" class="menu-toggle" :aria-label="menuOpen ? messages.close_menu : messages.open_menu" :aria-expanded="menuOpen" aria-controls="studio-menu" @click="menuOpen = !menuOpen">☰</button><a class="studio-brand" :href="`/${locale}`"><img class="brand-mark" :src="logo" alt="" width="46" height="42" /><strong>lessons.atapin.de</strong></a><span class="header-caption">{{ messages.workspace }}</span><nav class="studio-languages" :aria-label="messages.interface_language"><a v-for="language in ['ru', 'de']" :key="language" :href="`/${language}${page === 'studio' ? '/studio' : page === 'editor' ? '/studio/lessons/' + context.lessonId : page === 'teacher' ? '/teach/' + context.sessionId : page === 'join' ? '/join' : page === 'student' ? '/participate/' + context.sessionId : '/project/' + context.projectorToken}`" :aria-current="locale === language ? 'page' : undefined">{{ language.toUpperCase() }}</a></nav></header>
+        <div class="studio-body">
+            <aside v-if="menuOpen && page !== 'projector'" id="studio-menu" class="global-sidebar"><div class="section-heading"><strong>{{ messages.workspace }}</strong><button class="icon-button" :aria-label="messages.close_menu" @click="menuOpen = false">×</button></div><nav><a :href="`/${locale}/studio`">{{ messages.my_materials }}</a><a :href="`/${locale}/join`">{{ messages.student_join }}</a><a :href="`/${locale}`">{{ messages.home }}</a></nav><p>{{ messages.guest_notice }}</p></aside>
+            <main class="studio-workspace">
+                <StudioList v-if="page === 'studio'" :locale="locale" :messages="messages" />
+                <LessonEditor v-else-if="page === 'editor' && context.lessonId" :lesson-id="context.lessonId" :locale="locale" :messages="messages" />
+                <TeacherPanel v-else-if="page === 'teacher' && context.sessionId" :session-id="context.sessionId" :locale="locale" :messages="messages" />
+                <JoinForm v-else-if="page === 'join'" :locale="locale" :messages="messages" />
+                <PublicSession v-else-if="page === 'student' && context.sessionId" mode="student" :session-id="context.sessionId" :messages="messages" />
+                <PublicSession v-else-if="page === 'projector' && context.projectorToken" mode="projector" :projector-token="context.projectorToken" :messages="messages" />
+                <p v-else role="alert" class="error-banner">{{ messages.error_not_found }}</p>
+            </main>
+        </div>
+    </div>
+</template>

@@ -29,6 +29,44 @@ jobs:
       - run: composer test
       - run: composer lint
 
+  mariadb:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MARIADB_DATABASE: lessons_test
+          MARIADB_ROOT_PASSWORD: test-only-mariadb-password
+          MARIADB_ROOT_HOST: '%'
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: '3306'
+      DB_DATABASE: lessons_test
+      DB_USERNAME: root
+      DB_PASSWORD: test-only-mariadb-password
+      DB_URL: ''
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, fileinfo, pdo_sqlite, pdo_mysql, curl
+          tools: composer:v2
+          coverage: none
+      - run: composer validate --strict
+      - run: composer install --prefer-dist --no-interaction
+      - run: composer test
+
   frontend:
     runs-on: ubuntu-latest
     steps:

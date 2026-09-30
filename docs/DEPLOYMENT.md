@@ -9,7 +9,7 @@
 - PHP CLI: `/opt/plesk/php/8.5/bin/php`, версия 8.5.11; выбран PHP 8.5.11 FPM.
 - Node: `/opt/plesk/node/22/bin/node`, версия 22.23.3.
 - Composer PHAR: `/opt/psa/var/modules/composer/composer.phar`. `/usr/local/bin/composer` является shell-обёрткой; передавать её PHP нельзя.
-- MariaDB 10.6.23, `localhost:3306`. На этапе 1 приложение БД не использует.
+- MariaDB 10.6.23, `localhost:3306`. На этапе 2 БД обязательна для материалов и занятий.
 
 Исходники доставляются только через Git. `.env` и ключ приложения создаются на сервере, не коммитятся и не передаются через SFTP. `vendor`, `node_modules` и `public/build` собираются на сервере и исключены из Git. Файлы хранилища и конфигурация Plesk сохраняются при обновлении.
 
@@ -39,7 +39,23 @@ bash scripts/deploy-plesk.sh
 
 Ключ создаётся один раз; повторно `key:generate` при обновлениях не выполнять. Права записи нужны владельцу FPM на `storage` и `bootstrap/cache`; не использовать `chmod 777`. Установку Composer dev dependencies и PHPUnit на production не выполнять.
 
-## Последующие обновления
+## Первый запуск хранения — этап 2
+
+Production `.env` и ключ уже созданы; их не заменять. Перед первой инициализацией script проверяет метаданные настроенной БД: отсутствие таблиц, views, routines, triggers и events. При непустой schema или ошибке проверки он прекращает работу без изменения БД. Проверка предполагает отдельную application-БД и достаточные metadata privileges её владельца; чужую/shared schema этим способом не инициализировать.
+
+```bash
+cd /var/www/vhosts/lessons.atapin.de/httpdocs && \
+export PATH="/opt/plesk/php/8.5/bin:/opt/plesk/node/22/bin:$PATH" && \
+php artisan down --retry=30 && \
+git pull --ff-only && \
+bash scripts/deploy-plesk.sh --initialize-database
+```
+
+Флаг разрешает первый запуск additive migrations только на проверенной пустой БД. Он создаёт базовые Laravel-таблицы и пять domain-таблиц; не делает seed, fresh/reset или удаления данных. После создания таблиц этот флаг повторно не использовать.
+
+Для непустой БД перед новыми migrations нужна проверенная резервная копия средствами Plesk, включая schema, данные, triggers/routines/events. Хранить backup вне `httpdocs`, например `/var/www/vhosts/lessons.atapin.de/private/lessons-backups`, с закрытыми правами; никогда не в Git. После подтверждения backup выполнить `php artisan migrate --force --no-interaction` в подготовленном Plesk environment, затем обычный deployment. Восстановление существующих данных — отдельное подтверждаемое действие; автоматический rollback/fresh не предусмотрен.
+
+## Последующие обновления без новых migrations
 
 ```bash
 cd /var/www/vhosts/lessons.atapin.de/httpdocs && \
@@ -48,13 +64,13 @@ git pull --ff-only && \
 bash scripts/deploy-plesk.sh
 ```
 
-Script проверяет ветку, чистоту дерева и версии среды; получает Git-изменения, устанавливает locked зависимости, проверяет требования PHP, собирает Vue и кеширует Laravel. На этапе 1 нет domain migrations, workers или scheduler: эти действия не запускаются. При появлении persistence и очередей workflow обновляется отдельной задачей с требованиями backup и rollback.
+Script проверяет ветку, чистоту дерева и версии среды, включает maintenance, получает Git-изменения, устанавливает locked зависимости, проверяет требования PHP, собирает Vue, очищает кеши и выполняет `lessons:check` перед кешированием Laravel/возвращением сайта online. Без флага migrations не запускаются. Workers/scheduler ещё не используются. При ошибке сайт остаётся в maintenance: устранить причину и повторить deployment без initialization-флага, если таблицы уже созданы; не делать `artisan up`, пока проверка хранения не прошла.
 
 ## Проверка
 
-Health endpoint: `https://lessons.atapin.de/up`. Он проверяет загрузку приложения, а не БД или будущий движок проведения. Страницы `/`, `/ru`, `/de` — временная информация о подготовке платформы.
+Health endpoint: `https://lessons.atapin.de/up` проверяет загрузку приложения. `php artisan lessons:check` отдельно проверяет подключение, обязательные domain-таблицы/колонки и binary collation block ID на MariaDB. Это не нагрузочный тест или проверка backup restore. Страницы `/ru/studio`, `/de/studio` открывают конструктор; `/ru/join`, `/de/join` — вход ученика.
 
-После первого запуска проверить HTTPS, Vue и изображения, RU/DE, отсутствие доступа к `.env`, `.git` и исходникам. Проверка базы при необходимости — только подключение и `SELECT VERSION()`, без schema/data mutations.
+После запуска проверить HTTPS, Vue и изображения, RU/DE, отсутствие доступа к `.env`, `.git` и исходникам. Пройти создание → сохранение → запуск → проектор → ответ ученика в браузере; подтвердить отсутствие закрытых данных на публичных экранах. CLI checks не раскрывают конфигурацию/пароли и ученические ответы.
 
 Commit/push и зелёная локальная проверка не означают успешный deployment. Статус production подтверждается отдельно после выполнения команд и HTTP-проверки.
 
