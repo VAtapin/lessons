@@ -230,4 +230,9 @@ return [
     'media_design_22' => 'Junge liest unter einem Baum',
     'common_illustrations' => 'Gemeinsame Illustrationen',
     'common_illustrations_hint' => 'Diese Illustrationen können im Editor ausgewählt werden. Sie sind gemeinsame Versionen und werden nicht über die persönliche Mediathek verändert.',
+    'control_placement' => 'Bedienpult abtrennen',
+    'answered' => 'Geantwortet',
+    'student_answers' => 'Antworten der Lernenden',
+    'answers_received' => 'Antworten',
+    'set_timer' => 'Zeit einstellen',
 ];
