@@ -29,13 +29,15 @@
 - Local additive migrations и lessons:check прошли. Проверены ownership/CSRF, immutable снимки, optimistic conflicts, invalid media/документы, изоляция занятий, ответов и проекций; MySQL/MariaDB migration DDL и case-sensitive ID покрыты.
 - Браузер: создание → редактирование трёх типов → два этапа → сохранение/перезагрузка → запуск → проектор → вход/ответ ученика → навигация/возврат; ответ сохраняется, teacher получает его, закрытые заметки/решения отсутствуют на публичных экранах. Проверена неизменность старого запуска после новой правки, RU/DE и literal HTML как текст.
 - Реальная ширина 360 px: редактор, пульт и ученик без горизонтального переполнения; 768/1366 px проверены. Меню открывается/полностью закрывается. Console errors при рабочем проведении не обнаружены.
-- SSH перед deployment: server main чистый, HEAD 791b024; выбранная БД lessons без tables/views/routines/triggers/events. Schema permissions проверены чтением, БД пока не изменена.
-- Новый CI job MariaDB ещё не подтверждён выполнением. Реальная concurrent нагрузка MariaDB, browser matrix и backup restore не проверялись.
+- GitHub CI implementation commit прошёл: PHP 8.4, PHP 8.5, frontend Node 22 и реальная MariaDB 10.6; run 36778205368.
+- Production deployment fc75ab6 выполнен через Git: Composer platform requirements, Node typecheck/build, empty-schema preflight, additive migrations и lessons:check прошли. MariaDB 10.6.23, binary block ID collation подтверждены; /up, RU/DE кабинет и вход ученика — HTTP 200, .env/.git/исходник runtime — HTTP 404.
+- Production браузер: три блока/два этапа созданы, сохранены, восстановлены после перезагрузки и запущены; UI/изображение/закрытая карточка ведущего работают, console errors отсутствуют. Проектор проверен только чтением: заметок/решений ведущего нет. Добавление тестового участника/ответа остановлено automatic approval review; запрошено отдельное разрешение, проверка пока не выполнена. Полная цепочка ответа уже проверена локально и в CI.
+- Реальная concurrent нагрузка MariaDB, полная browser matrix и backup restore не проверялись.
 
 ## Git и production
 
-- Ветка main; upstream origin/main, https://github.com/VAtapin/lessons.git. Последний связанный commit до реализации этапа 2: 791b02415eb97d96f245c1de8ba04a27e76cb426 — Record verified Plesk foundation deployment.
-- Последний подтверждённый production запуск — этап 1. Deployment этапа 2 выполняется после commit/push; этот файл пока фиксирует локально проверенную готовность.
+- Ветка main; upstream origin/main, https://github.com/VAtapin/lessons.git. Implementation commit этапа 2: fc75ab62bb5c7d47e02355b854080137e76bbbc6 — Build the minimal lesson studio and runtime; отправлен в upstream и установлен на production.
+- Последний подтверждённый production запуск — этап 2. Этот документационный commit фиксирует выполненный deployment и проверки, отдельно от atomic implementation commit.
 - SSH lessons.atapin.de:2377, проект /var/www/vhosts/lessons.atapin.de/httpdocs; document root httpdocs/public. Исходники доставляются только Git.
 - .env production private 600, debug выключен, secure HTTPS session cookie, APP_KEY уже создан один раз и не меняется. Секреты/локальное окружение/БД/build исключены из Git.
 - Windows PHP child commands требуют PHPRC=D:\Projekte\lessons\.local\php.ini. Переносимый Node 22 — .local/node/node-v22.23.3-win-x64; служебные файлы не коммитятся.

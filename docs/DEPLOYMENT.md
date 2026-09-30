@@ -86,3 +86,13 @@ Implementation commit `c0341cffb502c65f26d33e5d55cbbd8db42dbbb1` (`Initialize le
 - GitHub CI implementation commit прошёл: [run 36771254689](https://github.com/VAtapin/lessons/actions/runs/36771254689).
 
 Это deployment основы этапа 1 и временной стартовой страницы. Конструктор, проведение занятий и остальные возможности платформы не запущены и не выдаются за готовые.
+
+## Подтверждённый запуск этапа 2 — 2026-09-30
+
+Implementation commit `fc75ab62bb5c7d47e02355b854080137e76bbbc6` (`Build the minimal lesson studio and runtime`) получен сервером через Git. До изменения schema проверена отдельная БД `lessons`: нет tables/views/routines/triggers/events; metadata permissions подтверждены чтением grants без вывода credentials. Initial migrations выполнены без удаления данных или seed, APP_KEY/.env сохранены.
+
+Composer platform requirements, Node 22 typecheck/build, additive migrations и `lessons:check` на MariaDB 10.6.23 прошли. Подтверждена binary collation block ID. Maintenance снят после успешных проверок; HTTPS `/up`, `/ru/studio`, `/de/studio`, `/ru/join` отвечают HTTP 200, `.env`, `.git/config` и исходник runtime — HTTP 404. Server main чистый.
+
+В production браузере создана явно техническая сборка трёх блоков/двух этапов, сохранена, восстановлена после перезагрузки и запущена. Изображение и закрытая карточка ведущего работают, console errors не обнаружены. Проектор проверен только чтением: закрытые заметки/решения отсутствуют. Добавление тестового ученика/ответа остановлено automatic approval review и ожидает отдельного разрешения владельца; эта часть production-проверки пока не выполнена. Полная цепочка проверена локально.
+
+GitHub CI прошёл, включая реальную MariaDB 10.6: [run 36778205368](https://github.com/VAtapin/lessons/actions/runs/36778205368). Это подтверждает минимальную вертикаль этапа 2, а не остальные этапы платформы или нагрузочную готовность.
