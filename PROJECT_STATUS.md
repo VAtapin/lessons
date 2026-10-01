@@ -24,7 +24,7 @@
 - File session lock + owner mutex + session row lock. Polling 2 секунды, устаревшие GET отбрасываются. Приглашение по умолчанию 1 час, grant 4 часа без автоматического продления. Отдельный приглашённый учитель видит ответы/заметки/решения после явного предупреждения.
 - Согласованное хранение: finished guest и подробные ответы 30 дней, account history без этих данных 2 года, rehearsal 7 дней, технические события 30 дней. Активные занятия и неизвестные legacy anchors защищены. Физическое удаление media/authoring resources/claim tombstones не выполняется.
 - Резервные копии: владелец выбрал хранение на сервере без автоматического удаления. Внешнее место хранения пока не задано.
-- Проведение теперь занимает весь экран: отсутствуют шапка, футер и меню сайта; компактная нижняя панель, внутренние этапы/ответы/заметки, отдельно tab/popup с подтверждённым handshake. Изображение заполняет выделенную область, переключатель показывает его целиком. Масштаб главной остаётся отдельной подготовленной правкой.
+- Проведение теперь занимает весь экран: отсутствуют шапка, футер и меню сайта; компактная нижняя панель, внутренние этапы/ответы/заметки, отдельно tab/popup с подтверждённым handshake. Изображение заполняет выделенную область, переключатель показывает его целиком. Главная ограничена масштабом макета 1120 px: уменьшены герой, типографика, интервалы и карточки; подбор по названию и фильтры сохранены. RU/DE desktop 1366 и mobile 360 проверены в браузере, overflow отсутствует.
 - Для занятия доступны встроенные редактируемые планы RU/DE, скачиваемые PDF на обоих языках, исходная презентация PPTX и YouTube-инструкция на русском с явными метками языка. Документация копируется в immutable release, видна учителю и не входит в проекции ученика/проектора. Файлы проверяются по whitelist/SHA256; старому исходному release добавляется write-once sidecar.
 - Почта: lessons@atapin.de через PHP/Plesk sendmail. Получение прежнего письма подтверждено пользователем; новое оформление проверено renderer/browser, получение в реальном почтовом клиенте пока не подтверждено.
 - Production: Plesk PHP 8.5.11 CLI/FPM, Node 22.23.3, MariaDB 10.6.23. /var/www/vhosts/lessons.atapin.de/httpdocs, document root public; SSH :2377. Локально PHP 8.4.25/SQLite/Node22.
@@ -42,7 +42,7 @@
 
 ## Git и следующие работы
 
-- main → origin/main, https://github.com/VAtapin/lessons.git. Последний связанный commit до текущего переноса проведения: b8f997babfcea47ba001026ab33ac8856d0176f2 — Validate integer answer IDs in load acceptance. Новый commit включает этот статус; его hash сообщает Git отчёт.
+- main → origin/main, https://github.com/VAtapin/lessons.git. Последний связанный commit: 313ffc09a02bd521c098acffc6b95502dc3d2a23 — Restore original lesson interactions in the block engine. Новый commit включает этот статус; его hash сообщает Git отчёт.
 - Git никогда не содержит .env, credentials, cookies, private data, local DB, logs, backups или build. Windows PHP child commands требуют PHPRC=D:\Projekte\lessons\.local\php.ini; Node22 — .local/node/node-v22.23.3-win-x64.
 - Этапы 7/8 установлены и проверены. Production администратор пока не назначен: требуется точный verified email владельца.
 - Этап 9: restore, execution records, очереди backup/retention и HTTP load harness прошли локальные проверки, Linux CI/production настройка ещё впереди. Targeted Astra checkpoint C не выявил P0/P1; два P2 исправлены: named lock на весь restore и queue:restart внутри deployment до up. Предварительный load10×30 не считается согласованной нагрузочной приёмкой.
