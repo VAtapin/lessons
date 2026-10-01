@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Runtime;
 
+use App\Application\Catalog\DocumentationFiles;
 use App\Application\Catalog\DocumentationService;
 use App\Application\Collaboration\CollaborationConflict;
 use App\Application\Collaboration\TeacherAccess;
@@ -25,7 +26,7 @@ use Carbon\CarbonImmutable;
 
 final class RuntimeService
 {
-    public function __construct(private StudioService $studio, private BlockRegistry $registry, private RuntimeCommands $commands, private SessionTimer $timer, private RuntimeMediaProjection $mediaProjection, private RuntimeBlocks $blocks, private RuntimeAnswers $answers, private RetentionPolicy $retention, private SessionAggregates $aggregates, private TeacherAccess $teacherAccess, private TeacherReceipts $teacherReceipts, private DocumentationService $documentation) {}
+    public function __construct(private StudioService $studio, private BlockRegistry $registry, private RuntimeCommands $commands, private SessionTimer $timer, private RuntimeMediaProjection $mediaProjection, private RuntimeBlocks $blocks, private RuntimeAnswers $answers, private RetentionPolicy $retention, private SessionAggregates $aggregates, private TeacherAccess $teacherAccess, private TeacherReceipts $teacherReceipts, private DocumentationService $documentation, private DocumentationFiles $documentationFiles) {}
 
     public function start(string $ownerKey, string $lessonId, int $expectedRevision, ?string $locale, bool $prepare = false): array
     {
@@ -337,7 +338,7 @@ final class RuntimeService
         $teacherDocument = $document->project(Audience::Teacher, $session->locale);
         $documentation = $this->documentation->forVersion($session->version, $document);
         if ($documentation !== null) {
-            $teacherDocument['documentation'] = $documentation->project($session->locale);
+            $teacherDocument['documentation'] = $this->documentationFiles->present($documentation, $session->locale);
         }
         $teacherDocument['stages'] = array_map(
             fn (array $stage): array => $this->mediaProjection->stage($stage, $session, Audience::Teacher, $teacherScoped),

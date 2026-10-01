@@ -122,6 +122,10 @@ final class WordsLessonTest extends TestCase
         $runtime = app(RuntimeService::class);
         $owner = (string) Str::uuid();
         $session = app(CatalogService::class)->use('slova-ranyat-slova-lechat', $locale, $owner, true)['session'];
+        foreach ($session['document']['documentation']['files'] as $index => $file) {
+            $this->assertSame(__('studio.documentation_words_'.($index + 1), [], $locale), $file['label']);
+            $this->assertSame('/lesson-files/'.$file['fileId'], $file['url']);
+        }
         $token = TeachingSession::findOrFail($session['id'])->projector_token;
         $participant = $runtime->join($session['joinCode'], 'Synthetic student', [])['participant']['id'];
         $execute = function ($action, $payload = []) use ($runtime, $owner, &$session): void {
