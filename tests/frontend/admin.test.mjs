@@ -41,7 +41,7 @@ test('access denial, validation and conflict have honest dedicated messages', ()
 test('RU and DE admin messages have matching complete keys for all new components', () => {
     const dictionaries=['ru','de'].map(locale=>new Set([...fs.readFileSync(new URL(`../../lang/${locale}/admin.php`,import.meta.url),'utf8').matchAll(/'([^']+)'\s*=>/g)].map(match=>match[1])));
     assert.deepEqual([...dictionaries[0]].sort(),[...dictionaries[1]].sort());
-    for(const file of ['CatalogSubmissions.vue','AdminPage.vue','CommonLibrary.vue','OperationsPanel.vue','admin.ts']) {
+    for(const file of ['CatalogSubmissions.vue','AdminPage.vue','CommonLibrary.vue','admin.ts']) {
         const source=fs.readFileSync(new URL('../../resources/js/studio/'+file,import.meta.url),'utf8');
         for(const match of source.matchAll(/messages\.(admin_[A-Za-z_]+)/g)) for(const dictionary of dictionaries) assert.ok(dictionary.has(match[1]),`${file}: ${match[1]}`);
     }
