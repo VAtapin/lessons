@@ -64,9 +64,12 @@ final class BackupRestoreTest extends TestCase
         $password = getenv('LESSONS_RESTORE_TEST_PASSWORD');
         $this->assertIsString($username, 'MariaDB CI must provision a restricted restore account; missing credentials are a failure, never a skip.');
         $this->assertIsString($password);
-        $config = array_replace($this->source->getConfig(), ['database' => 'lessons_restore_test', 'username' => $username, 'password' => $password, 'url' => null]);
+        // getConfig() includes the source connection name. Hydrated Eloquent models
+        // use that name for later mutations, so retaining it would delete source rows.
+        $config = array_replace($this->source->getConfig(), ['name' => 'restore_acceptance', 'database' => 'lessons_restore_test', 'username' => $username, 'password' => $password, 'url' => null]);
         config(['database.connections.restore_acceptance' => $config]);
         $this->target = DB::connection('restore_acceptance');
+        $this->assertSame('restore_acceptance', $this->target->getName());
         (new RestoreTarget)->assertSafe($this->target, 'testing');
         $this->ownsEmptyTarget = true;
         $this->directory = str_replace('\\', '/', realpath(sys_get_temp_dir())).'/lessons-restore-proof-'.bin2hex(random_bytes(8));
@@ -180,8 +183,9 @@ final class BackupRestoreTest extends TestCase
         (new RestoreTarget)->assertSafe($this->target, 'testing', empty: false);
         $this->target->getSchemaBuilder()->dropAllTables();
         $this->app->forgetInstance(DatabaseRestoreProcess::class);
-        config(['database.connections.restore_overlap' => $this->target->getConfig()]);
+        config(['database.connections.restore_overlap' => array_replace($this->target->getConfig(), ['name' => 'restore_overlap'])]);
         $second = DB::connection('restore_overlap');
+        $this->assertSame('restore_overlap', $second->getName());
         (new RestoreTarget)->assertSafe($second, 'testing');
         $this->assertNotSame($this->target->selectOne('SELECT CONNECTION_ID() AS id')->id, $second->selectOne('SELECT CONNECTION_ID() AS id')->id);
         $overlapAttempted = false;
