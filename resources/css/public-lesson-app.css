@@ -84,7 +84,7 @@
     .conducting-app.public-lesson-app .focus-stage-split { display: flex; flex-direction: column; height: auto; min-height: 100%; overflow: visible; }
     .conducting-app.public-lesson-app .focus-stage-copy { flex: 0 0 auto; overflow: visible; padding: 20px 16px; }
     .conducting-app.public-lesson-app .focus-stage-copy > h2 { font-size: 1.8rem; margin-bottom: 16px; }
-    .conducting-app.public-lesson-app .focus-stage-visual { flex: 0 0 auto; height: min(260px, 25dvh); overflow: hidden; }
+    .conducting-app.public-lesson-app .focus-stage:not(.focus-stage-cover) .focus-stage-visual { flex: 0 0 auto; height: min(260px, 25dvh); overflow: hidden; }
     .public-lesson-app .focus-stage-copy textarea { min-height: 120px; }
     .public-lesson-app.projector { --public-copy-size: 1.15rem; }
 }

@@ -8,5 +8,6 @@ export function focusStageBlocks(stage: ProjectedStage) {
     const blocks = covered ? stage.blocks.map(block => block.type === 'core.free-response' && block.runtime?.results && boardSources.has(block.id) ? { ...block, runtime: { ...block.runtime, results: undefined } } : block) : stage.blocks;
     const images = blocks.filter(block => block.type === 'core.image');
     const split = images.length === 1 && blocks.length > 1;
-    return { split, illustration: split ? images[0] : undefined, copy: split ? blocks.filter(block => block !== images[0]) : blocks };
+    const cover = split && blocks.some(block => block.type === 'core.signals') && blocks.every(block => ['core.text', 'core.image', 'core.signals'].includes(block.type));
+    return { split, cover, mediaFirst: !cover && blocks.some(block => block.type === 'core.free-response'), illustration: split ? images[0] : undefined, copy: split ? blocks.filter(block => block !== images[0]) : blocks };
 }

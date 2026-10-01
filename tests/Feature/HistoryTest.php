@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Application\History\HistoryService;
+use App\Application\History\RehearsalService;
 use App\Application\Runtime\RuntimeService;
 use App\Models\LessonMaterial;
 use App\Models\TeachingSession;
@@ -166,6 +167,53 @@ final class HistoryTest extends TestCase
         $this->assertSame('idle', $new['timer']['status']);
         $this->assertNull($new['message']);
         $this->postJson('/api/studio/sessions/'.$session['id'].'/again', ['ownerKey' => $this->historyOwner])->assertUnprocessable();
+    }
+
+    public function test_active_history_preserves_all_real_sessions_paging_and_private_owner_summary(): void
+    {
+        CarbonImmutable::setTestNow('2026-10-01 12:00:00 UTC');
+        $first = $this->historySession();
+        $this->historyParticipant($first);
+        $this->historyCommand($first, 'stage', ['stageId' => 'second']);
+        $this->historyCommand($first, 'pause');
+        $runtime = $this->app->make(RuntimeService::class);
+        $original = TeachingSession::findOrFail($first['id']);
+        $version = $original->version;
+        for ($i = 0; $i < 32; $i++) {
+            $runtime->startSnapshot($this->historyOwner, $version, 'ru', 'lesson');
+        }
+        $finished = $this->historySession();
+        $this->historyCommand($finished, 'finish');
+        $this->app->make(RehearsalService::class)->start($this->historyOwner, $version->lesson_material_id, LessonMaterial::findOrFail($version->lesson_material_id)->revision, 'ru');
+        $foreign = $runtime->startSnapshot($this->historyOwner, $version, 'ru', 'lesson');
+        TeachingSession::query()->where('id', $foreign['id'])->update(['owner_key' => (string) Str::uuid()]);
+
+        $page = $this->getJson('/api/studio/sessions?status=active')->assertOk()->json();
+        $this->assertCount(30, $page['sessions']);
+        $second = $this->getJson('/api/studio/sessions?status=active&cursor='.rawurlencode($page['nextCursor']))->assertOk()->json();
+        $this->assertCount(3, $second['sessions']);
+        $this->assertNull($second['nextCursor']);
+        $sessions = [...$page['sessions'], ...$second['sessions']];
+        $this->assertCount(33, array_unique(array_column($sessions, 'id')));
+        foreach ($sessions as $summary) {
+            $this->assertSame('lesson', $summary['mode']);
+            $this->assertContains($summary['status'], ['prepared', 'running', 'paused']);
+        }
+        $summary = collect($sessions)->firstWhere('id', $first['id']);
+        $this->assertSame($original->join_code, $summary['joinCode']);
+        $this->assertSame(2, $summary['stageNumber']);
+        $this->assertSame(2, $summary['stageCount']);
+        $this->assertSame('Second', $summary['stageTitle']);
+        $this->assertSame(1, $summary['participantCount']);
+        foreach (['Private pupil name', 'Authored private note', 'projector_token', 'owner_key', 'teacherNotes', 'answers'] as $private) {
+            $this->assertStringNotContainsString($private, json_encode($sessions));
+        }
+        $this->assertSame($version->document, $version->fresh()->document);
+        $this->getJson('/api/studio/sessions?status=active&mode=rehearsal')->assertOk()->assertExactJson(['sessions' => [], 'nextCursor' => null]);
+        $this->getJson('/api/studio/sessions?cursor='.rawurlencode($page['nextCursor']))->assertUnprocessable();
+        $this->withSession(['studio_owner_key' => (string) Str::uuid()]);
+        $this->getJson('/api/studio/sessions?status=active')->assertOk()->assertExactJson(['sessions' => [], 'nextCursor' => null]);
+        $this->getJson('/api/studio/sessions?status=active&cursor='.rawurlencode($page['nextCursor']))->assertUnprocessable();
     }
 
     public function test_legacy_unknown_anchors_are_not_guessed_and_account_cutoffs_are_enforced_before_cleanup(): void

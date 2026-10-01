@@ -8,6 +8,16 @@ const { focusStageBlocks } = await import(`data:text/javascript;base64,${Buffer.
 const stage = blocks => ({ id: 'stage', content: { title: 'Actual title' }, config: {}, blocks });
 const image = id => ({ id, type: 'core.image', resources: { image: '/real/immutable/version' }, content: { alt: 'Actual illustration' } });
 
+test('welcome uses the full image background while written discussion places the image beside the real input', () => {
+    const welcome = focusStageBlocks(stage([image('welcome'), { type: 'core.text' }, { type: 'core.signals' }]));
+    assert.equal(welcome.cover, true);
+    assert.equal(welcome.illustration.resources.image, '/real/immutable/version');
+    const discussion = focusStageBlocks(stage([image('priest'), { type: 'core.free-response' }]));
+    assert.equal(discussion.cover, false);
+    assert.equal(discussion.mediaFirst, true);
+    assert.equal(discussion.copy[0].type, 'core.free-response');
+});
+
 test('focus composes one real illustration with all material and tasks in their original relative order', () => {
     const blocks = [image('scene'), { id: 'intro', type: 'core.text', content: { text: 'Real introduction' } }, { id: 'question', type: 'core.single-choice', runtime: { status: 'open' } }, { id: 'signal', type: 'core.signals' }];
     const before = JSON.stringify(blocks);

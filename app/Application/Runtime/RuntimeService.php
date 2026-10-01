@@ -305,13 +305,17 @@ final class RuntimeService
         if (! $legacy && $keys !== ['blockId', 'stageId', 'value']) {
             throw new ApiProblem('invalid_action', 422);
         }
-        if ($session->status !== 'running') {
+        if (! in_array($session->status, ['prepared', 'running'], true)) {
             throw new ApiProblem('invalid_state', 409);
         }
         if ($session->current_stage_id !== $stageId) {
             throw new ApiProblem('invalid_action', 422);
         }
         $block = $this->blocks->find($this->document($session), $blockId, $stageId);
+        // Joining a prepared class includes readiness/help, never an early task attempt.
+        if ($session->status === 'prepared' && $block->type !== 'core.signals') {
+            throw new ApiProblem('invalid_state', 409);
+        }
         if ($legacy && $block->type !== 'core.single-choice') {
             throw new ApiProblem('invalid_action', 422);
         }
@@ -391,7 +395,8 @@ final class RuntimeService
             'status' => $session->status, 'serverNow' => $now->toISOString(), 'timer' => $this->timer->project($session, $now),
             'message' => $session->message,
             'wave' => $session->wave_expires_at !== null && $session->wave_expires_at->greaterThan($now)
-                ? ['id' => $session->wave_id, 'expiresAt' => $session->wave_expires_at->utc()->toISOString()] : null,
+                ? ['id' => $session->wave_id, 'expiresAt' => $session->wave_expires_at->utc()->toISOString(),
+                    'aggregate' => $this->answers->kindnessAggregate($session, $this->document($session), $this->blocks->snapshot($session))] : null,
         ];
     }
 

@@ -28,21 +28,25 @@ final readonly class HistoryService
     {
         $status = $filters['status'] ?? null;
         $mode = $filters['mode'] ?? null;
-        if (($status !== null && ! in_array($status, ['prepared', 'running', 'paused', 'finished'], true))
+        if (($status !== null && ! in_array($status, ['active', 'prepared', 'running', 'paused', 'finished'], true))
             || ($mode !== null && ! in_array($mode, ['lesson', 'rehearsal'], true))) {
             throw new ApiProblem('invalid_action', 422);
         }
         $scope = hash('sha256', json_encode([$owner, $status, $mode], JSON_THROW_ON_ERROR));
         $account = User::query()->where('owner_key', $owner)->exists();
         $now = CarbonImmutable::now('UTC');
-        $query = TeachingSession::query()->where('owner_key', $owner)->with('version')->orderByDesc('created_at')->orderByDesc('id');
+        $query = TeachingSession::query()->where('owner_key', $owner)->with('version')->select('teaching_sessions.*')->addSelect([
+            'participant_count' => SessionParticipant::query()->selectRaw('count(*)')->whereColumn('teaching_session_id', 'teaching_sessions.id'),
+        ])->orderByDesc('created_at')->orderByDesc('id');
         // SQL removes expired rows; the one-day calendar-year margin is checked
         // precisely below, including Feb 29 -> Feb 28 cutoffs.
         $query->where(fn ($q) => $q->where('status', '!=', 'finished')
             ->orWhere(fn ($q) => $q->where('mode', 'lesson')->where(fn ($q) => $q->whereNull('finished_at')->orWhere('finished_at', '>',
                 $account ? $now->subYearsNoOverflow(2)->subDay() : $now->subDays(30))))
             ->orWhere(fn ($q) => $q->where('mode', 'rehearsal')->where('created_at', '>', $now->subDays(7))));
-        if ($status !== null) {
+        if ($status === 'active') {
+            $query->whereIn('status', ['prepared', 'running', 'paused'])->where('mode', 'lesson');
+        } elseif ($status !== null) {
             $query->where('status', $status);
         }
         if ($mode !== null) {
@@ -189,12 +193,20 @@ final readonly class HistoryService
 
     private function summary(TeachingSession $session, ?bool $account = null): array
     {
+        $stages = $session->version->document['stages'];
+        $stageIndex = array_search($session->current_stage_id, array_column($stages, 'id'), true);
+        $available = $this->policy->detailsAvailable($session);
+
         return ['id' => $session->id, 'lessonId' => $session->version->lesson_material_id, 'lessonVersionId' => $session->lesson_version_id,
             'title' => $session->version->document['content'][$session->locale]['title'], 'locale' => $session->locale,
             'mode' => $session->mode, 'status' => $session->status, 'revision' => $session->revision,
             'createdAt' => $session->created_at->utc()->toISOString(), 'startedAt' => $session->started_at?->utc()->toISOString(),
             'finishedAt' => $session->finished_at?->utc()->toISOString(), 'visitedStageIds' => $session->visited_stage_ids,
-            'detailsAvailable' => $this->policy->detailsAvailable($session),
+            'joinCode' => $session->mode === 'lesson' && $session->status !== 'finished' ? $session->join_code : null,
+            'stageNumber' => $stageIndex === false ? null : $stageIndex + 1, 'stageCount' => count($stages),
+            'stageTitle' => $stageIndex === false ? null : $stages[$stageIndex]['content'][$session->locale]['title'],
+            'participantCount' => $available ? (int) ($session->participant_count ?? SessionParticipant::query()->where('teaching_session_id', $session->id)->count()) : 0,
+            'detailsAvailable' => $available,
             'detailsExpiresAt' => $this->policy->detailsExpiresAt($session)?->toISOString(), 'historyExpiresAt' => $this->policy->historyExpiresAt($session, $account)?->toISOString()];
     }
 }

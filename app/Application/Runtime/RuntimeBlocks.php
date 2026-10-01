@@ -147,6 +147,19 @@ final class RuntimeBlocks
             }
             if ($block->type === 'core.roles') {
                 $runtime['availability'] = $this->availability($session, $block);
+                if ($detailsAvailable) {
+                    $runtime['summary'] = ['counts' => array_map(fn (array $role): array => ['optionId' => $role['roleId'], 'count' => $role['used']], $runtime['availability']),
+                        'totalAnswers' => array_sum(array_column($runtime['availability'], 'used'))];
+                }
+            }
+            if ($detailsAvailable && $block->type === 'core.signals') {
+                $answers = SessionAnswer::query()->where('teaching_session_id', $session->id)->where('block_id', $block->id)->get();
+                $runtime['summary'] = ['totalAnswers' => $answers->count(),
+                    'ready' => $answers->filter(fn (SessionAnswer $answer): bool => (bool) ($answer->value['ready'] ?? false))->count(),
+                    'question' => $answers->filter(fn (SessionAnswer $answer): bool => (bool) ($answer->value['question'] ?? false) && ! $answer->acknowledged)->count()];
+            }
+            if ($detailsAvailable && in_array($block->type, ['core.poll', 'core.single-choice'], true)) {
+                $runtime['summary'] = $this->pollResults($session, $block);
             }
             if ($block->type === 'core.free-response' && $audience === Audience::Projector && $detailsAvailable) {
                 $published = SessionAnswer::query()->where('teaching_session_id', $session->id)
@@ -185,7 +198,7 @@ final class RuntimeBlocks
         $answers = SessionAnswer::query()->where('teaching_session_id', $session->id)->where('block_id', $block->id)->get();
         $counts = [];
         foreach ($block->content[$session->locale]['options'] as $option) {
-            $counts[] = ['optionId' => $option['optionId'], 'count' => $answers->filter(fn (SessionAnswer $answer): bool => ($answer->value['optionId'] ?? null) === $option['optionId'])->count()];
+            $counts[] = ['optionId' => $option['optionId'], 'count' => $answers->filter(fn (SessionAnswer $answer): bool => ($answer->value['optionId'] ?? $answer->option_id) === $option['optionId'])->count()];
         }
 
         return ['counts' => $counts, 'totalAnswers' => $answers->count()];

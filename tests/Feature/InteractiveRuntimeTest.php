@@ -32,6 +32,51 @@ final class InteractiveRuntimeTest extends TestCase
         $this->identity($this->owner);
     }
 
+    public function test_prepared_class_accepts_only_readiness_and_help_and_projects_anonymous_live_counts(): void
+    {
+        $session = $this->start(true);
+        $participant = $this->join($session, 'Private learner name');
+        $this->submit($session, 'signals', ['ready' => true, 'question' => false])->assertOk()
+            ->assertJsonPath('session.status', 'prepared')->assertJsonPath('session.kindnessPoints', 1);
+        foreach (['single' => ['optionId' => 'a'], 'roles' => ['roleId' => 'a'], 'free' => ['text' => 'Too early']] as $blockId => $value) {
+            $this->submit($session, $blockId, $value)->assertConflict()->assertJsonPath('error.code', 'invalid_state');
+        }
+        $this->submit($session, 'signals', ['ready' => true, 'question' => true])->assertOk();
+        $public = $this->projector($session)->assertOk()->assertJsonPath('session.stage.blocks.7.runtime.summary', ['totalAnswers' => 1, 'ready' => 1, 'question' => 1]);
+        $this->assertStringNotContainsString('Private learner name', $public->getContent());
+        $this->assertStringNotContainsString($participant['id'], $public->getContent());
+        $this->getJson('/api/studio/sessions/'.$session['id'])->assertOk()->assertJsonPath('session.answers.0.value.question', true);
+        $session = $this->getJson('/api/studio/sessions/'.$session['id'])->json('session');
+        $this->execute($session, 'signal.ack', ['blockId' => 'signals', 'participantId' => $participant['id']]);
+        $this->projector($session)->assertJsonPath('session.stage.blocks.7.runtime.summary.question', 0);
+        $this->execute($session, 'begin');
+        $this->execute($session, 'pause');
+        $this->submit($session, 'signals', ['ready' => false, 'question' => false])->assertConflict();
+        $this->execute($session, 'finish');
+        $this->submit($session, 'signals', ['ready' => false, 'question' => false])->assertConflict();
+        $this->assertDatabaseCount('session_answers', 1);
+    }
+
+    public function test_live_choices_show_only_distribution_before_review_and_never_a_solution_or_names(): void
+    {
+        $session = $this->start();
+        $participant = $this->join($session, 'Private voter');
+        $this->execute($session, 'block.open', ['blockId' => 'poll']);
+        $this->submit($session, 'poll', ['optionId' => 'b'])->assertOk();
+        $this->submit($session, 'single', ['optionId' => 'b'])->assertOk()->assertJsonPath('session.ownAnswers.1.grade', null)
+            ->assertJsonPath('session.kindnessPoints', 1);
+        $this->submit($session, 'roles', ['roleId' => 'a'])->assertOk();
+        $public = $this->projector($session)->assertOk()->assertJsonPath('session.stage.blocks.2.runtime.summary', ['counts' => [['optionId' => 'a', 'count' => 0], ['optionId' => 'b', 'count' => 1]], 'totalAnswers' => 1])
+            ->assertJsonPath('session.stage.blocks.0.runtime.summary', ['counts' => [['optionId' => 'a', 'count' => 0], ['optionId' => 'b', 'count' => 1]], 'totalAnswers' => 1])
+            ->assertJsonPath('session.stage.blocks.6.runtime.summary', ['counts' => [['optionId' => 'a', 'count' => 1], ['optionId' => 'b', 'count' => 0]], 'totalAnswers' => 1])
+            ->assertJsonMissingPath('session.stage.blocks.2.runtime.results')->assertJsonMissingPath('session.stage.blocks.0.runtime.results');
+        $this->assertStringNotContainsString('Private voter', $public->getContent());
+        $this->assertStringNotContainsString($participant['id'], $public->getContent());
+        $this->assertStringNotContainsString('solution', $public->getContent());
+        $this->execute($session, 'role.assign', ['blockId' => 'roles', 'participantId' => $participant['id'], 'roleId' => null]);
+        $this->projector($session)->assertJsonPath('session.stage.blocks.6.runtime.summary', ['counts' => [['optionId' => 'a', 'count' => 0], ['optionId' => 'b', 'count' => 0]], 'totalAnswers' => 0]);
+    }
+
     public function test_lazy_states_transitions_reveal_and_navigation_preserve_attempts_and_answers(): void
     {
         $session = $this->start();

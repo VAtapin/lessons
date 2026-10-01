@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { nextTick, onMounted, onBeforeUnmount, ref } from 'vue';
 import { api, ApiError } from '../studio/api';
 import CatalogFilters from './CatalogFilters.vue';
 import PublicIcon from './PublicIcon.vue';
+import ActiveSessionList from '../studio/ActiveSessionList.vue';
+import { catalogStartDecision, type ActiveSessionPage } from './start-session';
 import StageRenderer from '../studio/StageRenderer.vue';
 import LessonDocumentation from '../studio/LessonDocumentation.vue';
 import type { ProjectedStage } from '../studio/types';
@@ -14,6 +16,8 @@ const entries = ref<CatalogEntry[]>([]), entry = ref<CatalogEntry | null>(null);
 const pagination = ref<CatalogList['pagination']>({ page: 1, total: 0, perPage: 12, lastPage: 1 });
 const previewStages = ref<ProjectedStage[]>([]), previewIndex = ref(0);
 const terms = ref<CatalogTerm[] | null>(null), taxonomyFailed = ref(false), taxonomyLoading = ref(true);
+const activeSessions = ref<ActiveSessionPage | null>(null);
+const moreSessionsLoading = ref(false);
 let controller: AbortController | undefined;
 async function load() {
     controller?.abort(); controller = new AbortController(); loading.value = true; failed.value = false; missing.value = false;
@@ -40,14 +44,33 @@ async function load() {
         missing.value = error instanceof ApiError && error.status === 404; failed.value = !missing.value;
     } finally { loading.value = false; }
 }
-async function useLesson(mode: 'use' | 'start') {
+async function useLesson(mode: 'use' | 'start', explicitlyNew = false) {
     if (action.value || !entry.value) return;
     action.value = mode; actionFailed.value = false;
     try {
-        const result = await api<{ lesson: { id: string }; session?: { id: string } }>(`/api/catalog/${encodeURIComponent(entry.value.slug)}/${mode}`, 'POST', { locale: props.locale });
+        const slug = entry.value.slug;
+        const create = () => api<{ lesson: { id: string }; session?: { id: string } }>(`/api/catalog/${encodeURIComponent(slug)}/${mode}`, 'POST', { locale: props.locale });
+        let result;
+        if (mode === 'start' && !explicitlyNew) {
+            const decision = await catalogStartDecision(() => api<ActiveSessionPage>('/api/studio/sessions?status=active'), create);
+            if (decision.kind === 'resume') {
+                activeSessions.value = decision.page; action.value = '';
+                await nextTick();
+                const heading = document.getElementById('active-sessions-heading');
+                heading?.focus({ preventScroll: true }); heading?.scrollIntoView({ block: 'start' });
+                return;
+            }
+            result = decision.result;
+        } else result = await create();
         const target = mode === 'start' && result.session ? `/${props.locale}/teach/${result.session.id}` : `/${props.locale}/studio/lessons/${result.lesson.id}`;
         window.location.assign(target);
     } catch { actionFailed.value = true; action.value = ''; }
+}
+async function moreActiveSessions() {
+    if (!activeSessions.value?.nextCursor || moreSessionsLoading.value) return;
+    moreSessionsLoading.value = true; actionFailed.value = false;
+    try { const page = await api<ActiveSessionPage>(`/api/studio/sessions?${new URLSearchParams({ status: 'active', cursor: activeSessions.value.nextCursor })}`); activeSessions.value = { sessions: [...new Map([...activeSessions.value.sessions, ...page.sessions].map(session => [session.id, session])).values()], nextCursor: page.nextCursor }; }
+    catch { actionFailed.value = true; } finally { moreSessionsLoading.value = false; }
 }
 function pageLink(page: number): string { const query = catalogPageQuery(window.location.search, terms.value); query.set('page', String(page)); return `/${props.locale}/catalog?${query}`; }
 function topicLabel(key: string): string { return taxonomyOptions(terms.value, props.messages).topic.find(term => term.key === key)?.label ?? props.messages[`topic_${key}`] ?? key; }
@@ -63,6 +86,7 @@ onMounted(load); onBeforeUnmount(() => controller?.abort());
         <div v-else-if="missing" class="catalog-status"><h1>{{ messages.not_found }}</h1><a class="public-button" :href="`/${locale}/catalog`">{{ messages.back_catalog }}</a></div>
         <article v-else-if="entry" class="catalog-detail">
             <div class="lesson-overview"><img v-if="entry.coverUrl" :src="entry.coverUrl" alt="" class="lesson-cover" /><div><p class="hero-eyebrow">{{ messages.format_lesson }} · {{ entry.durationMinutes }} {{ messages.minutes }} · {{ entry.locales.map(l => l.toUpperCase()).join(' / ') }}</p><h1>{{ entry.title }}</h1><p>{{ entry.description }}</p><div class="lesson-tags"><span v-for="topic in entry.topic" :key="topic">{{ topicLabel(topic) }}</span></div><div class="public-actions"><button class="public-button" :disabled="!!action" @click="useLesson('start')">{{ action === 'start' ? messages.action_pending : messages.start_lesson }}<PublicIcon name="arrow" /></button><button class="public-button secondary" :disabled="!!action" @click="useLesson('use')">{{ action === 'use' ? messages.action_pending : messages.use_lesson }}</button></div><p class="lesson-hint">{{ messages.start_hint }}</p><p class="lesson-hint">{{ messages.copy_hint }}</p><p v-if="actionFailed" role="alert">{{ messages.action_error }}</p></div></div>
+            <section v-if="activeSessions" class="catalog-status" aria-labelledby="active-sessions-heading"><h2 id="active-sessions-heading" tabindex="-1">{{ messages.active_sessions_title }}</h2><p>{{ messages.active_sessions_hint }}</p><ActiveSessionList :sessions="activeSessions.sessions" :locale="locale" :messages="studioMessages || messages" /><button v-if="activeSessions.nextCursor" class="public-button secondary" :disabled="moreSessionsLoading" @click="moreActiveSessions">{{ messages.load_more }}</button><div class="public-actions"><button class="public-button" :disabled="!!action || moreSessionsLoading" @click="useLesson('start', true)">{{ messages.start_new_session }}</button><button class="public-button secondary" :disabled="!!action" @click="activeSessions = null">{{ messages.cancel }}</button></div></section>
             <div v-if="entry.details" class="lesson-facts"><section><h2>{{ messages.lesson_goals }}</h2><ul><li v-for="goal in entry.details.goals" :key="goal">{{ goal }}</li></ul></section><section><h2>{{ messages.lesson_materials }}</h2><ul><li v-for="material in entry.details.materials" :key="material">{{ material }}</li></ul><p>{{ entry.details.devices }}</p><p>{{ entry.details.conditions }}</p></section></div>
             <section class="lesson-stage-list"><h2>{{ messages.lesson_content }}</h2><ol><li v-for="(stage, index) in entry.stages" :key="index"><span>{{ index + 1 }}</span><h3>{{ stage.title }}</h3><small v-if="stage.durationSeconds">{{ Math.ceil(stage.durationSeconds / 60) }} {{ messages.minutes }}</small></li></ol></section>
             <LessonDocumentation v-if="entry.documentation" :documentation="entry.documentation" :messages="studioMessages || messages" />

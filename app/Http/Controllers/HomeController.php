@@ -17,7 +17,7 @@ final class HomeController extends Controller
         }
 
         return view('home', ['locale' => $locale, 'page' => 'catalog', 'context' => ['slug' => $slug],
-            'messages' => trans('interface'), 'studioMessages' => trans('studio')]);
+            'messages' => trans('interface'), 'studioMessages' => array_merge(trans('studio'), trans('wave'))]);
     }
 
     public function __invoke(?string $locale = null): View

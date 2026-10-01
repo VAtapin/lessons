@@ -31,7 +31,7 @@ poll(async signal => {
     } catch (problem) { if (started === generation && !busy.value) throw problem; }
 }, problem => { connected.value = false; error.value = errorMessage(problem, props.messages); if (props.teacherScoped && problem instanceof ApiError && [401, 403, 404, 410, 419].includes(problem.status)) { accessLost.value = true; session.value = undefined; error.value = props.messages.collab_access_lost ?? error.value; } });
 async function answer(blockId: string, value: AnswerValue) {
-    if (!session.value || !canAnswerPublicSession(props.mode, session.value.status, connected.value, busy.value)) return;
+    if (!session.value || !canAnswerPublicSession(props.mode, session.value.status, connected.value, busy.value, session.value.stage.blocks.find(block => block.id === blockId)?.type)) return;
     busy.value = true; generation++; error.value = '';
     try {
         session.value = (await api<{ session: PublicState }>(props.rehearsal ? `/api/studio/rehearsals/${props.sessionId}/answers` : `${endpoint}/answers`, 'POST', { stageId: session.value.currentStageId, blockId, value })).session;
@@ -52,7 +52,7 @@ async function answer(blockId: string, value: AnswerValue) {
         <p v-if="error" role="alert" class="error-banner public-lesson-notice">{{ error }}</p>
         <div ref="canvas" class="public-lesson-canvas">
             <p v-if="!session && !accessLost" class="public-lesson-loading" role="status">{{ messages.loading }}</p>
-            <StageRenderer v-if="session" :key="session.currentStageId" :stage="session.stage" :messages="messages" :focus="true" :interactive="mode === 'student'" :answers="session.ownAnswers" :busy="!canAnswerPublicSession(mode, session.status, connected, busy)" @answer="answer" />
+            <StageRenderer v-if="session" :key="session.currentStageId" :stage="session.stage" :messages="messages" :focus="true" :interactive="mode === 'student'" :answers="session.ownAnswers" :prepared="session.status === 'prepared'" :busy="mode !== 'student' || !connected || busy || !['prepared', 'running'].includes(session.status)" @answer="answer" />
         </div>
     </div>
 </template>

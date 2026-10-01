@@ -24,7 +24,7 @@ const languageLink = (locale: string) => `/${locale}${props.page === 'catalog' ?
 </script>
 
 <template>
-    <div class="public-site">
+    <div id="page-top" class="public-site">
         <a class="skip-link" href="#main-content">{{ messages.catalog_title }}</a>
         <header class="public-header">
             <a class="public-brand" :href="`/${locale}`"><img :src="logo" alt="" width="72" height="64" /><span><strong>lessons.atapin.de</strong><small>{{ messages.tagline }}</small></span></a>
@@ -37,9 +37,10 @@ const languageLink = (locale: string) => `/${locale}${props.page === 'catalog' ?
             <template v-if="page !== 'catalog'">
                 <section class="public-hero" :style="{ '--hero-image': `url(${hero})` }">
                     <div class="hero-art" role="img" :aria-label="messages.image_alt"></div>
-                    <div class="hero-botanical" aria-hidden="true"><svg viewBox="0 0 180 400"><path d="M8 0Q95 150 32 370" fill="none" stroke="#8a794c" stroke-width="3"/><g fill="#8b8756"><ellipse v-for="n in 13" :key="n" :cx="36 + Math.sin(n) * 23" :cy="n * 25" rx="9" ry="25" :transform="`rotate(${n % 2 ? -45 : 45} ${36 + Math.sin(n) * 23} ${n * 25})`" /></g></svg></div>
+                    <div class="hero-botanical" :style="{ backgroundImage: `url(${landscape})` }" aria-hidden="true"></div>
                     <div class="public-hero-copy"><p class="hero-eyebrow">{{ messages.eyebrow }}</p><h1>{{ messages.title }}</h1><p class="hero-description">{{ messages.description }}</p><div class="public-actions"><a class="public-button" href="#topics">{{ messages.view_topics }}<PublicIcon name="arrow" /></a><a class="public-button secondary" href="#find-materials">{{ messages.start_selection }}</a></div><p class="hero-blessing">«{{ messages.footer }}»</p></div>
-                    <p class="hero-handwriting" aria-hidden="true">{{ messages.eyebrow }}<br />{{ messages.tagline }} ♡</p>
+                    <p class="hero-handwriting" aria-hidden="true">{{ messages.hero_motto }} ♡</p>
+                    <aside class="hero-verse"><p>{{ messages.hero_verse }}</p><small>{{ messages.hero_verse_source }}</small></aside>
                 </section>
                 <div class="public-content">
                     <CatalogFilters :locale="locale" :messages="messages" />
@@ -54,5 +55,6 @@ const languageLink = (locale: string) => `/${locale}${props.page === 'catalog' ?
             <CatalogPage v-else :locale="locale" :messages="messages" :slug="context?.slug" :studio-messages="studioMessages" />
         </main>
         <footer id="contact" class="public-footer"><div class="footer-main"><a class="public-brand" :href="`/${locale}`"><img :src="logo" alt="" width="64" height="58" /><span><strong>lessons.atapin.de</strong><small>{{ messages.tagline }}</small></span></a><nav :aria-label="messages.nav_contact"><a v-for="key in navigation" :key="key" :href="homeAnchor(key)">{{ messages[`nav_${key}`] }}</a></nav><a href="mailto:info@atapin.de">info@atapin.de</a><a :href="`/${locale}/studio`">{{ messages.open_studio }}</a></div><div class="footer-bottom"><span>© {{ new Date().getFullYear() }} lessons.atapin.de</span><span>{{ messages.eyebrow }}</span></div></footer>
+        <a class="public-back-to-top" href="#page-top" :aria-label="messages.back_to_top" :title="messages.back_to_top"><PublicIcon name="arrow" /></a>
     </div>
 </template>

@@ -1,0 +1,57 @@
+.teacher-panel.conducting-app.has-embedded-tools { display: grid; grid-template-columns: minmax(0, 1fr) clamp(320px, 25vw, 420px); grid-template-rows: minmax(0, 1fr) auto; }
+.has-embedded-tools .conducting-canvas { grid-column: 1; grid-row: 1; min-width: 0; }
+.conducting-app .embedded-control { grid-column: 2; grid-row: 1; min-height: 0; overflow-y: auto; padding: 16px; border-left: 1px solid #dfc9a5; background: #fff9edf2; }
+.has-embedded-tools .focus-dock { grid-column: 1 / -1; grid-row: 2; }
+.has-embedded-tools .focus-notifications { grid-column: 1 / -1; position: absolute; left: 0; right: 0; z-index: 40; }
+.conducting-app .join-copy-row { display: flex; gap: 6px; margin-top: 10px; }
+.conducting-app .join-copy-row input { min-width: 0; flex: 1; font: .75rem system-ui, sans-serif; padding: 8px; }
+.conducting-app .join-copy-row button { font-size: .75rem; padding: 8px; }
+.conducting-app .focus-stage.focus-media-first .focus-stage-copy { grid-column: 2; grid-row: 1; }
+.conducting-app .focus-stage.focus-media-first .focus-stage-visual { grid-column: 1; grid-row: 1; }
+.conducting-app .focus-stage.focus-media-first .focus-stage-copy > h2 { font-size: 1.1rem; color: #a45421; margin-bottom: 18px; }
+.conducting-app .focus-stage.focus-media-first .focus-stage-copy .interactive-free-response legend { font-size: clamp(2rem, 3.2vw, 4rem); line-height: 1.12; font-weight: 600; margin-bottom: 24px; }
+.conducting-app.public-lesson-app .focus-stage.focus-stage-cover, .teacher-panel.conducting-app .focus-stage.focus-stage-cover { display: block; position: relative; overflow-y: auto; max-width: none; }
+.conducting-app .focus-stage.focus-stage-cover .focus-stage-visual { position: absolute; inset: 0; width: 100%; height: 100%; }
+.conducting-app .focus-stage.focus-stage-cover .focus-stage-visual::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, #302619ed 0%, #382c22a3 38%, #382c2220 77%); }
+.conducting-app .focus-stage.focus-stage-cover .focus-stage-copy { position: relative; z-index: 1; color: #fff9ed; width: min(76%, 980px); min-height: 100%; height: auto; padding: clamp(20px, 5dvh, 64px) clamp(24px, 4.5vw, 80px); overflow: visible; }
+.conducting-app .focus-stage.focus-stage-cover .focus-stage-copy > h2 { color: #fff9ed; font-size: clamp(2.7rem, min(6.8vw, 11dvh), 7rem); line-height: .98; max-width: 10em; margin-bottom: 24px; text-wrap: balance; }
+.conducting-app .focus-stage.focus-stage-cover .focus-stage-copy .plain-text { font-size: clamp(1.2rem, 2.4vw, 2.2rem); color: #fff9ed; }
+.conducting-app .focus-stage.focus-stage-cover .interactive-signals { color: #432c1d; background: #fff9edf2; border: 1px solid #dccaac; border-radius: 12px; padding: 12px; margin-top: 20px; max-width: 620px; }
+.conducting-app .focus-stage.focus-stage-cover .render-block { border-bottom: 0; padding-bottom: 0; }
+.conducting-app .focus-stage.focus-stage-cover .text-source { display: none; }
+.conducting-app .focus-stage.focus-stage-cover .focus-stage-copy .interactive-signals legend { font-size: .92rem; line-height: 1.4; }
+.conducting-app .focus-stage.focus-stage-cover .focus-image-fit { z-index: 2; }
+.conducting-app .focus-stage .compact-role-choices { display: flex; flex-wrap: wrap; gap: 7px; }
+.conducting-app .focus-stage .compact-role-choices .role-card { flex: 0 1 auto; display: inline-flex; align-items: center; gap: 5px; min-height: 40px; padding: 8px 12px; border-radius: 8px; font: .86rem/1.35 system-ui, sans-serif; box-shadow: none; }
+.conducting-app .focus-stage .compact-role-choices .role-card strong { font: inherit; }
+.conducting-app .focus-stage .compact-role-choices .role-card small { font-size: .7rem; }
+.conducting-app .focus-stage .compact-role-choices .role-card-selected { color: #fff9ed; background: #b45c20; }
+.conducting-app .focus-stage .compact-role-choices .role-card-taken { opacity: .65; }
+.conducting-app .role-release { min-height: 32px; margin-top: 8px; font-size: .78rem; padding: 5px 10px; }
+.conducting-app .focus-stage .signal-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.conducting-app .focus-stage .signal-buttons button { flex: 0 1 auto; min-height: 40px; padding: 8px 14px; font-size: .9rem; }
+.conducting-app .focus-stage .interactive-free-response textarea { min-height: 64px; max-height: 180px; resize: vertical; }
+.conducting-app .class-voice { color: #432c1d; background: #fff9edf2; border: 1px solid #dccaac; border-radius: 10px; padding: 10px 12px; margin-top: 12px; font: .78rem/1.4 system-ui, sans-serif; }
+.class-voice-bars { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 6px; }
+.class-voice-bar { position: relative; min-width: 100px; flex: 1; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 9px; background: #eddfc3; border-radius: 6px; overflow: hidden; }
+.class-voice-bar i { position: absolute; bottom: 0; left: 0; height: 3px; background: #b45c20; transition: width .25s; }
+.conducting-app .live-answer-card { position: absolute; bottom: 14px; left: 14px; z-index: 12; width: min(440px, calc(100% - 28px)); max-height: 44dvh; overflow-y: auto; border: 1px solid #d4b58b; border-radius: 12px; padding: 12px; background: #fff9edfa; color: #432c1d; box-shadow: 0 8px 30px #49321d30; font: .85rem/1.4 system-ui, sans-serif; }
+.live-answer-heading { display: flex; align-items: center; gap: 8px; }
+.live-answer-heading small { color: #6d684c; }
+.live-answer-heading button { margin-left: auto; }
+.conducting-app .live-answer-card button { min-height: 36px; font-size: .78rem; padding: 6px 9px; }
+.live-answer-text { margin: 8px 0; }
+.live-answer-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.live-reply-form { display: grid; gap: 6px; margin-top: 10px; }
+.live-reply-form textarea { width: 100%; min-height: 64px; }
+.compact-control .live-answer-card { position: static; width: 100%; margin-bottom: 12px; max-height: none; }
+@media (max-width: 800px) {
+    .teacher-panel.conducting-app.has-embedded-tools { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(120px, 38dvh) auto; }
+    .conducting-app .embedded-control { grid-column: 1; grid-row: 2; border-left: 0; border-top: 1px solid #dfc9a5; }
+    .has-embedded-tools .focus-dock { grid-row: 3; }
+    .conducting-app .focus-stage.focus-stage-cover .focus-stage-copy { width: 100%; padding: 26px 18px; }
+    .conducting-app .focus-stage.focus-stage-cover .focus-stage-copy > h2 { font-size: clamp(2.7rem, 9vw, 4rem); }
+    .conducting-app .focus-stage.focus-media-first .focus-stage-copy { order: 1; }
+    .conducting-app .focus-stage.focus-media-first .focus-stage-visual { order: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .class-voice-bar i { transition: none; } }

@@ -44,6 +44,6 @@ final class CollaborationPageController extends Controller
         App::setLocale($locale);
 
         return view('home', ['locale' => $locale, 'page' => $page, 'context' => $context,
-            'messages' => trans('interface'), 'studioMessages' => array_merge(trans('studio'), trans('deletion'), trans('collaboration'))]);
+            'messages' => trans('interface'), 'studioMessages' => array_merge(trans('studio'), trans('deletion'), trans('collaboration'), trans('wave'))]);
     }
 }

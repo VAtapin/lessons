@@ -94,7 +94,7 @@ test('new commands retain pending UUID and revision through reload for safe retr
 test('both interface dictionaries contain renderer and editor labels, including optional text heading', () => {
     const folder = new URL('../../resources/js/studio/', import.meta.url);
     for (const locale of ['ru', 'de']) {
-        const dictionary = ['studio', 'deletion', 'admin', 'collaboration']
+        const dictionary = ['studio', 'deletion', 'admin', 'collaboration', 'wave']
             .map(group => new URL(`../../lang/${locale}/${group}.php`, import.meta.url))
             .filter(file => fs.existsSync(file)).map(file => fs.readFileSync(file, 'utf8')).join('\n');
         const keys = new Set([...dictionary.matchAll(/'([^']+)'\s*=>/g)].map(match => match[1]));

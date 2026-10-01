@@ -124,13 +124,29 @@ final class RuntimeAnswers
     public function kindnessPoints(TeachingSession $session, LessonDocument $document, SessionParticipant $participant, array $snapshot): int
     {
         return SessionAnswer::query()->where('teaching_session_id', $session->id)->where('session_participant_id', $participant->id)->get()
-            ->sum(function (SessionAnswer $answer) use ($document, $snapshot): int {
-                $block = $this->blocks->find($document, $answer->block_id);
-                if ($block->solution !== null && $block->type !== 'core.sequence' && $this->blocks->readState($block, $snapshot)['status'] !== 'revealed') {
-                    return 0;
-                }
+            ->sum(fn (SessionAnswer $answer): int => $this->visiblePoints($answer, $document, $snapshot));
+    }
 
-                return (int) $answer->kindness_points;
-            });
+    public function kindnessAggregate(TeachingSession $session, LessonDocument $document, array $snapshot): array
+    {
+        $contributions = [];
+        foreach (SessionAnswer::query()->where('teaching_session_id', $session->id)->get() as $answer) {
+            $points = $this->visiblePoints($answer, $document, $snapshot);
+            if ($points > 0) {
+                $contributions[$answer->session_participant_id] = ($contributions[$answer->session_participant_id] ?? 0) + $points;
+            }
+        }
+
+        return ['points' => array_sum($contributions), 'participants' => count($contributions)];
+    }
+
+    private function visiblePoints(SessionAnswer $answer, LessonDocument $document, array $snapshot): int
+    {
+        $block = $this->blocks->find($document, $answer->block_id);
+        if ($block->solution !== null && $block->type !== 'core.sequence' && $this->blocks->readState($block, $snapshot)['status'] !== 'revealed') {
+            return 0;
+        }
+
+        return (int) $answer->kindness_points;
     }
 }

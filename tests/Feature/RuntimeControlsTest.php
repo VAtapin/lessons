@@ -251,8 +251,10 @@ final class RuntimeControlsTest extends TestCase
         $this->assertSame($student['wave'], $projector['wave']);
         $this->assertSame('<script>plain text</script>', $student['message']);
         foreach ([$student, $projector] as $state) {
+            $this->assertArrayNotHasKey('participants', $state);
+            $this->assertSame(['points', 'participants'], array_keys($state['wave']['aggregate']));
             $json = json_encode($state, JSON_THROW_ON_ERROR);
-            foreach (['Teacher secret', 'solution', 'origin', 'joinCode', 'joinUrl', 'projectorUrl', 'participants', 'lastSeenAt', 'fingerprint', 'command_id', 'acknowledgedCommandId', $this->owner] as $secret) {
+            foreach (['Teacher secret', 'solution', 'origin', 'joinCode', 'joinUrl', 'projectorUrl', 'lastSeenAt', 'fingerprint', 'command_id', 'acknowledgedCommandId', $this->owner] as $secret) {
                 $this->assertStringNotContainsString($secret, $json);
             }
         }
@@ -324,6 +326,23 @@ final class RuntimeControlsTest extends TestCase
         $this->execute($session, 'timer.clear');
         $this->execute($session, 'resume');
         $this->assertSame('idle', $session['timer']['status']);
+    }
+
+    public function test_wave_aggregate_preserves_unrevealed_grades_and_never_awards_points(): void
+    {
+        $session = $this->start();
+        $this->join($session);
+        $this->answer($session)->assertOk();
+        $this->execute($session, 'wave');
+        $this->assertSame(['points' => 0, 'participants' => 0], $session['wave']['aggregate']);
+        $this->getJson('/api/projection/'.$this->token($session))->assertOk()
+            ->assertJsonPath('session.wave.aggregate', ['points' => 0, 'participants' => 0]);
+        $this->execute($session, 'block.review', ['blockId' => 'choice-1']);
+        $this->assertSame(['points' => 1, 'participants' => 1], $session['wave']['aggregate']);
+        $this->execute($session, 'wave');
+        $this->assertSame(['points' => 1, 'participants' => 1], $session['wave']['aggregate']);
+        $this->assertDatabaseHas('session_answers', ['block_id' => 'choice-1', 'kindness_points' => 1]);
+        $this->assertSame(['id', 'expiresAt', 'aggregate'], array_keys($session['wave']));
     }
 
     private function start(bool $prepare = false): array

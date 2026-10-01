@@ -1,6 +1,17 @@
 <?php
 
 return [
+    'active_sessions_title' => 'Sie haben aktive Unterrichtssitzungen',
+    'active_sessions_hint' => 'Kehren Sie zum geöffneten Leitungspult zurück oder beginnen Sie eine separate neue Sitzung.',
+    'start_new_session' => 'Neue Unterrichtssitzung beginnen',
+    'load_more' => 'Weitere anzeigen',
+    'cancel' => 'Abbrechen',
+
+    'back_to_top' => 'Nach oben',
+    'hero_motto' => 'Wissen. Glaube. Gute Taten. Eine bessere Welt.',
+    'hero_verse' => 'Geht hin und macht alle Völker zu Jüngern…',
+    'hero_verse_source' => 'Mt. 28,19',
+
     'javascript_required' => 'Aktivieren Sie JavaScript im Browser, um interaktive Lektionen auszuwählen und durchzuführen.',
     'lesson_goals' => 'Lernziele', 'lesson_materials' => 'Was wird benötigt?', 'preview_title' => 'Inhalt ansehen', 'preview_stage' => 'Etappe der Lektion',
     'tagline' => 'Gute Unterrichtsideen für eine bessere Welt', 'language' => 'Sprache der Website',
