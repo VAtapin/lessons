@@ -47,6 +47,13 @@ test('projector and responses without an actual personal score never synthesize 
     assert.doesNotMatch(await render('student', undefined), /public-lesson-points/);
 });
 
+test('public conducting layouts override the legacy projector width cap', () => {
+    const css = fs.readFileSync(new URL('../../resources/css/public-lesson-app.css', import.meta.url), 'utf8');
+    const legacy = fs.readFileSync(new URL('../../resources/css/studio.css', import.meta.url), 'utf8');
+    assert.match(legacy, /\.public-session\.projector\s*\{\s*max-width:\s*1280px/);
+    assert.match(css, /\.conducting-app\.conducting-app\.public-session\.public-lesson-app\s*\{[^}]*width:\s*100%;\s*max-width:\s*none;/);
+});
+
 test('finished student and projector render the released closing content and locale return link', async () => {
     const closing = { content: { title: 'Original closing title', eyebrow: 'Original ending', text: 'Exact released thanks', quote: 'Exact released quotation', source: 'Original source' } };
     for (const mode of ['student', 'projector']) {
