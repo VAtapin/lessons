@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
-use App\Application\Account\AccountIdentity;
 use App\Domain\Lessons\BlockRegistry;
+use App\Notifications\ResetAccountPassword;
+use App\Notifications\VerifyAccountEmail;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -25,7 +27,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        ResetPassword::createUrlUsing(fn ($user, string $token) => url('/'.AccountIdentity::present($user)['uiLocale'].'/reset-password/'.$token).'?email='.rawurlencode($user->email));
+        ResetPassword::createUrlUsing(fn ($user, string $token) => url('/'.$user->preferredLocale().'/reset-password/'.$token).'?email='.rawurlencode($user->getEmailForPasswordReset()));
+        VerifyEmail::toMailUsing(VerifyAccountEmail::message(...));
+        ResetPassword::toMailUsing(fn ($user, string $token) => (new ResetAccountPassword($token))->toMail($user));
         foreach (config('lessons.auth_limits') as $name => $limits) {
             RateLimiter::for('account-'.$name, function (Request $request) use ($name, $limits): array {
                 $email = $request->input('email');
