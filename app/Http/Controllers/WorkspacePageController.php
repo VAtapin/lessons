@@ -22,7 +22,7 @@ final class WorkspacePageController extends Controller
 
         return view('home', [
             'locale' => $locale, 'page' => $page, 'context' => $context,
-            'messages' => trans('interface'), 'studioMessages' => array_merge(trans('studio'), trans('deletion')),
+            'messages' => trans('interface'), 'studioMessages' => array_merge(trans('studio'), trans('deletion'), trans('collaboration')),
         ]);
     }
 

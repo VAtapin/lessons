@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Studio;
 
+use App\Application\Collaboration\TeacherAccess;
 use App\Application\History\RetentionPolicy;
 use App\Application\Shared\ApiProblem;
 use App\Application\Shared\GuestIdentity;
 use App\Application\Shared\MediaCatalogue;
+use App\Application\Shared\OwnerMutation;
 use App\Domain\Lessons\BlockRegistry;
 use App\Domain\Lessons\LessonDocument;
 use App\Http\Controllers\Controller;
@@ -19,7 +21,19 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 final class MediaFileController extends Controller
 {
-    public function __construct(private readonly MediaCatalogue $catalogue, private readonly GuestIdentity $identity, private readonly BlockRegistry $registry, private readonly RetentionPolicy $retention) {}
+    public function __construct(private readonly MediaCatalogue $catalogue, private readonly GuestIdentity $identity, private readonly BlockRegistry $registry, private readonly RetentionPolicy $retention, private readonly TeacherAccess $teacherAccess) {}
+
+    public function conduct(Request $request, string $sessionId, string $assetId, string $versionId): BinaryFileResponse
+    {
+        $actor = $this->teacherAccess->cookieActor($request, $sessionId);
+
+        return OwnerMutation::forSession($sessionId, function (TeachingSession $session) use ($actor, $assetId, $versionId): BinaryFileResponse {
+            $this->teacherAccess->assert($session, $actor);
+            $this->assertActiveReference($session, $assetId, $versionId);
+
+            return $this->file($session->owner_key, $assetId, $versionId);
+        });
+    }
 
     public function owned(Request $request, string $assetId, string $versionId): BinaryFileResponse
     {

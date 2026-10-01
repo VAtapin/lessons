@@ -42,3 +42,4 @@ require __DIR__.'/account.php';
 require __DIR__.'/account-pages.php';
 require __DIR__.'/history.php';
 require __DIR__.'/catalog.php';
+require __DIR__.'/collaboration.php';

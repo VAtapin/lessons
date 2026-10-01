@@ -88,6 +88,36 @@
 .teacher-panel .teacher-tools .studio-card { padding: 17px; }
 .teacher-panel .timer-prominent > strong { font-size: 3.6rem; }
 .teacher-panel .teacher-private:empty { display: none; }
+.teacher-panel .teacher-bottom { align-items: start; }
+/* Long lessons keep the approved preview/answers composition on desktop.
+   The list scrolls while its heading and stage counter remain in view. */
+@media (min-width: 1001px) {
+    .teacher-panel:not(.compact-control) .teacher-layout:not(.stages-collapsed) .conducting-stages {
+        display: flex;
+        flex-direction: column;
+        max-height: clamp(340px, calc(100vh - 320px), 580px);
+        min-height: 0;
+    }
+    .teacher-panel:not(.compact-control) .conducting-stages > .section-heading,
+    .teacher-panel:not(.compact-control) .conducting-stages > .stage-progress { flex-shrink: 0; }
+    .teacher-panel:not(.compact-control) #conducting-stages {
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-gutter: stable;
+    }
+    /* Controls span both rows without enlarging the preview row. Expanding
+       collaboration or block tools keeps every action accessible by scrolling. */
+    .teacher-panel:not(.compact-control) .teacher-tools {
+        contain: size;
+        align-self: stretch;
+        align-content: start;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-gutter: stable;
+    }
+}
 @media (max-width: 1250px) {
     .teacher-panel .teacher-layout { grid-template-columns: 190px minmax(0, 1fr) 245px; }
     .teacher-panel .stage-thumbnail, .teacher-panel .stage-select .stage-type-symbol { width: 40px; min-width: 40px; height: 45px; }

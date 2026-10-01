@@ -31,7 +31,13 @@ export interface ProjectedStage extends Omit<Stage, 'content' | 'blocks'> { cont
 export interface RuntimeState { id: string; status: 'prepared' | 'running' | 'paused' | 'finished'; serverNow: string; timer: { status: 'idle' | 'running' | 'paused' | 'expired'; endsAt: string | null; remainingSeconds: number }; message: string | null; wave: { id: string; expiresAt: string } | null }
 export interface TeacherState extends RuntimeState { mode: 'lesson' | 'rehearsal'; id: string; revision: number; locale: string; currentStageId: string; document: { id: string; content: { title: string }; stages: ProjectedStage[] }; joinCode?: string; joinUrl?: string; publicStage: ProjectedStage; projectorUrl?: string; participants: { id: string; name: string; connected: boolean; lastSeenAt: string | null }[]; answers: TeacherAnswer[]; blockStates: { blockId: string; status: BlockStatus; attemptNo: number }[] }
 export interface PublicState extends RuntimeState { id: string; revision: number; locale: string; currentStageId: string; stage: ProjectedStage; ownAnswers?: OwnAnswer[] }
-export interface PageContext { lessonId?: string; sessionId?: string; projectorToken?: string; resetToken?: string; email?: string; audience?: 'student' | 'projector' }
+export interface PageContext { lessonId?: string; sessionId?: string; projectorToken?: string; resetToken?: string; email?: string; audience?: 'student' | 'projector'; teacherScope?: 'grant' }
+export type TeacherCapability = 'present' | 'moderate' | 'finish' | 'manageCollaboration';
+export interface TeacherActorState { kind: 'owner' | 'grant'; isPresenter: boolean; capabilities: TeacherCapability[]; expiresAt?: string }
+export interface TeacherInvitationInfo { id: string; expiresAt: string; acceptedAt: string | null; revokedAt: string | null }
+export interface TeacherGrantInfo { id: string; displayName: string; expiresAt: string; revokedAt: string | null; isPresenter: boolean }
+export interface CollaborationState { controlEpoch: number; presenter: { kind: 'owner' | 'grant' | 'vacant'; grantId?: string; displayName?: string }; invitations?: TeacherInvitationInfo[]; grants?: TeacherGrantInfo[] }
+export interface TeacherActorResponse { session: TeacherState; actor: TeacherActorState; collaboration: CollaborationState; acknowledgedCommandId?: string; invitation?: { id: string; expiresAt: string; url: string } }
 export interface User { id: number; name: string; email: string; verified: boolean; uiLocale: string }
 export interface Account { user: User | null; guestClaimAvailable: boolean; quota: MediaQuota }
 export interface ClaimCounts { lessons: number; templates: number; mediaAssets: number; sessions: number }

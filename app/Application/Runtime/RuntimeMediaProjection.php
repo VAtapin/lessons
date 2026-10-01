@@ -13,7 +13,7 @@ final readonly class RuntimeMediaProjection
 {
     public function __construct(private MediaCatalogue $media) {}
 
-    public function stage(array $projection, TeachingSession $session, Audience $audience): array
+    public function stage(array $projection, TeachingSession $session, Audience $audience, bool $teacherScoped = false): array
     {
         foreach ($projection['blocks'] as &$block) {
             if ($block['type'] !== 'core.image') {
@@ -24,12 +24,13 @@ final readonly class RuntimeMediaProjection
             $imageUrl = $resolved['url'];
             if (! str_starts_with($imageUrl, '/media/builtin/')) {
                 $pair = rawurlencode($reference['assetId']).'/'.rawurlencode($reference['versionId']);
-                $imageUrl = $session->mode === 'rehearsal' && $audience !== Audience::Teacher
+                $imageUrl = $teacherScoped ? '/media/conduct/'.rawurlencode($session->id).'/'.$pair
+                    : ($session->mode === 'rehearsal' && $audience !== Audience::Teacher
                     ? '/media/rehearsal/'.rawurlencode($session->id).'/'.$pair : match ($audience) {
                         Audience::Teacher => '/media/owned/'.$pair,
                         Audience::Student => '/media/participation/'.rawurlencode($session->id).'/'.$pair,
                         Audience::Projector => '/media/projection/'.rawurlencode($session->projector_token).'/'.$pair,
-                    };
+                    });
             }
             $block['resources'] = ['image' => $imageUrl];
         }

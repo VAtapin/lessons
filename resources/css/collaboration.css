@@ -1,0 +1,21 @@
+.collaboration-panel { min-width: 0; }
+.collaboration-panel > h2 { margin-bottom: 16px; }
+.presenter-line { display: flex; align-items: center; gap: 12px; margin-block: 14px !important; }
+.presenter-line > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.presenter-line strong { display: block; font: 600 .9rem/1.5 system-ui, sans-serif; }
+.presenter-line small { display: block; font: .78rem/1.5 system-ui, sans-serif; color: var(--muted); }
+.collaboration-panel details { margin-top: 18px; }
+.collaboration-panel summary { cursor: pointer; font: .86rem/1.4 system-ui, sans-serif; }
+.collaboration-warning { font: .8rem/1.6 system-ui, sans-serif; background: #f6ecd7; padding: 12px; border-radius: 8px; margin-top: 14px !important; }
+.collaboration-panel form button, .invitation-link > button { margin-top: 12px; }
+.collaboration-panel h3 { margin-top: 24px; }
+.collaboration-list { padding: 0; list-style: none; margin: 12px 0; }
+.collaboration-list li { padding-block: 12px; border-top: 1px solid var(--border); }
+.collaboration-list small { display: block; font: .75rem/1.5 system-ui, sans-serif; color: var(--muted); margin-block: 6px; }
+.collaboration-list strong { font: 600 .86rem/1.5 system-ui, sans-serif; overflow-wrap: anywhere; }
+.collaboration-list .action-row { gap: 6px; margin: 12px 0 0; }
+.collaboration-list button { font-size: .78rem; }
+.invitation-link input { font-size: .8rem !important; }
+.invitation-card { max-width: 640px; margin-inline: auto; }
+.invitation-card > p:not(.eyebrow) { margin-top: 20px; line-height: 1.7; }
+.invitation-card form > button { margin-top: 24px; }

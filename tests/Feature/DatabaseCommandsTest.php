@@ -42,7 +42,7 @@ final class DatabaseCommandsTest extends TestCase
     {
         $this->artisan('lessons:check')->expectsOutputToContain('Database connection and lesson schema checks passed.')->assertSuccessful();
         foreach (['users', 'guest_workspace_claims', 'account_deletion_requests', 'catalog_entries', 'lesson_materials', 'lesson_versions', 'lesson_save_receipts', 'teaching_sessions', 'session_participants', 'session_answers', 'session_command_receipts', 'session_block_states',
-            'media_owner_quotas', 'media_assets', 'media_versions', 'block_template_records', 'block_template_versions'] as $table) {
+            'media_owner_quotas', 'media_assets', 'media_versions', 'block_template_records', 'block_template_versions', 'teacher_invitations', 'teacher_grants'] as $table) {
             $this->assertDatabaseCount($table, 0);
         }
     }

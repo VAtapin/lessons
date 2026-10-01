@@ -1,5 +1,6 @@
 <?php
 
+use App\Application\Collaboration\CollaborationConflict;
 use App\Application\Shared\ApiProblem;
 use App\Application\Studio\EditorProblem;
 use App\Http\Middleware\AccountSession;
@@ -22,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $authoredDocument = fn (Request $request) => $request->isMethod('POST') && $request->is('api/studio/lessons')
             || $request->isMethod('PUT') && $request->is('api/studio/lessons/*')
             || $request->isMethod('POST') && $request->is('api/studio/lessons/*/preview');
-        $runtimeCommand = fn (Request $request) => $request->isMethod('POST') && $request->is('api/studio/sessions/*/commands');
+        $runtimeCommand = fn (Request $request) => $request->isMethod('POST') && $request->is('api/studio/sessions/*/commands', 'api/conduct/sessions/*/commands', 'api/teacher-invitations/accept');
         $runtimeAnswer = fn (Request $request) => $request->isMethod('POST')
             && $request->is('api/participation/*/answers', 'api/studio/rehearsals/*/answers');
         $historyNotes = fn (Request $request) => $request->isMethod('PATCH') && $request->is('api/studio/sessions/*/history');
@@ -33,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->convertEmptyStringsToNull(except: [$authInput, $authoredDocument, $runtimeCommand, $runtimeAnswer, $historyNotes, $libraryContent]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(fn (CollaborationConflict $problem) => response()->json(['error' => ['code' => $problem->problemCode]] + $problem->state, 409));
         $exceptions->render(fn (EditorProblem $problem) => response()->json($problem->payload(), $problem->status));
         $exceptions->render(fn (ApiProblem $problem) => response()->json(
             ['error' => ['code' => $problem->problemCode]], $problem->status,

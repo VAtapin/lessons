@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Runtime;
 
+use App\Application\Collaboration\CollaborationConflict;
+use App\Application\Collaboration\TeacherAccess;
+use App\Application\Collaboration\TeacherActor;
+use App\Application\Collaboration\TeacherReceipts;
 use App\Application\History\RetentionPolicy;
 use App\Application\History\SessionAggregates;
 use App\Application\Shared\ApiProblem;
@@ -14,14 +18,13 @@ use App\Domain\Lessons\BlockRegistry;
 use App\Domain\Lessons\LessonDocument;
 use App\Domain\Lessons\Stage;
 use App\Models\LessonVersion;
-use App\Models\SessionCommandReceipt;
 use App\Models\SessionParticipant;
 use App\Models\TeachingSession;
 use Carbon\CarbonImmutable;
 
 final class RuntimeService
 {
-    public function __construct(private StudioService $studio, private BlockRegistry $registry, private RuntimeCommands $commands, private SessionTimer $timer, private RuntimeMediaProjection $mediaProjection, private RuntimeBlocks $blocks, private RuntimeAnswers $answers, private RetentionPolicy $retention, private SessionAggregates $aggregates) {}
+    public function __construct(private StudioService $studio, private BlockRegistry $registry, private RuntimeCommands $commands, private SessionTimer $timer, private RuntimeMediaProjection $mediaProjection, private RuntimeBlocks $blocks, private RuntimeAnswers $answers, private RetentionPolicy $retention, private SessionAggregates $aggregates, private TeacherAccess $teacherAccess, private TeacherReceipts $teacherReceipts) {}
 
     public function start(string $ownerKey, string $lessonId, int $expectedRevision, ?string $locale, bool $prepare = false): array
     {
@@ -125,17 +128,47 @@ final class RuntimeService
 
     public function teacher(string $ownerKey, string $sessionId): array
     {
-        return $this->teacherState($this->findOwned($ownerKey, $sessionId));
+        return $this->teacherActor(TeacherActor::owner($ownerKey), $sessionId)['session'];
     }
 
-    public function navigate(string $ownerKey, string $sessionId, int $expectedRevision, string $stageId): array
+    public function teacherActor(TeacherActor $actor, string $sessionId): array
     {
-        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $sessionId, $expectedRevision, $stageId): array {
-            $session = TeachingSession::query()->whereKey($sessionId)->where('owner_key', $ownerKey)->lockForUpdate()->first()
-                ?? throw new ApiProblem('not_found', 404);
-            $this->retention->assertOwnerReadable($session);
+        return OwnerMutation::forSession($sessionId, fn (TeachingSession $session): array => $this->actorState($session, $actor));
+    }
+
+    /** Called only with the session locked; projection always uses fresh actor rights. */
+    public function actorState(TeachingSession $session, TeacherActor $actor): array
+    {
+        $metadata = $this->teacherAccess->metadata($session, $actor);
+
+        return ['session' => $this->teacherState($session, $actor->kind === 'grant')] + $metadata;
+    }
+
+    public function projectorActor(TeacherActor $actor, string $sessionId): array
+    {
+        return OwnerMutation::forSession($sessionId, function (TeachingSession $session) use ($actor): array {
+            $this->teacherAccess->assert($session, $actor);
+            if ($session->mode !== 'lesson') {
+                throw new ApiProblem('not_found', 404);
+            }
+
+            return $this->publicState($session, Audience::Projector, teacherScoped: true);
+        });
+    }
+
+    public function navigate(string $ownerKey, string $sessionId, int $expectedRevision, string $stageId, ?int $controlEpoch = null): array
+    {
+        return OwnerMutation::forSession($sessionId, function (TeachingSession $session) use ($ownerKey, $expectedRevision, $stageId, $controlEpoch): array {
+            $actor = TeacherActor::owner($ownerKey);
+            $this->teacherAccess->assert($session, $actor);
+            try {
+                $this->teacherAccess->assertAction($session, $actor, 'stage');
+                $this->teacherReceipts->assertEpoch($session, $controlEpoch);
+            } catch (ApiProblem $problem) {
+                throw new CollaborationConflict($problem->problemCode, $this->actorState($session, $actor));
+            }
             if ($session->revision !== $expectedRevision) {
-                throw new ApiProblem('revision_conflict', 409);
+                throw new CollaborationConflict('revision_conflict', $this->actorState($session, $actor));
             }
 
             $previousStage = $session->current_stage_id;
@@ -150,42 +183,50 @@ final class RuntimeService
         });
     }
 
-    public function command(string $ownerKey, string $sessionId, string $commandId, int $expectedRevision, string $action, array $payload, array $extraFields = []): array
+    public function command(string $ownerKey, string $sessionId, string $commandId, int $expectedRevision, string $action, array $payload, array $extraFields = [], ?int $controlEpoch = null): array
     {
-        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $sessionId, $commandId, $expectedRevision, $action, $payload, $extraFields): array {
-            $session = TeachingSession::query()->whereKey($sessionId)->where('owner_key', $ownerKey)->lockForUpdate()->first()
-                ?? throw new ApiProblem('not_found', 404);
-            $this->retention->assertOwnerReadable($session);
-            $commandId = strtolower($commandId);
-            $fingerprint = $this->commands->fingerprint($expectedRevision, $action, $payload, $extraFields);
-            $receipt = SessionCommandReceipt::query()->where('teaching_session_id', $sessionId)->where('command_id', $commandId)->first();
-            if ($receipt !== null) {
-                if (! hash_equals($receipt->fingerprint, $fingerprint)) {
-                    throw new RuntimeConflict('command_conflict', $this->teacherState($session));
-                }
+        try {
+            return $this->actorCommand(TeacherActor::owner($ownerKey), $sessionId, $commandId, $expectedRevision, $action, $payload, $extraFields, $controlEpoch);
+        } catch (CollaborationConflict $conflict) {
+            throw new RuntimeConflict($conflict->problemCode, $conflict->state['session']);
+        }
+    }
 
-                return ['session' => $this->teacherState($session), 'acknowledgedCommandId' => $commandId];
-            }
-            if ($session->revision !== $expectedRevision) {
-                throw new RuntimeConflict('revision_conflict', $this->teacherState($session));
-            }
-            if ($extraFields !== []) {
-                throw new ApiProblem('invalid_action', 422);
-            }
+    public function actorCommand(TeacherActor $actor, string $sessionId, string $commandId, int $expectedRevision, string $action, array $payload, array $extraFields = [], ?int $controlEpoch = null): array
+    {
+        return OwnerMutation::forSession($sessionId, function (TeachingSession $session) use ($actor, $commandId, $expectedRevision, $action, $payload, $extraFields, $controlEpoch): array {
+            $this->teacherAccess->assert($session, $actor);
+            $commandId = strtolower($commandId);
             try {
+                $this->teacherAccess->assertAction($session, $actor, $action);
+                if ($actor->kind === 'grant' && $controlEpoch === null) {
+                    throw new ApiProblem('invalid_action', 422);
+                }
+                $this->teacherReceipts->assertEpoch($session, $controlEpoch);
+                $fields = $controlEpoch === null ? $extraFields : ['controlEpoch' => $controlEpoch] + $extraFields;
+                $fingerprint = $this->commands->fingerprint($expectedRevision, $action, $payload, $fields);
+                if ($this->teacherReceipts->replay($session, $actor, $commandId, $fingerprint)) {
+                    return $this->actorState($session, $actor) + ['acknowledgedCommandId' => $commandId];
+                }
+                if ($session->revision !== $expectedRevision) {
+                    throw new ApiProblem('revision_conflict', 409);
+                }
+                if ($extraFields !== []) {
+                    throw new ApiProblem('invalid_action', 422);
+                }
                 $this->commands->apply($session, $this->document($session), $action, $payload, CarbonImmutable::now('UTC'));
                 $this->recordLifecycle($session, $action);
             } catch (ApiProblem $problem) {
                 if ($problem->status === 409) {
-                    throw new RuntimeConflict($problem->problemCode, $this->teacherState($session));
+                    throw new CollaborationConflict($problem->problemCode, $this->actorState($session, $actor));
                 }
                 throw $problem;
             }
             $session->revision++;
             $session->save();
-            SessionCommandReceipt::create(['teaching_session_id' => $sessionId, 'command_id' => $commandId, 'fingerprint' => $fingerprint]);
+            $this->teacherReceipts->record($session, $actor, $commandId, $fingerprint);
 
-            return ['session' => $this->teacherState($session), 'acknowledgedCommandId' => $commandId];
+            return $this->actorState($session, $actor) + ['acknowledgedCommandId' => $commandId];
         });
     }
 
@@ -282,14 +323,14 @@ final class RuntimeService
         return $this->publicState($session, Audience::Student, $participant);
     }
 
-    private function teacherState(TeachingSession $session): array
+    private function teacherState(TeachingSession $session, bool $teacherScoped = false): array
     {
         $this->retention->assertOwnerReadable($session);
         $document = $this->document($session);
         $blockSnapshot = $this->blocks->snapshot($session);
         $teacherDocument = $document->project(Audience::Teacher, $session->locale);
         $teacherDocument['stages'] = array_map(
-            fn (array $stage): array => $this->mediaProjection->stage($stage, $session, Audience::Teacher),
+            fn (array $stage): array => $this->mediaProjection->stage($stage, $session, Audience::Teacher, $teacherScoped),
             $teacherDocument['stages'],
         );
         $uiLocales = config('lessons.ui_locales');
@@ -302,7 +343,7 @@ final class RuntimeService
             'document' => $teacherDocument,
             'publicStage' => $this->mediaProjection->stage(
                 $this->blocks->project($this->stage($document, $session->current_stage_id), $session, Audience::Projector, $blockSnapshot, $this->retention->detailsAvailable($session)),
-                $session, Audience::Projector,
+                $session, Audience::Projector, $teacherScoped,
             ),
             'participants' => $this->retention->detailsAvailable($session) ? SessionParticipant::query()->where('teaching_session_id', $session->id)
                 ->orderBy('created_at')->orderBy('id')->get()->map(fn (SessionParticipant $participant) => [
@@ -313,18 +354,18 @@ final class RuntimeService
             'blockStates' => $this->blocks->allStates($document, $blockSnapshot),
             'answers' => $this->retention->detailsAvailable($session) ? $this->answers->teacher($session, $document) : [],
         ] + ($session->mode === 'lesson' ? ['joinCode' => $session->join_code,
-            'projectorUrl' => url('/'.$uiLocale.'/project/'.$session->projector_token),
+            'projectorUrl' => $teacherScoped ? url('/'.$uiLocale.'/conduct/'.$session->id.'/projector') : url('/'.$uiLocale.'/project/'.$session->projector_token),
             'joinUrl' => url('/'.$uiLocale.'/join').'?code='.rawurlencode($session->join_code)] : []);
     }
 
-    private function publicState(TeachingSession $session, Audience $audience, ?SessionParticipant $participant = null): array
+    private function publicState(TeachingSession $session, Audience $audience, ?SessionParticipant $participant = null, bool $teacherScoped = false): array
     {
         $document = $this->document($session);
         $blockSnapshot = $this->blocks->snapshot($session);
         $state = $this->baseState($session) + [
             'stage' => $this->mediaProjection->stage(
                 $this->blocks->project($this->stage($document, $session->current_stage_id), $session, $audience, $blockSnapshot),
-                $session, $audience,
+                $session, $audience, $teacherScoped,
             ),
         ];
         if ($participant !== null) {
