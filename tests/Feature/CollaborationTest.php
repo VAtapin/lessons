@@ -20,6 +20,7 @@ final class CollaborationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->withoutVite();
         $this->historyIdentity();
         $this->travelTo(CarbonImmutable::parse('2026-10-01T12:00:00Z'));
     }

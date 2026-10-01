@@ -37,7 +37,8 @@
 
 ## Git и следующие работы
 
-- main → origin/main, https://github.com/VAtapin/lessons.git. Последний связанный implementation commit: 867521ffb5b50cd8309506c0af696b3c059d6974. Текущий atomic commit добавляет совместное проведение; его hash определяется после commit.
+- main → origin/main, https://github.com/VAtapin/lessons.git. Последний связанный implementation commit: 6759c55e5bebaaa1848b0f6979902be1f7251baf — Enable scoped co-teacher lesson control. Production остаётся 867521f до успешного CI.
+- CI 36856178271: frontend passed; backend остановился на новом HTML route assertion из-за отсутствия Vite manifest в backend-only job. Тест переведён на штатный withoutVite; реальный frontend build остаётся отдельной проверкой. Исправление проверяется новым CI перед deployment.
 - Git никогда не содержит .env, credentials, cookies, private data, local DB, logs, backups или build. Windows PHP child commands требуют PHPRC=D:\Projekte\lessons\.local\php.ini; Node22 — .local/node/node-v22.23.3-win-x64.
 - Этап 7: закончить browser revoke/отдельный пульт, CI настоящих concurrent MariaDB connections и Git deployment. Этап 8: административная проверка, общие блоки и динамические справочники реализованы в working tree; интеграция проверяется перед отдельным commit.
 - Этап 9: проверка реального изолированного restore, execution records, безопасное retention расписание и HTTP load harness реализованы в working tree, но ещё не прошли Linux CI/production настройку. Предварительный load10×30 не считается согласованной нагрузочной приёмкой.
