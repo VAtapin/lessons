@@ -239,12 +239,13 @@ final class MediaLibraryTest extends TestCase
         $this->getJson('/api/studio/media?archived=0')->assertOk()->assertJsonCount(1, 'assets');
     }
 
-    public function test_invalid_or_missing_rights_and_duplicate_tags_are_rejected(): void
+    public function test_optional_attribution_and_duplicate_tags_validation(): void
     {
         foreach (['author', 'source', 'rightsBasis', 'usageRights'] as $field) {
             $metadata = $this->multipartMetadata();
             unset($metadata[$field]);
-            $this->post('/api/studio/media', $metadata + ['file' => UploadedFile::fake()->image('image.png')], ['Accept' => 'application/json'])->assertUnprocessable();
+            $asset = $this->post('/api/studio/media', $metadata + ['file' => UploadedFile::fake()->image('image.png')], ['Accept' => 'application/json'])->assertCreated()->json('asset');
+            $this->assertSame($field === 'rightsBasis' ? 'unspecified' : '', $asset[$field]);
         }
         $metadata = $this->multipartMetadata();
         $metadata['tags'] = '["same","same"]';

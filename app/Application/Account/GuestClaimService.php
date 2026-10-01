@@ -99,7 +99,7 @@ final class GuestClaimService
 
     private function counts(string $key): array
     {
-        return ['lessons' => LessonMaterial::query()->where('owner_key', $key)->count(),
+        return ['lessons' => LessonMaterial::query()->where('owner_key', $key)->whereNull('purged_at')->count(),
             'templates' => BlockTemplateRecord::query()->where('owner_key', $key)->count(),
             'mediaAssets' => MediaAsset::query()->where('owner_key', $key)->count(),
             'sessions' => TeachingSession::query()->where('owner_key', $key)->count()];

@@ -62,6 +62,11 @@ final class NeighborLessonRuntimeTest extends TestCase
                 if ($public['runtime']['status'] === 'prepared') {
                     $execute('block.open', ['blockId' => $block['id']]);
                 }
+                if ($block['type'] === 'core.roles') {
+                    foreach ($block['content'][$locale]['roles'] as $role) {
+                        $execute('role.reveal.next', ['blockId' => $block['id']]);
+                    }
+                }
                 $value = match ($block['type']) {
                     'core.roles' => ['roleId' => 'samaritan'],
                     'core.signals' => ['ready' => true, 'question' => true],

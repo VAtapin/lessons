@@ -121,7 +121,7 @@ final readonly class HistoryService
                 'connected' => $participant->last_seen_at !== null && $participant->last_seen_at->greaterThanOrEqualTo(CarbonImmutable::now('UTC')->subSeconds(config('lessons.runtime.connected_seconds'))),
                 'lastSeenAt' => $participant->last_seen_at?->utc()->toISOString(),
             ])->all() : [], 'answers' => $available ? $this->answers->teacher($session, $document) : []]
-            + ($session->mode === 'rehearsal' ? ['snapshotDocument' => $session->version->document] : []);
+            + ['snapshotDocument' => $available ? $session->version->document : null];
     }
 
     public function notes(string $owner, string $id, int $revision, string $notes): array
@@ -144,7 +144,7 @@ final readonly class HistoryService
     public function favorite(string $owner, string $id, bool $favorite): array
     {
         return OwnerMutation::transaction([$owner], function () use ($owner, $id, $favorite): array {
-            $material = LessonMaterial::query()->where('owner_key', $owner)->lockForUpdate()->find($id)
+            $material = LessonMaterial::query()->where('owner_key', $owner)->whereNull('purged_at')->lockForUpdate()->find($id)
                 ?? throw new ApiProblem('not_found', 404);
             if ((bool) $material->favorite !== $favorite) {
                 $material->favorite = $favorite;
@@ -188,7 +188,7 @@ final readonly class HistoryService
 
     private function material(string $owner, string $id): LessonMaterial
     {
-        return LessonMaterial::query()->where('owner_key', $owner)->find($id) ?? throw new ApiProblem('not_found', 404);
+        return LessonMaterial::query()->where('owner_key', $owner)->whereNull('purged_at')->find($id) ?? throw new ApiProblem('not_found', 404);
     }
 
     private function summary(TeachingSession $session, ?bool $account = null): array
@@ -199,6 +199,7 @@ final readonly class HistoryService
 
         return ['id' => $session->id, 'lessonId' => $session->version->lesson_material_id, 'lessonVersionId' => $session->lesson_version_id,
             'lessonArchived' => (bool) $session->version->material->archived,
+            'lessonPurged' => $session->version->material->purged_at !== null,
             'title' => $session->version->document['content'][$session->locale]['title'], 'locale' => $session->locale,
             'mode' => $session->mode, 'status' => $session->status, 'revision' => $session->revision,
             'createdAt' => $session->created_at->utc()->toISOString(), 'startedAt' => $session->started_at?->utc()->toISOString(),

@@ -57,6 +57,10 @@ final class PresentationRuntimeTest extends TestCase
         $this->execute('role.reveal.next', ['blockId' => 'traveler-roles']);
         $this->assertSame(['traveler', 'robber_1'], $this->block('traveler-roles')['runtime']['presentation']['revealedRoleIds']);
         $this->submit('traveler-roles', ['roleId' => 'traveler']);
+        $this->expectProblem('invalid_state', fn () => $this->submit('traveler-roles', ['roleId' => 'samaritan']));
+        for ($index = 0; $index < 4; $index++) {
+            $this->execute('role.reveal.next', ['blockId' => 'traveler-roles']);
+        }
         $this->submit('traveler-roles', ['roleId' => 'samaritan']);
         $roles = $this->block('traveler-roles')['runtime']['availability'];
         $this->assertSame(0, collect($roles)->firstWhere('roleId', 'traveler')['used']);

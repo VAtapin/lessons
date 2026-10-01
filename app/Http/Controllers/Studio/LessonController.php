@@ -13,6 +13,7 @@ use App\Domain\Lessons\Audience;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 final class LessonController extends Controller
 {
@@ -44,6 +45,39 @@ final class LessonController extends Controller
         $material = $this->studio->create($this->identity->key($request), $data['document']);
 
         return response()->json(['lesson' => $this->studio->present($material)], 201);
+    }
+
+    public function purge(Request $request, string $id): JsonResponse
+    {
+        $data = $request->all();
+        if (array_keys($data) !== ['expectedRevision'] || ! is_int($data['expectedRevision']) || $data['expectedRevision'] < 1) {
+            throw new ApiProblem('invalid_action', 422);
+        }
+
+        return response()->json($this->studio->purge($this->identity->key($request), [['id' => $id, 'expectedRevision' => $data['expectedRevision']]]));
+    }
+
+    public function emptyTrash(Request $request): JsonResponse
+    {
+        $data = $request->all();
+        if (array_keys($data) !== ['lessons'] || ! is_array($data['lessons']) || ! array_is_list($data['lessons']) || count($data['lessons']) > 100) {
+            throw new ApiProblem('invalid_action', 422);
+        }
+        $ids = [];
+        foreach ($data['lessons'] as $lesson) {
+            if (! is_array($lesson)) {
+                throw new ApiProblem('invalid_action', 422);
+            }
+            $keys = array_keys($lesson);
+            sort($keys);
+            if ($keys !== ['expectedRevision', 'id'] || ! is_string($lesson['id']) || ! Str::isUuid($lesson['id'])
+                || ! is_int($lesson['expectedRevision']) || $lesson['expectedRevision'] < 1 || in_array($lesson['id'], $ids, true)) {
+                throw new ApiProblem('invalid_action', 422);
+            }
+            $ids[] = $lesson['id'];
+        }
+
+        return response()->json($this->studio->purge($this->identity->key($request), $data['lessons']));
     }
 
     public function show(Request $request, string $id): JsonResponse

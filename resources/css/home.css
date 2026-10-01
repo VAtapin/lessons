@@ -15,17 +15,6 @@
 @media(min-width:951px){
     .public-hero .public-button{min-height:35px;padding:8px 21px;font-size:13px!important;border-radius:6px}
     .public-hero .public-actions{gap:16px}
-    .public-hero + .public-content > .material-picker{padding:9px 12px 11px;margin-bottom:13px}
-    .public-hero + .public-content > .material-picker h2{font-size:24px;margin-bottom:8px}
-    .public-hero + .public-content > .material-picker .picker-groups{gap:7px;grid-template-columns:1fr 1fr 1.3fr 1.3fr}
-    .public-hero + .public-content > .material-picker fieldset{padding:7px 10px 8px}
-    .public-hero + .public-content > .material-picker legend{font-size:14px;margin-bottom:7px;gap:8px}
-    .public-hero + .public-content > .material-picker .filter-chips{gap:5px}
-    .public-hero + .public-content > .material-picker .filter-chips button{min-height:26px;padding:5px 8px;font-size:10px}
-    .public-hero + .public-content > .material-picker .picker-search{margin-top:8px;gap:10px}
-    .public-hero + .public-content > .material-picker .picker-search label span{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden;white-space:nowrap}
-    .public-hero + .public-content > .material-picker .picker-search input{height:32px;font-size:11px;padding:7px 10px}
-    .public-hero + .public-content > .material-picker .picker-search .public-button{min-height:32px;padding:7px 16px;font-size:12px!important;border-radius:6px}
 }
 @media(min-width:951px){
     .public-header{padding-left:10.6%;gap:12px}
@@ -64,3 +53,32 @@
 }
 @media(max-width:950px){.hero-verse{display:none}}
 @media(prefers-reduced-motion:no-preference){html:has(.public-site){scroll-behavior:smooth}}
+/* Catalog facets are single URL selections, presented as compact native controls. */
+.catalog-content .material-picker { padding: 14px 16px; }
+.catalog-content .material-picker h2 { margin-bottom: 12px; font-size: 22px; }
+.catalog-content .picker-groups { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.catalog-facet { display: grid; min-width: 0; gap: 6px; }
+.catalog-facet > span { display: flex; align-items: center; gap: 6px; font: 600 12px/1.3 system-ui, sans-serif; }
+.catalog-facet .public-icon { width: 18px; height: 18px; color: #ae591d; }
+.public-site .catalog-facet select { width: 100%; min-width: 0; height: 42px; padding: 8px 10px; border: 1px solid #dccaac; border-radius: 7px; background: #fffcf5; color: #4e3c2b; font: 13px/1.3 system-ui, sans-serif; }
+@media (max-width: 760px) {
+    .catalog-content .picker-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .catalog-content .material-picker { padding: 12px; }
+}
+/* Full-width section backgrounds share one centered content boundary. */
+.public-site { --home-content-max: 1480px; --home-gutter: clamp(18px, 5.3vw, 88px); --home-content-inset: max(var(--home-gutter), calc((100% - var(--home-content-max)) / 2)); }
+.public-header, .public-hero, .public-footer { max-width: none; margin-inline: 0; }
+.public-header, .public-footer { padding-inline: var(--home-content-inset); }
+.public-content { width: calc(100% - 2 * var(--home-gutter)); max-width: var(--home-content-max); margin-inline: auto; }
+.public-hero-copy { padding-left: var(--home-content-inset); width: calc(var(--home-content-inset) + min(620px, 43vw)); }
+.home-section { margin-top: clamp(28px, 3vw, 44px); }
+.home-section > h2, .home-section > p { padding-left: 0; }
+.home-section > p { margin-bottom: 14px; }
+.home-steps { padding-inline: 0; }
+.landscape-cta { margin-top: clamp(28px, 3vw, 44px); padding-inline: var(--home-content-inset); }
+.landscape-cta > div { min-width: 0; }
+.landscape-cta h2 { white-space: normal; }
+.home-about { padding-inline: 0; padding-block: 32px; }
+@media (max-width: 600px) {
+    .public-hero-copy { width: 100%; padding-inline: var(--home-content-inset); }
+}

@@ -6,6 +6,9 @@ const compile = file => ts.transpileModule(fs.readFileSync(new URL(file, import.
 const moduleUrl = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
 const libraryUrl = moduleUrl(compile('../../resources/js/studio/library.ts'));
 const library = await import(libraryUrl);
+test('new metadata leaves attribution unspecified without claiming a license', () => {
+    assert.deepEqual(library.emptyMetadata(), { title: '', tags: [], author: '', source: '', rightsBasis: 'unspecified', usageRights: '' });
+});
 const document = await import(moduleUrl(compile('../../resources/js/studio/document.ts').replace("'./library'", JSON.stringify(libraryUrl))));
 test('template locale compatibility needs every document translation and does not mix interface locale', () => {
     assert.equal(library.compatibleLocales(['ru', 'de'], ['de']), true);

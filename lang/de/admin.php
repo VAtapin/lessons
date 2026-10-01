@@ -8,7 +8,7 @@ return [
     'admin_error' => 'Die Anfrage konnte nicht ausgeführt werden. Prüfen Sie die Verbindung und versuchen Sie es erneut.',
     'admin_login_required' => 'Melden Sie sich für diese Aktion an.', 'admin_verification_required' => 'Bestätigen Sie zuerst Ihre E-Mail-Adresse.', 'admin_access_denied' => 'Dieser Bereich ist nur für Administratoren zugänglich.',
     'admin_conflict' => 'Die Daten wurden geändert. Laden Sie den aktuellen Stand und prüfen Sie ihn vor dem erneuten Speichern. Ihre Eingaben bleiben erhalten.',
-    'admin_invalid' => 'Prüfen Sie Pflichtfelder, Übersetzungen, Bildrechte und ausgewählte Kategorien.',
+    'admin_invalid' => 'Prüfen Sie Pflichtfelder, Übersetzungen und ausgewählte Kategorien.',
     'admin_submissions_title' => 'Lektion für den öffentlichen Katalog vorschlagen', 'admin_submit_explanation' => 'Eine gesonderte freigegebene Version wird eingereicht und vor der Veröffentlichung geprüft. Eigener Unterricht ist ohne Veröffentlichung möglich.',
     'admin_pinned_version' => 'Festgehaltene Version', 'admin_slug' => 'Materialadresse', 'admin_slug_hint' => 'Kleine lateinische Buchstaben, Ziffern und Bindestriche. Bereits belegte Adressen können nicht wiederverwendet werden.',
     'admin_title' => 'Titel', 'admin_description' => 'Beschreibung', 'admin_duration' => 'Dauer in Minuten', 'admin_cover' => 'Titelbild aus gemeinsamen Illustrationen', 'admin_no_cover' => 'Ohne Titelbild',

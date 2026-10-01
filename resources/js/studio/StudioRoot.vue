@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import '../../css/studio.css';
+import '../../css/workspace-art.css';
 import { computed, nextTick, onMounted, onBeforeUnmount, ref } from 'vue';
 import { api, errorMessage } from './api';
 import { accountState, acceptAccount, identityBlocked, startIdentityWatch } from './identity';

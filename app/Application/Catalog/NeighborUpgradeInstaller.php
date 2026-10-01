@@ -17,14 +17,18 @@ final readonly class NeighborUpgradeInstaller
 {
     public function __construct(private CatalogService $catalog, private BlockRegistry $registry, private MediaCatalogue $media) {}
 
-    public function install(): array
+    public function install(string $revision = 'v2'): array
     {
-        $old = require resource_path('content/kto-moi-blizhnii.php');
-        $next = require resource_path('content/kto-moi-blizhnii-v2.php');
+        if (! in_array($revision, ['v2', 'v3'], true)) {
+            throw new RuntimeException('Unsupported reviewed neighbor revision.');
+        }
+        $old = require resource_path($revision === 'v3' ? 'content/kto-moi-blizhnii-v2.php' : 'content/kto-moi-blizhnii.php');
+        $next = require resource_path('content/kto-moi-blizhnii-'.$revision.'.php');
+        $oldRevision = $revision === 'v3' ? 2 : 1;
         [$oldDocument, $oldHash] = $this->source($old);
         [$document, $hash] = $this->source($next);
 
-        return OwnerMutation::transaction([$old['ownerKey']], function () use ($old, $next, $oldDocument, $document, $oldHash, $hash): array {
+        return OwnerMutation::transaction([$old['ownerKey']], function () use ($old, $next, $oldDocument, $document, $oldHash, $hash, $oldRevision): array {
             $entry = CatalogEntry::query()->where('slug', $old['slug'])->lockForUpdate()->first();
             $material = LessonMaterial::query()->whereKey($old['materialId'])->lockForUpdate()->first();
             $original = LessonVersion::query()->whereKey($old['versionId'])->first();
@@ -38,11 +42,11 @@ final readonly class NeighborUpgradeInstaller
             $existing = LessonVersion::query()->whereKey($next['versionId'])->first();
             if ($entry->lesson_version_id === $next['versionId'] && $entry->source_revision === $next['sourceRevision'] && $entry->source_hash === $hash
                 && $existing !== null && $existing->lesson_material_id === $material->id && $existing->status === 'released' && $existing->purpose === 'authoring'
-                && $existing->document === $document->toArray() && $material->current_version_id === $existing->id && $material->revision === 2) {
+                && $existing->document === $document->toArray() && $material->current_version_id === $existing->id && $material->revision === $oldRevision + 1) {
                 return ['entry' => $entry, 'created' => false];
             }
             if ($entry->lesson_version_id !== $old['versionId'] || $entry->source_revision !== $old['sourceRevision'] || $entry->source_hash !== $oldHash
-                || $material->current_version_id !== $old['versionId'] || $material->revision !== 1 || $existing !== null) {
+                || $material->current_version_id !== $old['versionId'] || $material->revision !== $oldRevision || $existing !== null) {
                 throw new RuntimeException('Neighbor upgrade receipt differs or the new identifier is occupied. No published resources were overwritten.');
             }
             $version = new LessonVersion(['lesson_material_id' => $material->id, 'status' => 'released', 'purpose' => 'authoring', 'document' => $document->toArray()]);
@@ -51,7 +55,7 @@ final readonly class NeighborUpgradeInstaller
             $this->catalog->validatePublication($version, $next['metadata']);
             $entry->repinSourceRelease($old['versionId'], $old['sourceRevision'], $oldHash, $version, $next['sourceRevision'], $hash);
             $material->current_version_id = $version->id;
-            $material->revision = 2;
+            $material->revision = $oldRevision + 1;
             $material->save();
 
             return ['entry' => $entry, 'created' => true];

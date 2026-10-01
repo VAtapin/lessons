@@ -13,7 +13,9 @@ final class FreeResponseBlock extends InteractiveDefinition
 {
     public function translatedTextFields(): array
     {
-        return $this->textFields('question');
+        return [...$this->textFields('question'), ...array_map(fn (string $field): array => [
+            'path' => [$field], 'required' => false, 'blankMode' => 'unicode',
+        ], ['label', 'placeholder', 'submitLabel'])];
     }
 
     public function id(): string
@@ -30,7 +32,15 @@ final class FreeResponseBlock extends InteractiveDefinition
     {
         InteractiveShape::config($block, ['allowRepeat', 'maxLength']);
         Shape::integer($block->config['maxLength'], 'free.maxLength', 1, 1000);
-        InteractiveShape::content($block, $locales, 'question');
+        foreach ($locales as $locale) {
+            $content = Shape::object($block->content[$locale], ['question'], ['label', 'placeholder', 'submitLabel'], 'free.content');
+            Shape::boundedText($content['question'], 'free.question', 5000);
+            foreach (['label', 'placeholder', 'submitLabel'] as $field) {
+                if (array_key_exists($field, $content)) {
+                    Shape::boundedText($content[$field], 'free.'.$field, 200, true);
+                }
+            }
+        }
         if ($block->solution !== null) {
             throw new ValidationException('Free response cannot have an automatic solution.');
         }

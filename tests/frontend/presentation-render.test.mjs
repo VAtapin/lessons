@@ -45,3 +45,36 @@ test('discussion shows the server-selected question to every reader and short la
     assert.match(teacherHtml, />Priest<\/button>/);
     assert.match(teacherHtml, /aria-pressed="true"[^>]*>Samaritan<\/button>/);
 });
+
+test('authored scene retains its exact title, question, subtitle and source in the shared renderer', async () => {
+    const html = await render({ type: 'core.presentation', config: { kind: 'scene', scene: 'story' }, content: {
+        eyebrow: 'Сценка · Лк 10:30', title: 'Человек на дороге', subtitle: 'Кого позовём первым?',
+        text: 'Путник шёл из Иерусалима в Иерихон. Разбойники ограбили и избили его. Он остался ждать помощи.', source: 'Лк 10:30', quote: '«Иди, и ты поступай так же»',
+    } });
+    assert.match(html, /Сценка · Лк 10:30/);
+    assert.match(html, /Человек на дороге/);
+    assert.match(html, /Кого позовём первым\?/);
+    assert.match(html, /Путник шёл из Иерусалима в Иерихон\. Разбойники ограбили и избили его\. Он остался ждать помощи\./);
+    assert.match(html, /class="scene-source">Лк 10:30/);
+    assert.match(html, /class="scene-quote">«Иди, и ты поступай так же»/);
+    assert.doesNotMatch(html, /<button|<input/);
+});
+
+test('lesson summary keeps the three authored takeaway cards, quote and source', async () => {
+    const html = await render({ type: 'core.presentation', config: { kind: 'summary' }, content: {
+        eyebrow: 'Итог урока', title: 'Ближним становятся', text: 'Не вопрос «кто достоин моей помощи?», а решение: «чьим ближним могу стать я?»',
+        items: [
+            { itemId: 'notice', label: 'Увидеть', text: 'заметить человека и его нужду' },
+            { itemId: 'approach', label: 'Подойти', text: 'не прятаться за удобным оправданием' },
+            { itemId: 'help', label: 'Помочь', text: 'сделать конкретный посильный шаг' },
+        ], quote: '«Иди, и ты поступай так же»', source: 'Лк 10:37', subtitle: 'Назовите одним словом, что вы уносите с этого урока.',
+    } });
+    assert.match(html, /Ближним становятся/);
+    assert.match(html, /Не вопрос «кто достоин моей помощи\?», а решение: «чьим ближним могу стать я\?»/);
+    assert.equal((html.match(/class="takeaway-index"/g) ?? []).length, 3);
+    assert.ok(html.indexOf('Увидеть') < html.indexOf('Подойти'));
+    assert.ok(html.indexOf('Подойти') < html.indexOf('Помочь'));
+    for (const text of ['заметить человека и его нужду', 'не прятаться за удобным оправданием', 'сделать конкретный посильный шаг', '«Иди, и ты поступай так же»', 'Лк 10:37']) assert.ok(html.includes(text));
+    assert.match(html, /class="summary-subtitle">Назовите одним словом, что вы уносите с этого урока\./);
+    assert.doesNotMatch(html, /<button|<input/);
+});

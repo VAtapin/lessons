@@ -41,10 +41,10 @@ onBeforeUnmount(() => controller?.abort());
         <h2>{{ messages.find_title }}</h2>
         <p v-if="failed" role="status">{{ messages.load_error }} <button v-if="terms === null && props.terms === undefined" type="button" @click="loadTaxonomy">{{ messages.retry }}</button></p>
         <div class="picker-groups">
-            <fieldset v-for="(key, index) in groups" :key="key" :disabled="loading">
-                <legend><PublicIcon :name="icons[index]!" />{{ messages[`filter_${key}`] }}</legend>
-                <div class="filter-chips"><button v-for="term in values(key)" :key="term.key" type="button" :aria-pressed="filters[key] === term.key" @click="filters[key] = filters[key] === term.key ? '' : term.key">{{ term.label }}</button></div>
-            </fieldset>
+            <label v-for="(key, index) in groups" :key="key" class="catalog-facet">
+                <span><PublicIcon :name="icons[index]!" />{{ messages[`filter_${key}`] }}</span>
+                <select v-model="filters[key]" :name="key" :disabled="loading"><option value="">{{ messages.any_filter }}</option><option v-for="term in values(key)" :key="term.key" :value="term.key">{{ term.label }}</option></select>
+            </label>
         </div>
         <div class="picker-search">
             <label><span>{{ messages.search_label }}</span><input v-model="filters.q" type="search" maxlength="120" :placeholder="messages.search_placeholder" :disabled="loading" /></label>

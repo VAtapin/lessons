@@ -84,6 +84,19 @@ final class RehearsalTest extends TestCase
         $this->postJson($url.'/answers', ['stageId' => 'first', 'blockId' => 'choice', 'value' => ['optionId' => 'b']])->assertNotFound();
     }
 
+    public function test_owner_rehearsal_can_try_roles_without_classroom_reveal(): void
+    {
+        $lesson = $this->historyLesson();
+        $session = $this->postJson('/api/studio/lessons/'.$lesson['id'].'/rehearsals', ['expectedRevision' => 1])->assertCreated()->json('session');
+        $this->postJson('/api/studio/rehearsals/'.$session['id'].'/answers', [
+            'stageId' => 'first', 'blockId' => 'roles', 'value' => ['roleId' => 'a'],
+        ])->assertOk()->assertJsonPath('session.ownAnswers.0.value.roleId', 'a');
+        $this->assertDatabaseCount('session_block_states', 0);
+        $this->postJson('/api/studio/rehearsals/'.$session['id'].'/answers', [
+            'stageId' => 'first', 'blockId' => 'roles', 'value' => ['roleId' => null],
+        ])->assertOk()->assertJsonPath('session.ownAnswers.0.value.roleId', null);
+    }
+
     public function test_rehearsal_private_media_is_owner_current_stage_exact_version_even_after_replacement(): void
     {
         $metadata = ['title' => 'Fixture image', 'tags' => '[]', 'author' => 'Test', 'source' => 'Test', 'rightsBasis' => 'self_created', 'usageRights' => 'Test'];

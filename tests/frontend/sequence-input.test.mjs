@@ -27,6 +27,17 @@ test('shuffling preserves every stable item ID and leaves content order unchange
     assert.deepEqual(ids, ['A', 'B', 'C', 'D']);
 });
 
+test('identity random draws still mix any sequence longer than one without inspecting a solution', () => {
+    for (const ids of [[], ['A'], ['A', 'B'], ['A', 'B', 'C', 'D', 'E']]) {
+        const before = [...ids];
+        const pool = input.shuffledItems(ids, () => 0.999999);
+        assert.deepEqual([...pool].sort(), [...ids].sort());
+        assert.deepEqual(ids, before);
+        if (ids.length > 1) assert.notDeepEqual(pool, ids);
+        else assert.deepEqual(pool, ids);
+    }
+});
+
 test('per-position feedback appears only with an actually revealed server order', () => {
     assert.deepEqual(input.sequencePositions(['B', 'A']), ['ungraded', 'ungraded']);
     assert.deepEqual(input.sequencePositions(['B', 'A', 'C'], ['A', 'B', 'C']), ['incorrect', 'incorrect', 'correct']);

@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
+import { api } from './studio/api';
+import { accountState, acceptAccount } from './studio/identity';
+import type { Account } from './studio/types';
 import type { InterfaceMessages } from './app';
-import CatalogFilters from './catalog/CatalogFilters.vue';
 import CatalogPage from './catalog/CatalogPage.vue';
 import PublicIcon from './catalog/PublicIcon.vue';
 import { catalogLink } from './catalog/filters';
@@ -15,6 +18,7 @@ import bible from '../../UI-Design/19.png';
 import reading from '../../UI-Design/22.png';
 import mercy from '../../UI-Design/15.png';
 const props = defineProps<{ locale: string; messages: InterfaceMessages; page?: string; studioMessages?: InterfaceMessages; context?: { slug?: string } }>();
+onMounted(async () => { try { acceptAccount(await api<Account>('/api/account')); } catch { /* Sign-in remains available when account lookup fails. */ } });
 const audiences = [{ key: 'school', image: school }, { key: 'sunday-school', image: sunday }, { key: 'children', image: children }, { key: 'adults', image: adults }];
 const topics = [{ key: 'bible', image: bible }, { key: 'holidays', image: reading }, { key: 'parables', image: landscape }, { key: 'family', image: sunday }, { key: 'prayer', image: adults }, { key: 'mercy', image: mercy }];
 const formats = [{ key: 'presentation', icon: 'screen' }, { key: 'notes', icon: 'file' }, { key: 'game', icon: 'game' }, { key: 'questions', icon: 'question' }, { key: 'worksheet', icon: 'pencil' }, { key: 'interactive', icon: 'screen' }];
@@ -29,8 +33,9 @@ const languageLink = (locale: string) => `/${locale}${props.page === 'catalog' ?
         <header class="public-header">
             <a class="public-brand" :href="`/${locale}`"><img :src="logo" alt="" width="72" height="64" /><span><strong>lessons.atapin.de</strong><small>{{ messages.tagline }}</small></span></a>
             <nav class="public-nav" :aria-label="messages.home"><a v-for="key in navigation" :key="key" :href="homeAnchor(key)">{{ messages[`nav_${key}`] }}</a></nav>
-            <a class="header-search" :href="page === 'catalog' ? '#find-materials' : homeAnchor('find-materials')" :aria-label="messages.search_label"><PublicIcon name="search" /></a>
+            <a class="header-search" :href="page === 'catalog' && !context?.slug ? '#find-materials' : `${catalogLink(locale)}#find-materials`" :aria-label="messages.search_label"><PublicIcon name="search" /></a>
             <a class="public-button header-choose" :href="catalogLink(locale)">{{ messages.choose_lesson }}</a>
+            <a class="public-button secondary header-account" :href="`/${locale}/${accountState?.user ? 'studio?view=overview' : 'login'}`">{{ messages[accountState?.user ? 'my_workspace' : 'sign_in'] }}</a>
             <nav class="public-languages" :aria-label="messages.language"><a v-for="language in ['ru', 'de']" :key="language" :href="languageLink(language)" :lang="language" :aria-current="locale === language ? 'page' : undefined">{{ language.toUpperCase() }}</a></nav>
         </header>
         <main id="main-content">
@@ -38,12 +43,11 @@ const languageLink = (locale: string) => `/${locale}${props.page === 'catalog' ?
                 <section class="public-hero" :style="{ '--hero-image': `url(${hero})` }">
                     <div class="hero-art" role="img" :aria-label="messages.image_alt"></div>
                     <div class="hero-botanical" :style="{ backgroundImage: `url(${landscape})` }" aria-hidden="true"></div>
-                    <div class="public-hero-copy"><p class="hero-eyebrow">{{ messages.eyebrow }}</p><h1>{{ messages.title }}</h1><p class="hero-description">{{ messages.description }}</p><div class="public-actions"><a class="public-button" href="#topics">{{ messages.view_topics }}<PublicIcon name="arrow" /></a><a class="public-button secondary" href="#find-materials">{{ messages.start_selection }}</a></div><p class="hero-blessing">«{{ messages.footer }}»</p></div>
+                    <div class="public-hero-copy"><p class="hero-eyebrow">{{ messages.eyebrow }}</p><h1>{{ messages.title }}</h1><p class="hero-description">{{ messages.description }}</p><div class="public-actions"><a class="public-button" :href="catalogLink(locale)">{{ messages.view_topics }}<PublicIcon name="arrow" /></a><a class="public-button secondary" :href="catalogLink(locale)">{{ messages.start_selection }}</a></div><p class="hero-blessing">«{{ messages.footer }}»</p></div>
                     <p class="hero-handwriting" aria-hidden="true">{{ messages.hero_motto }} ♡</p>
                     <aside class="hero-verse"><p>{{ messages.hero_verse }}</p><small>{{ messages.hero_verse_source }}</small></aside>
                 </section>
                 <div class="public-content">
-                    <CatalogFilters :locale="locale" :messages="messages" />
                     <section id="audiences" class="home-section"><h2>{{ messages.audiences_title }}</h2><p>{{ messages.audiences_intro }}</p><div class="audience-grid"><a v-for="card in audiences" :key="card.key" class="illustrated-card" :href="catalogLink(locale, 'audience', card.key)"><img :src="card.image" alt="" width="1448" height="1086" loading="lazy" /><h3>{{ messages[`card_${card.key}`] }}</h3><p>{{ messages[`card_${card.key}_text`] }}</p></a></div></section>
                     <section id="topics" class="home-section"><h2>{{ messages.topics_title }}</h2><p>{{ messages.topics_intro }}</p><div class="topic-grid"><a v-for="card in topics" :key="card.key" class="illustrated-card topic-card" :href="catalogLink(locale, 'topic', card.key)"><img :src="card.image" alt="" width="1672" height="941" loading="lazy" /><h3>{{ messages[`card_${card.key}`] }}</h3></a></div></section>
                     <section id="steps" class="home-section"><h2>{{ messages.steps_title }}</h2><p>{{ messages.steps_intro }}</p><ol class="home-steps"><li v-for="(icon, index) in ['search', 'file', 'people']" :key="icon"><span class="step-number">{{ index + 1 }}</span><span class="step-icon"><PublicIcon :name="icon" /></span><div><h3>{{ messages[`step_${index + 1}`] }}</h3><p>{{ messages[`step_${index + 1}_text`] }}</p></div><PublicIcon v-if="index < 2" name="arrow" /></li></ol></section>

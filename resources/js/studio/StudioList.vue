@@ -3,7 +3,7 @@ import VersionBrowser from './VersionBrowser.vue';
 import WorkspaceOverview from './WorkspaceOverview.vue';
 import StudioIcon from './StudioIcon.vue';
 import { accountState } from './identity';
-import { onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import { api, ApiError, errorMessage } from './api';
 import { newDocument } from './document';
 import type { Lesson, LessonSummary, Messages } from './types';
@@ -16,8 +16,30 @@ const error = ref('');
 const notice = ref('');
 const trash = view === 'trash';
 const deleting = ref('');
+const purging = ref<{ id: string; expectedRevision: number; title: string }[]>([]);
+const purgeAll = ref(false);
+const purgeConfirmation = ref<HTMLElement>();
+async function confirmPurge(lesson?: LessonSummary) {
+    if (busy.value || !trash) return;
+    purgeAll.value = !lesson;
+    purging.value = (lesson ? [lesson] : lessons.value.slice(0, 100)).map(item => ({ id: item.id, expectedRevision: item.revision, title: item.title || props.messages.untitled_material }));
+    await nextTick(); purgeConfirmation.value?.focus();
+}
+async function purge() {
+    if (busy.value || !trash || !purging.value.length || purging.value.length > 100) return;
+    busy.value = true; error.value = ''; notice.value = '';
+    const snapshot = purging.value.map(({ id, expectedRevision }) => ({ id, expectedRevision }));
+    try {
+        const result = await api<{ deletedIds: string[] }>(purgeAll.value ? '/api/studio/lessons/trash/purge' : `/api/studio/lessons/${snapshot[0]!.id}/purge`, 'POST', purgeAll.value ? { lessons: snapshot } : { expectedRevision: snapshot[0]!.expectedRevision });
+        lessons.value = lessons.value.filter(item => !result.deletedIds.includes(item.id));
+        purging.value = []; notice.value = props.messages.lesson_purged;
+    } catch (problem) {
+        if (problem instanceof ApiError && problem.status === 409) await load();
+        error.value = errorMessage(problem, props.messages);
+    } finally { busy.value = false; }
+}
 async function load() {
-    busy.value = true; error.value = ''; deleting.value = ''; versionLesson.value = '';
+    busy.value = true; error.value = ''; deleting.value = ''; versionLesson.value = ''; purging.value = [];
     try { lessons.value = (await api<{ lessons: LessonSummary[] }>(`/api/studio/lessons?archived=${trash ? '1' : '0'}`)).lessons; }
     catch (problem) { error.value = errorMessage(problem, props.messages); }
     finally { busy.value = false; }
@@ -56,9 +78,16 @@ async function archive(lesson: LessonSummary, archived: boolean) {
     <WorkspaceOverview v-if="view === 'overview'" :lessons="lessons" :locale="locale" :messages="messages" />
     <template v-else>
     <p v-if="trash" class="info-banner">{{ messages.lesson_trash_hint }}</p>
+    <button v-if="trash && lessons.length" :disabled="busy" @click="confirmPurge()">{{ messages.empty_trash }}</button>
+    <div v-if="purging.length" ref="purgeConfirmation" class="info-banner" role="alert" tabindex="-1">
+        <p>{{ messages.lesson_purge_confirm }}</p>
+        <p v-if="purgeAll">{{ messages.trash_batch_hint }} {{ purging.length }}</p>
+        <ul><li v-for="item in purging" :key="item.id">{{ item.title }}</li></ul>
+        <div class="button-row"><button :disabled="busy" @click="purge">{{ messages.purge_permanently }}</button><button :disabled="busy" @click="purging = []">{{ messages.cancel }}</button></div>
+    </div>
     <p v-if="view === 'constructor'" class="constructor-intro">{{ messages.workspace_constructor_hint }}</p>
     <div v-if="!lessons.length && !busy && !error" class="studio-card empty-state"><StudioIcon name="edit" /><h2>{{ trash ? messages.lesson_trash_empty : messages.empty_title }}</h2><p>{{ trash ? messages.lesson_trash_hint : messages.empty_description }}</p><button v-if="!trash" class="primary" :disabled="busy" @click="create">{{ messages.new_material }}</button></div>
-    <div v-else class="materials-grid"><article v-for="lesson in lessons" :key="lesson.id" class="studio-card material-card"><span class="status-pill">{{ trash ? messages.lesson_deleted : messages[lesson.status] }}</span><h2 v-if="trash">{{ lesson.title || messages.untitled_material }}</h2><a v-else :href="`/${locale}/studio/lessons/${lesson.id}`"><h2>{{ lesson.title || messages.untitled_material }}</h2></a><p>{{ messages.revision }} {{ lesson.revision }}</p><div class="action-row"><button v-if="trash" class="primary" :disabled="busy" @click="archive(lesson, false)">{{ messages.restore }}</button><template v-else><button :aria-pressed="!!lesson.favorite" :disabled="busy" @click="favorite(lesson)">{{ lesson.favorite ? '★' : '☆' }} {{ messages.favorite }}</button><button :aria-expanded="versionLesson === lesson.id" :disabled="busy" @click="versionLesson = versionLesson === lesson.id ? '' : lesson.id">{{ messages.saved_versions }}</button><a class="button-link" :href="`/${locale}/studio/lessons/${lesson.id}`">{{ messages.open_editor }} →</a><button :disabled="busy" :aria-expanded="deleting === lesson.id" :aria-label="messages.delete_lesson + ': ' + (lesson.title || messages.untitled_material)" @click="deleting = deleting === lesson.id ? '' : lesson.id">{{ messages.delete_lesson }}</button></template></div><div v-if="deleting === lesson.id" class="info-banner" role="alert"><p>{{ messages.lesson_delete_confirm }}</p><div class="button-row"><button :disabled="busy" @click="archive(lesson, true)">{{ messages.lesson_move_to_trash }}</button><button :disabled="busy" @click="deleting = ''">{{ messages.cancel }}</button></div></div></article></div>
+    <div v-else class="materials-grid"><article v-for="lesson in lessons" :key="lesson.id" class="studio-card material-card"><span class="status-pill">{{ trash ? messages.lesson_deleted : messages[lesson.status] }}</span><h2 v-if="trash">{{ lesson.title || messages.untitled_material }}</h2><a v-else :href="`/${locale}/studio/lessons/${lesson.id}`"><h2>{{ lesson.title || messages.untitled_material }}</h2></a><p>{{ messages.revision }} {{ lesson.revision }}</p><p v-if="trash && lesson.archivedAt">{{ messages.lesson_deleted_at }}: <time :datetime="lesson.archivedAt">{{ new Date(lesson.archivedAt).toLocaleString(locale) }}</time></p><div class="action-row"><template v-if="trash"><button class="primary" :disabled="busy" @click="archive(lesson, false)">{{ messages.restore }}</button><button :disabled="busy" @click="confirmPurge(lesson)">{{ messages.purge_permanently }}</button></template><template v-else><button :aria-pressed="!!lesson.favorite" :disabled="busy" @click="favorite(lesson)">{{ lesson.favorite ? '★' : '☆' }} {{ messages.favorite }}</button><button :aria-expanded="versionLesson === lesson.id" :disabled="busy" @click="versionLesson = versionLesson === lesson.id ? '' : lesson.id">{{ messages.saved_versions }}</button><a class="button-link" :href="`/${locale}/studio/lessons/${lesson.id}`">{{ messages.open_editor }} →</a><button :disabled="busy" :aria-expanded="deleting === lesson.id" :aria-label="messages.delete_lesson + ': ' + (lesson.title || messages.untitled_material)" @click="deleting = deleting === lesson.id ? '' : lesson.id">{{ messages.delete_lesson }}</button></template></div><div v-if="deleting === lesson.id" class="info-banner" role="alert"><p>{{ messages.lesson_delete_confirm }}</p><div class="button-row"><button :disabled="busy" @click="archive(lesson, true)">{{ messages.lesson_move_to_trash }}</button><button :disabled="busy" @click="deleting = ''">{{ messages.cancel }}</button></div></div></article></div>
     <VersionBrowser v-if="versionLesson && !trash" :key="versionLesson" :lesson-id="versionLesson" :messages="messages" />
     </template>
 </template>

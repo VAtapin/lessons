@@ -350,6 +350,7 @@ final class RuntimeService
         }
 
         return $this->baseState($session) + [
+            'joinProjectionVisible' => (bool) $session->join_projection,
             'document' => $teacherDocument,
             'publicStage' => $this->mediaProjection->stage(
                 $this->blocks->project($this->stage($document, $session->current_stage_id), $session, Audience::Projector, $blockSnapshot, $this->retention->detailsAvailable($session)),
@@ -382,6 +383,10 @@ final class RuntimeService
             $state['ownAnswers'] = $this->answers->own($session, $document, $participant, $blockSnapshot);
             $state['kindnessPoints'] = $this->answers->kindnessPoints($session, $document, $participant, $blockSnapshot);
         }
+        if ($audience === Audience::Projector && $session->mode === 'lesson' && $session->join_projection && $session->status !== 'finished') {
+            $state['joinProjection'] = ['code' => $session->join_code,
+                'url' => url('/'.$session->locale.'/join').'?code='.rawurlencode($session->join_code)];
+        }
 
         return $state;
     }
@@ -390,7 +395,7 @@ final class RuntimeService
     {
         $now = CarbonImmutable::now('UTC');
 
-        return [
+        $state = [
             'id' => $session->id, 'revision' => $session->revision, 'locale' => $session->locale, 'currentStageId' => $session->current_stage_id,
             'mode' => $session->mode,
             'status' => $session->status, 'serverNow' => $now->toISOString(), 'timer' => $this->timer->project($session, $now),
@@ -399,6 +404,18 @@ final class RuntimeService
                 ? ['id' => $session->wave_id, 'expiresAt' => $session->wave_expires_at->utc()->toISOString(),
                     'aggregate' => $this->answers->kindnessAggregate($session, $this->document($session), $this->blocks->snapshot($session))] : null,
         ];
+        if ($session->status === 'finished') {
+            $state['closing'] = null;
+            foreach ($this->document($session)->project(Audience::Projector, $session->locale)['stages'] as $stage) {
+                foreach ($stage['blocks'] as $block) {
+                    if ($block['type'] === 'core.presentation' && $block['config']['kind'] === 'closing') {
+                        $state['closing'] = $block;
+                    }
+                }
+            }
+        }
+
+        return $state;
     }
 
     private function recordLifecycle(TeachingSession $session, string $action): void

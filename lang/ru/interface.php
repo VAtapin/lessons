@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'any_filter' => 'Все',
+    'sign_in' => 'Войти',
+    'my_workspace' => 'Мой кабинет',
+
     'active_sessions_title' => 'У вас есть активные занятия',
     'active_sessions_hint' => 'Вернитесь в уже открытый пульт или начните отдельное новое занятие.',
     'start_new_session' => 'Начать новое занятие',

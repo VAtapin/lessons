@@ -38,6 +38,7 @@ final class InteractiveRuntimeTest extends TestCase
         $participant = $this->join($session, 'Private learner name');
         $this->submit($session, 'signals', ['ready' => true, 'question' => false])->assertOk()
             ->assertJsonPath('session.status', 'prepared')->assertJsonPath('session.kindnessPoints', 1);
+        $this->execute($session, 'role.reveal.next', ['blockId' => 'roles']);
         foreach (['single' => ['optionId' => 'a'], 'roles' => ['roleId' => 'a'], 'free' => ['text' => 'Too early']] as $blockId => $value) {
             $this->submit($session, $blockId, $value)->assertConflict()->assertJsonPath('error.code', 'invalid_state');
         }
@@ -65,6 +66,7 @@ final class InteractiveRuntimeTest extends TestCase
         $this->submit($session, 'poll', ['optionId' => 'b'])->assertOk();
         $this->submit($session, 'single', ['optionId' => 'b'])->assertOk()->assertJsonPath('session.ownAnswers.1.grade', null)
             ->assertJsonPath('session.kindnessPoints', 1);
+        $this->execute($session, 'role.reveal.next', ['blockId' => 'roles']);
         $this->submit($session, 'roles', ['roleId' => 'a'])->assertOk();
         $public = $this->projector($session)->assertOk()->assertJsonPath('session.stage.blocks.2.runtime.summary', ['counts' => [['optionId' => 'a', 'count' => 0], ['optionId' => 'b', 'count' => 1]], 'totalAnswers' => 1])
             ->assertJsonPath('session.stage.blocks.0.runtime.summary', ['counts' => [['optionId' => 'a', 'count' => 0], ['optionId' => 'b', 'count' => 1]], 'totalAnswers' => 1])
@@ -239,9 +241,40 @@ final class InteractiveRuntimeTest extends TestCase
         $this->command($session, 'answer.moderate', ['answerId' => $answer->id, 'expectedAnswerRevision' => 5, 'status' => 'approved', 'displayText' => '  '])->assertUnprocessable();
     }
 
+    public function test_classroom_roles_require_reveal_and_reset_preserves_claims_and_null_release(): void
+    {
+        $session = $this->start();
+        $participant = $this->join($session);
+        $this->submit($session, 'roles', ['roleId' => 'a'])->assertConflict()->assertJsonPath('error.code', 'invalid_state');
+        $this->assertDatabaseCount('session_answers', 0);
+        $this->assertDatabaseCount('session_block_states', 0);
+        $this->assertDatabaseHas('teaching_sessions', ['id' => $session['id'], 'revision' => 1]);
+        $this->execute($session, 'role.reveal.next', ['blockId' => 'roles']);
+        $this->submit($session, 'roles', ['roleId' => 'a'])->assertOk();
+        $this->submit($session, 'roles', ['roleId' => 'b'])->assertConflict()->assertJsonPath('error.code', 'invalid_state');
+        $this->assertSame(['roleId' => 'a'], SessionAnswer::firstOrFail()->value);
+        $this->assertSame(1, SessionAnswer::firstOrFail()->revision);
+        $this->assertDatabaseHas('teaching_sessions', ['id' => $session['id'], 'revision' => $session['revision']]);
+        $this->execute($session, 'role.reveal.next', ['blockId' => 'roles']);
+        $this->submit($session, 'roles', ['roleId' => 'b'])->assertOk()->assertJsonPath('session.ownAnswers.0.revision', 2);
+        $this->execute($session, 'role.reveal.reset', ['blockId' => 'roles']);
+        $this->assertSame(['roleId' => 'b'], SessionAnswer::firstOrFail()->value);
+        $this->submit($session, 'roles', ['roleId' => 'b'])->assertOk()->assertJsonPath('session.ownAnswers.0.revision', 2);
+        $this->submit($session, 'roles', ['roleId' => 'a'])->assertConflict()->assertJsonPath('error.code', 'invalid_state');
+        $this->command($session, 'role.assign', ['blockId' => 'roles', 'participantId' => $participant['id'], 'roleId' => 'a'])
+            ->assertConflict()->assertJsonPath('error.code', 'invalid_state');
+        $this->assertSame(['roleId' => 'b'], SessionAnswer::firstOrFail()->value);
+        $this->assertSame(2, SessionAnswer::firstOrFail()->revision);
+        $this->submit($session, 'roles', ['roleId' => null])->assertOk()->assertJsonPath('session.ownAnswers.0.value.roleId', null);
+        $this->assertSame(3, SessionAnswer::firstOrFail()->revision);
+        $this->assertDatabaseCount('session_answers', 1);
+    }
+
     public function test_roles_capacity_release_assignment_and_failed_switch_preserve_prior_claim(): void
     {
         $session = $this->start();
+        $this->execute($session, 'role.reveal.next', ['blockId' => 'roles']);
+        $this->execute($session, 'role.reveal.next', ['blockId' => 'roles']);
         $first = $this->join($session);
         $this->submit($session, 'roles', ['roleId' => 'a'])->assertOk();
         $this->identity((string) Str::uuid());
@@ -374,6 +407,7 @@ final class InteractiveRuntimeTest extends TestCase
         $document['stages'][0]['blocks'][6]['config']['capacities'] = ['0' => 1, '1' => 1];
         $lesson = $this->postJson('/api/studio/lessons', ['document' => $document])->assertCreated()->json('lesson');
         $session = $this->postJson('/api/studio/lessons/'.$lesson['id'].'/sessions', ['expectedRevision' => $lesson['revision']])->assertCreated()->json('session');
+        $this->execute($session, 'role.reveal.next', ['blockId' => 'roles']);
         $this->join($session);
         $this->submit($session, 'roles', ['roleId' => '0'])->assertOk();
         $this->identity((string) Str::uuid());

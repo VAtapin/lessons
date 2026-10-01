@@ -27,7 +27,7 @@ class TeachingSession extends Model
             'started_at' => 'immutable_datetime', 'finished_at' => 'immutable_datetime',
             'details_purged_at' => 'immutable_datetime', 'public_access_closed_at' => 'immutable_datetime',
             'visited_stage_ids' => 'array', 'final_aggregates' => 'array',
-            'presenter_is_owner' => 'boolean', 'presenter_epoch' => 'integer',
+            'presenter_is_owner' => 'boolean', 'presenter_epoch' => 'integer', 'join_projection' => 'boolean',
         ];
     }
 

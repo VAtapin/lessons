@@ -71,6 +71,7 @@ final class HistoryTest extends TestCase
         $this->postJson('/api/participation/'.$session['id'].'/answers', ['stageId' => 'first', 'blockId' => 'choice', 'value' => ['optionId' => 'a']])->assertOk();
         $this->historyCommand($session, 'block.open', ['blockId' => 'free']);
         $this->postJson('/api/participation/'.$session['id'].'/answers', ['stageId' => 'first', 'blockId' => 'free', 'value' => ['text' => 'Private free answer']])->assertOk();
+        $this->historyCommand($session, 'role.reveal.next', ['blockId' => 'roles']);
         foreach ([['roles', ['roleId' => 'a']], ['signals', ['ready' => true, 'question' => true]]] as [$block, $value]) {
             $this->postJson('/api/participation/'.$session['id'].'/answers', ['stageId' => 'first', 'blockId' => $block, 'value' => $value])->assertOk();
         }

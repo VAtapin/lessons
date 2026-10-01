@@ -120,6 +120,7 @@ final class CollaborationTest extends TestCase
         $this->grantCommand($session, 'block.open', ['blockId' => 'free'], 0)->assertConflict();
         $this->owner();
         $session = $this->runtimeCommand($session, 'block.open', ['blockId' => 'free'], 0)->assertOk()->json('session');
+        $session = $this->runtimeCommand($session, 'role.reveal.next', ['blockId' => 'roles'], 0)->assertOk()->json('session');
         $participant = $this->historyParticipant($session);
         $this->postJson('/api/participation/'.$session['id'].'/answers', ['stageId' => 'first', 'blockId' => 'free', 'value' => ['text' => 'Private original']])->assertOk();
         $answerId = $this->getJson('/api/conduct/sessions/'.$session['id'])->assertOk()->json('session.answers.0.id');

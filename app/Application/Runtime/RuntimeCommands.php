@@ -69,6 +69,8 @@ final class RuntimeCommands
                 $session->status = 'finished';
                 $session->wave_id = null;
                 $session->wave_expires_at = null;
+                $session->join_projection = false;
+                $session->message = null;
                 break;
             case 'stage':
                 if (! in_array($payload['stageId'], array_column($document->stages, 'id'), true)) {
@@ -99,6 +101,13 @@ final class RuntimeCommands
             case 'message.clear':
                 $session->message = null;
                 break;
+            case 'join.show':
+            case 'join.hide':
+                if ($session->mode !== 'lesson') {
+                    throw new ApiProblem('invalid_state', 409);
+                }
+                $session->join_projection = $action === 'join.show';
+                break;
             case 'wave':
                 $session->wave_id = (string) Str::uuid();
                 $session->wave_expires_at = $now->addSeconds(config('lessons.runtime.wave_seconds'));
@@ -110,7 +119,7 @@ final class RuntimeCommands
     {
         $required = match ($action) {
             'stage' => ['stageId'], 'timer.start' => ['seconds'], 'message.set' => ['text'],
-            'begin', 'pause', 'resume', 'finish', 'timer.pause', 'timer.resume', 'timer.clear', 'message.clear', 'wave' => [],
+            'begin', 'pause', 'resume', 'finish', 'timer.pause', 'timer.resume', 'timer.clear', 'message.clear', 'wave', 'join.show', 'join.hide' => [],
             default => throw new ApiProblem('invalid_action', 422),
         };
         $keys = array_keys($payload);

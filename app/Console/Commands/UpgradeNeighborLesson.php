@@ -10,14 +10,14 @@ use RuntimeException;
 
 final class UpgradeNeighborLesson extends Command
 {
-    protected $signature = 'lessons:upgrade-neighbor';
+    protected $signature = 'lessons:upgrade-neighbor {--revision=v3 : Reviewed target revision (v2 or v3)}';
 
     protected $description = 'Add the reviewed OLD workflow release and repin its exact source receipt without changing existing copies or classes';
 
     public function handle(NeighborUpgradeInstaller $installer): int
     {
         try {
-            $result = $installer->install();
+            $result = $installer->install((string) $this->option('revision'));
         } catch (RuntimeException $error) {
             $this->error($error->getMessage());
 

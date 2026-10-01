@@ -26,6 +26,14 @@ const block = () => ({ id: 'path', type: 'core.sequence', config: { allowRepeat:
 const answer = { value: { itemIds: ['helped', 'approached', 'saw'] }, grade: null, status: 'submitted' };
 const render = block => renderToString(createSSRApp(component, { block, answer, interactive: true, conducting: true, messages }));
 
+test('signal distribution preserves authored labels instead of replacing lesson words', async () => {
+    const signals = { id: 'signals', type: 'core.signals', config: {}, content: { readyLabel: 'Готов ✦', questionLabel: 'Есть вопрос' }, runtime: { status: 'open', summary: { totalAnswers: 1, ready: 1, question: 0 } } };
+    const html = await renderToString(createSSRApp((await import(voice)).default, { block: signals, messages: { class_voice: 'Голос класса', ready: 'Generic ready', question_signal: 'Generic question' } }));
+    assert.match(html, /Готов ✦<\/span><strong>1<\/strong>/);
+    assert.match(html, /Есть вопрос<\/span><strong>0<\/strong>/);
+    assert.doesNotMatch(html, /Generic ready|Generic question/);
+});
+
 test('a saved wrong road remains learner-selected without expected positions before joint review', async () => {
     const html = await render(block());
     assert.doesNotMatch(html, /sequence-expected/);
@@ -58,7 +66,7 @@ test('a graded choice shows anonymous class votes while its correct answer remai
 
 test('role choices show live distribution using role labels and hide the empty class voice', async () => {
     const roles = { id: 'roles', type: 'core.roles', content: { question: 'Choose a role', roles: [{ roleId: 'a', text: 'Traveler <one>' }, { roleId: 'b', text: 'Samaritan' }] }, config: {},
-        runtime: { status: 'open', summary: { totalAnswers: 1, counts: [{ optionId: 'a', count: 0 }, { optionId: 'b', count: 1 }] } } };
+        runtime: { status: 'open', mode: 'lesson', presentation: { revealedRoleIds: ['a', 'b'] }, summary: { totalAnswers: 1, counts: [{ optionId: 'a', count: 0 }, { optionId: 'b', count: 1 }] } } };
     const html = await renderToString(createSSRApp(component, { block: roles, interactive: true, conducting: true, messages: { class_voice: 'Class voice' } }));
     assert.match(html, /Class voice · 1/);
     assert.match(html, /Traveler &lt;one&gt;<\/span><strong>0<\/strong>/);
@@ -66,4 +74,51 @@ test('role choices show live distribution using role labels and hide the empty c
     roles.runtime.summary.totalAnswers = 0;
     const empty = await renderToString(createSSRApp(component, { block: roles, interactive: true, conducting: true, messages: { class_voice: 'Class voice' } }));
     assert.doesNotMatch(empty, /class="class-voice"/);
+});
+
+test('classroom role buttons and class votes expose only roles revealed by the presenter', async () => {
+    const roles = { id: 'roles', type: 'core.roles', content: { question: 'Choose a role', roles: [{ roleId: 'a', text: 'Traveler' }, { roleId: 'b', text: 'Hidden Samaritan' }] }, config: {},
+        runtime: { status: 'open', mode: 'lesson', presentation: { revealedRoleIds: ['a'] }, summary: { totalAnswers: 1, counts: [{ optionId: 'b', count: 1 }] } } };
+    const html = await renderToString(createSSRApp(component, { block: roles, interactive: true, conducting: true, messages: { class_voice: 'Class voice' } }));
+    assert.match(html, /Traveler/);
+    assert.doesNotMatch(html, /Hidden Samaritan/);
+    assert.equal((html.match(/class="role-card/g) ?? []).length, 1);
+    roles.runtime.presentation.revealedRoleIds = [];
+    const reset = await renderToString(createSSRApp(component, { block: roles, interactive: true, conducting: true, messages: { class_voice: 'Class voice' } }));
+    assert.doesNotMatch(reset, /Traveler|Hidden Samaritan/);
+    assert.doesNotMatch(reset, /class="role-card/);
+});
+
+test('authoring preview and private rehearsal retain all reusable role choices', async () => {
+    for (const runtime of [undefined, { status: 'open', mode: 'rehearsal', presentation: { revealedRoleIds: [] } }]) {
+        const roles = { id: 'roles', type: 'core.roles', content: { roles: [{ roleId: 'a', text: 'Traveler' }, { roleId: 'b', text: 'Samaritan' }] }, config: {}, runtime };
+        const html = await renderToString(createSSRApp(component, { block: roles, interactive: true, conducting: !!runtime, messages }));
+        assert.match(html, /Traveler/);
+        assert.match(html, /Samaritan/);
+        assert.equal((html.match(/class="role-card/g) ?? []).length, 2);
+    }
+});
+
+test('shared projector road retains the left passive pool and right saved shared order without answer actions', async () => {
+    const path = block();
+    path.runtime.presentation = { itemIds: ['helped', 'saw'] };
+    const html = await renderToString(createSSRApp(component, { block: path, conducting: true, messages }));
+    assert.ok(html.indexOf('class="sequence-pool"') < html.indexOf('class="sequence-road-panel"'));
+    assert.match(html, /class="sequence-tile sequence-tile-used"/);
+    assert.doesNotMatch(html, /<button/);
+    const road = html.slice(html.indexOf('<ol'), html.indexOf('</ol>'));
+    assert.ok(road.indexOf('Helped') < road.indexOf('Saw'));
+    assert.doesNotMatch(road, /Approached/);
+});
+
+test('conducting free response renders one native text field with length counter; authoring keeps multiline preview', async () => {
+    const free = { id: 'free', type: 'core.free-response', content: { question: 'What would you do?' }, config: { maxLength: 120 }, runtime: { status: 'open' } };
+    const props = { block: free, interactive: true, answer: { value: { text: '😀Help' }, grade: null, status: 'submitted' }, messages: { your_answer: 'Your answer', answer_placeholder: 'Type an answer' } };
+    const html = await renderToString(createSSRApp(component, { ...props, conducting: true }));
+    assert.match(html, /class="free-response-input" type="text" required maxlength="120" placeholder="Type an answer" value="😀Help"/);
+    assert.match(html, /<small>5 \/ 120<\/small>/);
+    assert.doesNotMatch(html, /<textarea/);
+    const preview = await renderToString(createSSRApp(component, { ...props, conducting: false }));
+    assert.match(preview, /<textarea required rows="4" maxlength="120"/);
+    assert.doesNotMatch(preview, /free-response-input/);
 });

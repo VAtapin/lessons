@@ -10,14 +10,21 @@ final class LibraryMetadata
 {
     public function parse(array $data): array
     {
-        return Validator::make($data, [
+        $validated = Validator::make($data, [
             'title' => ['required', 'string', 'max:200'],
             'tags' => ['present', 'array', 'list', 'max:20'],
             'tags.*' => ['required', 'string', 'max:50', 'distinct:strict'],
-            'author' => ['required', 'string', 'max:500'],
-            'source' => ['required', 'string', 'max:2000'],
-            'rightsBasis' => ['required', 'in:self_created,permission,public_domain,licensed,ai_generated'],
-            'usageRights' => ['required', 'string', 'max:2000'],
+            'author' => ['sometimes', 'nullable', 'string', 'max:500'],
+            'source' => ['sometimes', 'nullable', 'string', 'max:2000'],
+            'rightsBasis' => ['sometimes', 'in:unspecified,self_created,permission,public_domain,licensed,ai_generated'],
+            'usageRights' => ['sometimes', 'nullable', 'string', 'max:2000'],
         ])->validate();
+
+        foreach (['author', 'source', 'usageRights'] as $field) {
+            $validated[$field] = $validated[$field] ?? '';
+        }
+        $validated['rightsBasis'] = $validated['rightsBasis'] ?? 'unspecified';
+
+        return $validated;
     }
 }

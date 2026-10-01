@@ -44,6 +44,20 @@ final class TemplateLibraryTest extends TestCase
         $this->assertDatabaseCount('block_template_versions', 1);
     }
 
+    public function test_template_creation_needs_only_title_and_tags_without_invented_attribution(): void
+    {
+        $lesson = $this->createLesson();
+        $template = $this->postJson('/api/studio/templates', [
+            'title' => 'My teaching block', 'tags' => [], 'lessonId' => $lesson['id'],
+            'expectedLessonRevision' => 1, 'blockId' => 'Choice',
+        ])->assertCreated()->json('template');
+        $this->assertSame('', $template['author']);
+        $this->assertSame('', $template['source']);
+        $this->assertSame('', $template['usageRights']);
+        $this->assertSame('unspecified', $template['rightsBasis']);
+        $this->assertSame($lesson['document']['stages'][0]['blocks'][0], $template['versions'][0]['block']);
+    }
+
     public function test_two_insertions_are_independent_and_usage_changes_only_after_saving(): void
     {
         [$lesson, $template] = $this->create();
@@ -174,7 +188,7 @@ final class TemplateLibraryTest extends TestCase
     {
         [, $template] = $this->create();
         $this->putJson('/api/studio/templates/'.$template['id'], array_replace($this->updatePayload($template), ['expectedRevision' => 2]))->assertConflict();
-        foreach ([['author' => ''], ['source' => ''], ['usageRights' => ''], ['rightsBasis' => 'unknown'], ['tags' => ['duplicate', 'duplicate']], ['tags' => [str_repeat('a', 51)]], ['title' => str_repeat('a', 201)]] as $invalid) {
+        foreach ([['author' => str_repeat('a', 501)], ['source' => str_repeat('a', 2001)], ['usageRights' => str_repeat('a', 2001)], ['rightsBasis' => 'unknown'], ['tags' => ['duplicate', 'duplicate']], ['tags' => [str_repeat('a', 51)]], ['title' => str_repeat('a', 201)]] as $invalid) {
             $this->putJson('/api/studio/templates/'.$template['id'], array_replace($this->updatePayload($template), $invalid))->assertUnprocessable();
         }
         $bad = $template['versions'][0]['block'];

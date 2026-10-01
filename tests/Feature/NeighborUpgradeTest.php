@@ -68,7 +68,7 @@ final class NeighborUpgradeTest extends TestCase
         $sessionBefore = TeachingSession::findOrFail($copy['session']['id'])->getAttributes();
         $entry->update(['status' => 'hidden', 'approved_by' => 'existing-reviewer']);
         $approval = $entry->only(['status', 'approved_by', 'approved_at', 'metadata', 'slug']);
-        $this->artisan('lessons:upgrade-neighbor')->expectsOutput('Upgraded: kto-moi-blizhnii')->assertSuccessful();
+        $this->artisan('lessons:upgrade-neighbor', ['--revision' => 'v2'])->expectsOutput('Upgraded: kto-moi-blizhnii')->assertSuccessful();
         $upgraded = $entry->fresh();
         $version = $upgraded->version;
         $this->assertNotSame($original['id'], $version->id);
@@ -80,7 +80,7 @@ final class NeighborUpgradeTest extends TestCase
         $this->assertSame(2, $version->material->revision);
         $this->assertDatabaseCount('catalog_entries', 1);
         $versionBefore = $version->getAttributes();
-        $this->artisan('lessons:upgrade-neighbor')->expectsOutput('Already upgraded: kto-moi-blizhnii')->assertSuccessful();
+        $this->artisan('lessons:upgrade-neighbor', ['--revision' => 'v2'])->expectsOutput('Already upgraded: kto-moi-blizhnii')->assertSuccessful();
         $this->assertSame($versionBefore, $version->fresh()->getAttributes());
         $this->assertSame(2, LessonVersion::where('lesson_material_id', $version->lesson_material_id)->count());
         $this->assertSame('hidden', $entry->fresh()->status);

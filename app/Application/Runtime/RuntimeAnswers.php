@@ -24,7 +24,8 @@ final class RuntimeAnswers
     /** Caller holds the TeachingSession row lock for the entire write. */
     public function submit(TeachingSession $session, SessionParticipant $participant, BlockInstance $block, array $value): SessionAnswer
     {
-        if ($this->blocks->state($session, $block)['status'] !== 'open') {
+        $state = $this->blocks->state($session, $block);
+        if ($state['status'] !== 'open') {
             throw new ApiProblem('invalid_state', 409);
         }
         try {
@@ -37,10 +38,14 @@ final class RuntimeAnswers
         if ($answer !== null && $this->value($answer) === $value) {
             return $answer;
         }
-        if ($answer !== null && ! in_array($block->type, ['core.roles', 'core.signals'], true) && ! $block->config['allowRepeat']) {
+        if ($answer !== null && ! in_array($block->type, ['core.roles', 'core.signals', 'core.presentation'], true) && ! $block->config['allowRepeat']) {
             throw new ApiProblem('answer_locked', 409);
         }
         if ($block->type === 'core.roles' && $value['roleId'] !== null) {
+            // Reveal controls new classroom choices; resetting the board keeps existing claims.
+            if ($session->mode === 'lesson' && ! in_array($value['roleId'], $state['presentation']['revealedRoleIds'] ?? [], true)) {
+                throw new ApiProblem('invalid_state', 409);
+            }
             foreach ($this->blocks->availability($session, $block) as $role) {
                 if ($role['roleId'] === $value['roleId'] && $role['used'] >= $role['capacity']) {
                     throw new ApiProblem('role_full', 409);
@@ -55,6 +60,7 @@ final class RuntimeAnswers
         $answer->revision++;
         $answer->value = $value;
         $point = match ($block->type) {
+            'core.presentation' => 0,
             'core.signals' => (int) $value['ready'], 'core.roles' => (int) ($value['roleId'] !== null),
             'core.single-choice', 'core.multiple-choice', 'core.matching' => (int) ($this->blocks->interactive($block)->grade($block, $value) === true),
             default => 1,

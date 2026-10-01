@@ -19,7 +19,8 @@ final class LessonMaterial extends Model
 
     protected function casts(): array
     {
-        return ['revision' => 'integer', 'favorite' => 'boolean', 'archived' => 'boolean'];
+        return ['revision' => 'integer', 'favorite' => 'boolean', 'archived' => 'boolean',
+            'archived_at' => 'immutable_datetime', 'purged_at' => 'immutable_datetime'];
     }
 
     public function currentVersion(): BelongsTo

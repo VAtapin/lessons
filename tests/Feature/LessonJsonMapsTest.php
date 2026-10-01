@@ -49,6 +49,10 @@ final class LessonJsonMapsTest extends TestCase
         $this->assertMap($wire->session->publicStage->blocks[0]->config->capacities, $ids);
         $this->assertObjectNotHasProperty('teacherNotes', $wire->session->publicStage->blocks[0]);
         $session = $sessionResponse->json('session');
+        $session = $this->postJson('/api/studio/sessions/'.$session['id'].'/commands', [
+            'commandId' => (string) Str::uuid(), 'expectedRevision' => $session['revision'],
+            'action' => 'role.reveal.next', 'payload' => ['blockId' => 'roles'],
+        ])->assertOk()->json('session');
         $projection = $this->getJson('/api/projection/'.basename($session['projectorUrl']))->assertOk();
         $this->assertMap(json_decode($projection->getContent())->session->stage->blocks[0]->config->capacities, $ids);
         $this->assertStringNotContainsString('Private roles note', $projection->getContent());

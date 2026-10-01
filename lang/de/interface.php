@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'any_filter' => 'Alle',
+    'sign_in' => 'Anmelden',
+    'my_workspace' => 'Mein Bereich',
+
     'active_sessions_title' => 'Sie haben aktive Unterrichtssitzungen',
     'active_sessions_hint' => 'Kehren Sie zum geöffneten Leitungspult zurück oder beginnen Sie eine separate neue Sitzung.',
     'start_new_session' => 'Neue Unterrichtssitzung beginnen',

@@ -120,6 +120,8 @@ final class RuntimeConcurrencyTest extends TestCase
 
     public function test_two_participants_compete_for_last_role_slot_with_one_winner_and_preserved_answers(): void
     {
+        $session = $this->runtime->teacher($this->owner, $this->sessionId);
+        $this->runtime->command($this->owner, $this->sessionId, (string) Str::uuid(), $session['revision'], 'role.reveal.next', ['blockId' => 'roles']);
         $this->runtime->answer($this->sessionId, $this->participants[2], 'first', 'roles',
             ['stageId' => 'first', 'blockId' => 'roles', 'value' => ['roleId' => 'a']]);
         $before = $this->answers();

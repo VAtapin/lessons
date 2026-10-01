@@ -3,6 +3,7 @@ import { nextTick, ref, watch } from 'vue';
 import { acceptProjection } from './runtime';
 import { api, ApiError, errorMessage, poll } from './api';
 import StageRenderer from './StageRenderer.vue';
+import FinishedLesson from './FinishedLesson.vue';
 import RuntimeStatus from './RuntimeStatus.vue';
 import type { AnswerValue, Messages, PublicState } from './types';
 import { canAnswerPublicSession } from './public-session';
@@ -42,8 +43,9 @@ async function answer(blockId: string, value: AnswerValue) {
 </script>
 <template>
     <div :class="['public-session', 'public-lesson-app', 'conducting-app', mode]">
-        <div class="public-lesson-status">
+        <div v-if="session?.status !== 'finished'" class="public-lesson-status">
             <span class="public-lesson-mode">{{ mode === 'student' ? messages.student_screen : messages.shared_screen }}</span>
+            <strong v-if="session" class="public-lesson-stage-title">{{ session.stage.content.title }}</strong>
             <span v-if="mode === 'student' && typeof session?.kindnessPoints === 'number'" class="public-lesson-points" role="status" :aria-label="messages.kindness_points"><span aria-hidden="true">✦</span> {{ session.kindnessPoints }}</span>
             <span :class="['public-lesson-connection', { disconnected: !connected }]" role="status"><span aria-hidden="true">●</span> {{ connected ? messages.connected : messages.reconnecting }}</span>
             <RuntimeStatus v-if="session" :state="session" :messages="messages" :hide-status="session.status === 'running'" />
@@ -52,7 +54,8 @@ async function answer(blockId: string, value: AnswerValue) {
         <p v-if="error" role="alert" class="error-banner public-lesson-notice">{{ error }}</p>
         <div ref="canvas" class="public-lesson-canvas">
             <p v-if="!session && !accessLost" class="public-lesson-loading" role="status">{{ messages.loading }}</p>
-            <StageRenderer v-if="session" :key="session.currentStageId" :stage="session.stage" :messages="messages" :focus="true" :interactive="mode === 'student'" :answers="session.ownAnswers" :prepared="session.status === 'prepared'" :busy="mode !== 'student' || !connected || busy || !['prepared', 'running'].includes(session.status)" @answer="answer" />
+            <FinishedLesson v-if="session?.status === 'finished'" :block="session.closing" :messages="messages" :return-url="`/${session.locale}/catalog`" />
+            <StageRenderer v-else-if="session" :key="session.currentStageId" :stage="session.stage" :messages="messages" :focus="true" :interactive="mode === 'student'" :answers="session.ownAnswers" :prepared="session.status === 'prepared'" :busy="mode !== 'student' || !connected || busy || !['prepared', 'running'].includes(session.status)" @answer="answer" />
         </div>
     </div>
 </template>

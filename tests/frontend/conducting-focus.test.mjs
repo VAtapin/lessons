@@ -70,3 +70,83 @@ test('ordinary publication and boards for other sources keep the free-response r
         assert.equal(display[0].runtime.results.published[0].text, 'Ordinary reply');
     }
 });
+
+test('a road takes the whole scene and keeps its actual illustration as a backdrop', () => {
+    const illustration = image('road');
+    const sequence = { id: 'order', type: 'core.sequence', content: { text: 'Original instructions' }, config: {} };
+    const original = stage([illustration, sequence]);
+    const focused = focusStageBlocks(original);
+    assert.equal(focused.journey, true);
+    assert.equal(focused.split, false);
+    assert.equal(focused.illustration, illustration);
+    assert.deepEqual(focused.copy, [sequence]);
+    assert.deepEqual(original.blocks, [illustration, sequence]);
+});
+
+test('public school scenes retain the complete source material and discussion directions', () => {
+    const scene = { id: 'scene', type: 'core.presentation', config: { kind: 'scene' }, content: { title: 'Original school title', text: 'Original situation' } };
+    const discussion = { id: 'discussion', type: 'core.presentation', config: { kind: 'discussion' }, content: { text: 'Exact body', modes: [{ modeId: 'help', label: 'Original label', text: 'Original question' }] } };
+    const answer = { id: 'words', type: 'core.free-response', config: {}, content: { question: 'Original input question' } };
+    const original = stage([image('school'), scene, discussion, answer]);
+    const focused = focusStageBlocks(original);
+    assert.equal(focused.scenario, true);
+    assert.equal(focused.sceneHeading, true);
+    assert.deepEqual(focused.copy, [scene, discussion, answer]);
+    assert.equal(focused.copy[1], discussion);
+});
+
+test('summary uses the whole scene and reserves closing content for the finished screen', () => {
+    const summary = { id: 'summary', type: 'core.presentation', config: { kind: 'summary' }, content: { title: 'Original summary', text: 'Original lead' } };
+    const closing = { id: 'closing', type: 'core.presentation', config: { kind: 'closing' }, content: { title: 'Original closing', text: 'Original thanks' } };
+    const original = stage([image('summary'), summary, closing]);
+    const focused = focusStageBlocks(original);
+    assert.equal(focused.summary, true);
+    assert.equal(focused.split, false);
+    assert.equal(focused.sceneHeading, true);
+    assert.deepEqual(focused.copy, [summary]);
+    assert.equal(original.blocks[2], closing);
+});
+
+test('the released scene controls illustration side without removing content or changing stored blocks', () => {
+    for (const imageSide of ['left', 'right']) {
+        const scene = { id: 'scene', type: 'core.presentation', config: { kind: 'scene', scene: 'scenario', imageSide }, content: { title: 'Original title' } };
+        const answer = { id: 'answer', type: 'core.free-response', config: {}, content: { question: 'Original question' } };
+        const original = stage([image('scene-image'), scene, answer]);
+        const focused = focusStageBlocks(original);
+        assert.equal(focused.mediaFirst, imageSide === 'left');
+        assert.equal(focused.sceneVariant, 'scenario');
+        assert.deepEqual(focused.copy, [scene, answer]);
+        assert.equal(original.blocks[1], scene);
+    }
+});
+
+test('only verbatim repeated scene copy is printed once while distinct pedagogical wording and answer widgets survive', () => {
+    const scene = { id: 'scene', type: 'core.presentation', config: { kind: 'scene' }, content: { title: 'Original title', text: 'Exact question' } };
+    const question = { id: 'answer', type: 'core.free-response', config: {}, content: { question: 'Exact question', label: 'Answer label' } };
+    const discussion = { id: 'discussion', type: 'core.presentation', config: { kind: 'discussion' }, content: { text: 'Exact question', modes: [{ modeId: 'help', text: 'A different prompt' }] } };
+    const distinct = { id: 'different', type: 'core.free-response', config: {}, content: { question: 'A different question' } };
+    const original = stage([scene, question, discussion, distinct]);
+    const before = structuredClone(original);
+    const focused = focusStageBlocks(original);
+    assert.equal(focused.copy[0], scene);
+    assert.equal(focused.copy[1].id, question.id);
+    assert.equal(focused.copy[1].content.question, '');
+    assert.equal(focused.copy[1].content.label, 'Answer label');
+    assert.equal(focused.copy[2].content.text, '');
+    assert.equal(focused.copy[2].content.modes[0].text, 'A different prompt');
+    assert.equal(focused.copy[3], distinct);
+    assert.deepEqual(original, before);
+});
+
+test('role actions receive the exact scene labels without synthesizing or modifying source content', () => {
+    const content = { title: 'Original role scene', label: 'Original roles heading', subtitle: 'Original invitation', actionLabel: 'Original next action', resetLabel: 'Original reset', restartLabel: 'Original restart', resetText: 'Original reset prompt' };
+    const scene = { id: 'scene', type: 'core.presentation', config: { kind: 'scene', scene: 'story' }, content };
+    const roles = { id: 'roles', type: 'core.roles', config: {}, content: { roles: [{ roleId: 'first', text: 'Original role' }] } };
+    const original = stage([scene, roles]);
+    const focused = focusStageBlocks(original);
+    assert.equal(focused.sceneLabels, content);
+    assert.equal(focused.sceneActionLabel, content.actionLabel);
+    assert.equal(focused.copy[1], roles);
+    assert.equal(original.blocks[0].content, content);
+    assert.equal(focusStageBlocks(stage([roles])).sceneLabels, undefined);
+});

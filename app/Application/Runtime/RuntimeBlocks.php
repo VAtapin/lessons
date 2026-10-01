@@ -129,7 +129,7 @@ final class RuntimeBlocks
                 continue;
             }
             $state = $this->readState($block, $snapshot);
-            $runtime = ['status' => $state['status'], 'attemptNo' => 1];
+            $runtime = ['status' => $state['status'], 'attemptNo' => 1, 'mode' => $session->mode];
             if (isset($state['presentation'])) {
                 $runtime['presentation'] = $state['presentation'];
             }
@@ -137,6 +137,7 @@ final class RuntimeBlocks
                 $presentation = $state['presentation'] ?? [];
                 if ($block->config['kind'] === 'reveal' && ! ($presentation['visible'] ?? false)) {
                     $view['blocks'][$index]['content']['text'] = '';
+                    unset($view['blocks'][$index]['content']['quote'], $view['blocks'][$index]['content']['source']);
                 }
                 if ($block->config['kind'] === 'response-board' && $detailsAvailable) {
                     $runtime['board'] = SessionAnswer::query()->where('teaching_session_id', $session->id)

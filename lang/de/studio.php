@@ -1,6 +1,12 @@
 <?php
 
 return [
+    'show_qr_on_screen' => 'QR-Code auf der Leinwand zeigen',
+    'hide_qr_on_screen' => 'QR-Code ausblenden',
+    'scan_qr' => 'QR-Code mit der Kamera scannen',
+    'stage_plan_hint' => 'Hinweis für die Lehrkraft',
+    'lesson_finished_thanks' => 'Vielen Dank fürs Mitmachen!',
+
     'kindness_points' => 'Strahlen der Güte',
     'workspace' => 'Unterrichtswerkstatt',
     'my_materials' => 'Meine Materialien',
@@ -9,6 +15,15 @@ return [
     'lesson_deleted' => 'Im Papierkorb',
     'lesson_trash_empty' => 'Der Papierkorb ist leer',
     'lesson_trash_hint' => 'Hier finden Sie gelöschte Lektionskopien. Sie können sie wiederherstellen. Unterricht und Verlauf bleiben erhalten.',
+    'lesson_deleted_at' => 'Gelöscht am',
+    'empty_trash' => 'Papierkorb leeren',
+    'purge_permanently' => 'Endgültig löschen',
+    'lesson_purge_confirm' => 'Die aufgeführten Kopien endgültig löschen? Sie können nicht wiederhergestellt werden. Unterrichtssitzungen und Verlauf bleiben erhalten.',
+    'trash_batch_hint' => 'Nur die aufgeführten Kopien werden gelöscht, höchstens 100 auf einmal. Anzahl:',
+    'lesson_purged' => 'Die Kopien wurden endgültig gelöscht.',
+    'finish_remove_session' => 'Beenden und entfernen',
+    'finish_remove_confirm' => 'Den Unterricht für alle Teilnehmenden beenden und aus den aktiven Sitzungen entfernen? Er kann nicht fortgesetzt werden. Der Verlauf bleibt erhalten.',
+    'confirm_finish_session' => 'Unterricht beenden',
     'lesson_delete_confirm' => 'Diese Lektionskopie in den Papierkorb verschieben? Sie können sie wiederherstellen. Bereits begonnener Unterricht läuft weiter und sein Verlauf bleibt erhalten.',
     'lesson_move_to_trash' => 'In den Papierkorb verschieben',
     'lesson_removed' => 'Die Lektionskopie wurde in den Papierkorb verschoben.',
@@ -219,7 +234,7 @@ return [
     'error_invalid_metadata' => 'Prüfen Sie die erforderlichen Angaben, Feldlängen und Stichwörter.',
     'media_mutual_help' => 'Gegenseitige Hilfe von Kindern — integrierte Illustration',
     'refresh_media' => 'Bilderliste aktualisieren',
-    'save_metadata_before_version' => 'Speichern Sie die geänderten Angaben zuerst. Die neue Version verwendet die gespeicherten Angaben zu Quelle und Rechten.',
+    'save_metadata_before_version' => 'Speichern Sie zuerst den geänderten Titel und die Schlagwörter.',
     'error_media_storage_failed' => 'Die Datei konnte nicht gespeichert werden. Bild und Kontingent wurden nicht geändert; wiederholen Sie den Upload.',
     'discard_library_edits' => 'Ungespeicherte Änderungen verwerfen',
     'unsaved_library_edits' => 'Ungespeicherte Änderungen vorhanden. Speichern oder verwerfen Sie diese ausdrücklich, bevor Sie Inhalt, Version oder Archivstatus wechseln.',

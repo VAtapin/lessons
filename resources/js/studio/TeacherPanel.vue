@@ -13,6 +13,7 @@ import { liveAnswer, reviewAndPublish } from './live-answer';
 import LessonDocumentation from './LessonDocumentation.vue';
 import { isInteractive, valueText } from './interactive';
 import StageRenderer from './StageRenderer.vue';
+import FinishedLesson from './FinishedLesson.vue';
 import RuntimeStatus from './RuntimeStatus.vue';
 import RuntimeTimer from './RuntimeTimer.vue';
 import StudioIcon from './StudioIcon.vue';
@@ -83,6 +84,7 @@ const index = computed(() => session.value?.document.stages.findIndex(item => it
 const stageAnswers = computed(() => activeStageAnswers(session.value?.answers ?? [], stage.value));
 const joinUrl = computed(() => localInterfaceUrl(session.value?.joinUrl, props.locale, location.origin));
 const projectorUrl = computed(() => scope === 'grant' ? `/${props.locale}/conduct/${props.sessionId}/projector` : localInterfaceUrl(session.value?.projectorUrl, props.locale, location.origin));
+const displayState = computed(() => session.value ? { ...session.value, joinProjection: session.value.joinProjectionVisible && joinUrl.value ? { code: session.value.joinCode ?? '', url: joinUrl.value } : null } : undefined);
 const answeredParticipants = computed(() => countAnsweredParticipants(stageAnswers.value));
 const dismissedAnswers = ref(new Set<string>());
 const noticedId = ref<number>();
@@ -130,7 +132,7 @@ watch(() => stage.value?.id, () => { seconds.value = stage.value?.config.duratio
 watch(joinUrl, async url => {
     qr.value = '';
     if (!url) return;
-    try { const data = await QRCode.toDataURL(url, { width: 160, margin: 2, color: { dark: '#492d19', light: '#fffaf0' } }); if (url === joinUrl.value) qr.value = data; }
+    try { const data = await QRCode.toDataURL(url, { width: 768, margin: 3, color: { dark: '#492d19', light: '#fffaf0' } }); if (url === joinUrl.value) qr.value = data; }
     catch { error.value = props.messages.error_qr ?? ''; }
 });
 try {
@@ -262,9 +264,9 @@ function finish() { confirmFinish.value = true; }
             <p v-if="detachError" class="info-banner" role="status">{{ messages.detach_failed }} <button :disabled="detachDisabled" @click="detach(true)">{{ messages.detach_tab }}</button></p>
         </div>
         <template v-if="session && stage">
+            <RuntimeStatus v-if="displayState && !compact" :state="displayState" :messages="messages" :presenter="!detached" :disabled="presentDisabled" hide-timer hide-status @clear-message="send('message.clear')" @hide-join="send('join.hide')" />
             <main v-if="!compact" class="conducting-canvas" :inert="panelOpen !== null ? true : undefined" :aria-label="messages.shared_screen">
-                <RuntimeStatus :state="session" :messages="messages" hide-timer hide-status />
-                <StageRenderer :key="stage.id" :stage="session.publicStage" :messages="messages" :presenter="!detached" :busy="presentDisabled" focus @command="send" />
+                <FinishedLesson v-if="session.status === 'finished'" :block="session.closing" :messages="messages" :return-url="returnUrl" /><StageRenderer v-else :key="stage.id" :stage="session.publicStage" :messages="messages" :presenter="!detached" :busy="presentDisabled" focus @command="send" />
                 <LiveAnswerCard v-if="freshAnswer && !detached && !panelOpen && actor?.capabilities.includes('moderate') && session.status !== 'finished'" :key="freshAnswer.id" :answer="freshAnswer" :name="session.participants.find(participant => participant.id === freshAnswer?.participantId)?.name ?? ''" :messages="messages" :disabled="moderationDisabled" :submit-command="send" @publish="publishFreshAnswer" @dismiss="dismissAnswer" @edit="openPanel('answers', $event)" @command="send" />
             </main>
             <button v-if="panelOpen" class="focus-backdrop" tabindex="-1" :aria-label="messages.focus_close_panel" @click="closePanel"></button>
@@ -282,7 +284,7 @@ function finish() { confirmFinish.value = true; }
                     <details v-if="session.mode !== 'rehearsal'" :open="session.status === 'prepared'"><summary>{{ messages.join_code }} <strong class="join-code">{{ session.joinCode }}</strong> · {{ messages.show_qr }}</summary><img v-if="qr" :src="qr" :alt="messages.qr_alt" width="160" height="160" /><a :href="joinUrl" target="_blank" rel="noopener">{{ messages.student_join }} ↗</a></details>
                     <div v-if="session.mode !== 'rehearsal'" class="join-copy-row"><input ref="joinField" :aria-label="messages.student_join" :value="joinUrl" readonly @click="($event.target as HTMLInputElement).select()" /><button type="button" @click="copyJoinLink">{{ messages[copied ? 'copied_link' : 'copy_link'] }}</button></div>
                     <div v-else class="rehearsal-links"><span class="status-pill">{{ messages.rehearsal }}</span><a :href="`/${locale}/rehearsal/${session.id}/student`" target="_blank" rel="noopener">{{ messages.student_screen }} ↗</a><a :href="`/${locale}/rehearsal/${session.id}/projector`" target="_blank" rel="noopener">{{ messages.shared_screen }} ↗</a></div>
-                    <a v-if="session.mode !== 'rehearsal'" :href="projectorUrl" target="_blank" rel="noopener">{{ messages.open_projector }} ↗</a>
+                    <div v-if="session.mode !== 'rehearsal'" class="join-screen-actions"><button type="button" :disabled="presentDisabled" @click="send(session.joinProjectionVisible ? 'join.hide' : 'join.show')">{{ messages[session.joinProjectionVisible ? 'hide_qr_on_screen' : 'show_qr_on_screen'] }}</button><a class="button-link projector-launch" :href="projectorUrl" target="_blank" rel="noopener"><StudioIcon name="screen" />{{ messages.shared_screen }} ↗</a></div>
                 </section>
 
 
@@ -303,7 +305,7 @@ function finish() { confirmFinish.value = true; }
             <aside v-if="panelOpen === 'finish'" class="focus-drawer focus-detail" role="dialog" aria-modal="true" :aria-label="messages.finish_session" @keydown="trapPanel"><div class="focus-panel-heading"><h2>{{ messages.finish_session }}</h2><button id="focus-panel-close" :aria-label="messages.focus_close_panel" @click="confirmFinish = false; closePanel()"><StudioIcon name="close" /></button></div><p>{{ messages.finish_confirm }}</p><div class="action-row"><button class="primary" :disabled="disabled || !actor?.capabilities.includes('finish')" @click="confirmFinish = false; closePanel(); send('finish')">{{ messages.finish_yes }}</button><button @click="confirmFinish = false; closePanel()">{{ messages.cancel }}</button></div></aside><aside v-if="panelOpen === 'answers' || panelOpen === 'notes'" class="focus-drawer focus-detail" role="dialog" aria-modal="true" :aria-label="panelOpen === 'answers' ? messages.student_answers : messages.notes" @keydown="trapPanel">
                 <div class="focus-panel-heading"><h2>{{ panelOpen === 'answers' ? messages.student_answers : messages.notes }}</h2><button id="focus-panel-close" :aria-label="messages.focus_close_panel" @click="closePanel"><StudioIcon name="close" /></button></div>
                 <TeacherAnswers v-if="panelOpen === 'answers'" :session="session" :stage="stage" :answers="stageAnswers" :messages="messages" :disabled="moderationDisabled" @command="send" />
-                <div v-else class="teacher-private"><LessonDocumentation v-if="session.document.documentation" :documentation="session.document.documentation" :messages="messages" /><details v-for="block in stage.blocks.filter(block => block.teacherNotes)" :key="block.id" class="studio-card teacher-notes" open><summary>{{ messages.block_notes }} · {{ block.content.title ?? block.content.question ?? messages.text }}</summary><p class="plain-text">{{ block.teacherNotes }}</p></details><details v-if="stage.content.notes" class="studio-card teacher-notes" open><summary>{{ messages.notes }}</summary><p class="plain-text">{{ stage.content.notes }}</p></details><details v-if="solutions.length" class="studio-card teacher-solutions"><summary>{{ messages.correct_answers }}</summary><dl><div v-for="solution in solutions" :key="solution.blockId"><dt>{{ solution.question }}</dt><dd>{{ solution.answer }}</dd></div></dl></details></div>
+                <div v-else class="teacher-private"><details v-if="stage.content.notes" class="studio-card teacher-notes stage-plan-hints" open><summary>{{ messages.stage_plan_hint }} · {{ stage.content.title }}</summary><p class="plain-text">{{ stage.content.notes }}</p></details><LessonDocumentation v-if="session.document.documentation" :documentation="session.document.documentation" :messages="messages" /><details v-for="block in stage.blocks.filter(block => block.teacherNotes)" :key="block.id" class="studio-card teacher-notes" open><summary>{{ messages.block_notes }} · {{ block.content.title ?? block.content.question ?? messages.text }}</summary><p class="plain-text">{{ block.teacherNotes }}</p></details><details v-if="solutions.length" class="studio-card teacher-solutions"><summary>{{ messages.correct_answers }}</summary><dl><div v-for="solution in solutions" :key="solution.blockId"><dt>{{ solution.question }}</dt><dd>{{ solution.answer }}</dd></div></dl></details></div>
             </aside>
             <aside v-if="panelOpen === 'leave'" class="focus-drawer focus-detail" role="dialog" aria-modal="true" :aria-label="messages.leave_lesson_title" @keydown="trapPanel"><div class="focus-panel-heading"><h2>{{ messages.leave_lesson_title }}</h2><button id="focus-panel-close" :aria-label="messages.focus_close_panel" @click="closePanel"><StudioIcon name="close" /></button></div><p class="plain-text">{{ messages.leave_lesson_hint }}</p><p v-if="session.joinCode">{{ messages.join_code }}: <strong>{{ session.joinCode }}</strong></p><div class="action-row"><button class="primary" @click="closePanel">{{ messages.stay_in_lesson }}</button><button :disabled="busy" @click="leaveLesson">{{ messages.leave_keep_session }}</button></div></aside>
             <nav class="focus-dock" :aria-label="messages.teacher_panel" :inert="panelOpen !== null ? true : undefined">
@@ -314,7 +316,7 @@ function finish() { confirmFinish.value = true; }
                     <button v-if="index < session.document.stages.length - 1" class="primary focus-next" :disabled="presentDisabled" :aria-label="messages.next" :title="messages.next" @click="navigate(session.document.stages[index + 1]!.id)">→</button><button v-else-if="actor?.capabilities.includes('finish') && session.status !== 'finished'" class="primary focus-next" :disabled="disabled" @click="finish(); openPanel('finish', $event)">{{ messages.finish_session }}</button>
                     <button v-if="session.status === 'prepared'" class="primary focus-begin" :disabled="presentDisabled" @click="send('begin')">{{ messages.begin_session }}</button>
                     <RuntimeTimer v-if="session.timer.status !== 'idle'" :state="session" :messages="messages" />
-                    <button v-if="!compact" class="focus-control-toggle" :aria-label="messages.teacher_panel" :title="messages.teacher_panel" :aria-expanded="toolsOpen" aria-controls="embedded-tools" @click="openPanel('tools', $event)"><StudioIcon name="menu" /><span>{{ messages.focus_controls }}</span></button>
+                    <button class="focus-plan-toggle" :title="messages.stage_plan_hint" @click="openPanel('notes', $event)">☀ <span>{{ messages.stage_plan_hint }}</span></button><a v-if="session.mode === 'lesson'" class="button-link focus-projector" :href="projectorUrl" target="_blank" rel="noopener" :title="messages.shared_screen"><StudioIcon name="screen" /><span>{{ messages.shared_screen }}</span></a><button v-if="!compact" class="focus-control-toggle" :aria-label="messages.teacher_panel" :title="messages.teacher_panel" :aria-expanded="toolsOpen" aria-controls="embedded-tools" @click="openPanel('tools', $event)"><StudioIcon name="menu" /><span>{{ messages.focus_controls }}</span></button>
                     <button v-else class="focus-answers-toggle" :aria-label="messages.student_answers" :title="messages.student_answers" aria-haspopup="dialog" @click="openPanel('answers', $event)"><StudioIcon name="question" /><span>{{ stageAnswers.length }}</span></button>
                 </template>
                 <span v-else class="focus-detached-stage">{{ index + 1 }} / {{ session.document.stages.length }} · {{ stage.content.title }}</span>

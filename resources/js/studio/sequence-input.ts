@@ -5,6 +5,10 @@ export function shuffledItems(ids: string[], random = Math.random): string[] {
         const other = Math.floor(random() * (index + 1));
         [result[index], result[other]] = [result[other]!, result[index]!];
     }
+    // Fisher-Yates can return the authored order; a task must still start mixed.
+    if (result.length > 1 && result.every((id, index) => id === ids[index])) {
+        [result[0], result[1]] = [result[1]!, result[0]!];
+    }
     return result;
 }
 export function appendSequenceItem(selected: string[], itemId: string, available: string[]): string[] {

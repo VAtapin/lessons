@@ -36,6 +36,7 @@ final readonly class PresentationCommands
             $this->requireType($block, 'core.roles');
             $ids = InteractiveShape::ids($block, 'roles', 'roleId');
             $shown = $presentation['revealedRoleIds'] ?? [];
+            $presentation['roleReset'] = $action === 'role.reveal.reset' || count($shown) >= count($ids);
             $presentation['revealedRoleIds'] = $action === 'role.reveal.reset' || count($shown) >= count($ids) ? [] : array_slice($ids, 0, count($shown) + 1);
         } elseif (str_starts_with($action, 'sequence.')) {
             $this->requireType($block, 'core.sequence');

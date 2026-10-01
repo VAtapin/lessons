@@ -12,6 +12,9 @@ const url = source => `data:text/javascript;base64,${Buffer.from(source).toStrin
 const compile = source => ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } }).outputText;
 const helper = file => url(compile(fs.readFileSync(new URL('../../resources/js/studio/' + file, import.meta.url), 'utf8')));
 const stub = url('export default { render: () => null };');
+const finishedDescriptor = parse(fs.readFileSync(new URL('../../resources/js/studio/FinishedLesson.vue', import.meta.url), 'utf8')).descriptor;
+const finished = url(compile(compileScript(finishedDescriptor, { id: 'finished-lesson-test', inlineTemplate: true }).content)
+    .replace(/from ['"]vue['"]/g, `from ${JSON.stringify(pathToFileURL(require.resolve('vue')).href)}`));
 // Inject a server DTO as the initial state; polling and nested renderers are outside this page-status test.
 const source = fs.readFileSync(new URL('../../resources/js/studio/PublicSession.vue', import.meta.url), 'utf8').replace('const session = ref<PublicState>();', 'const session = ref<PublicState>(globalThis.__publicCounterFixture);').replace(/import ['"]\.\.\/\.\.\/css\/public-lesson-app.css['"];?/, '');
 const { descriptor } = parse(source);
@@ -21,10 +24,11 @@ const compiled = compile(script.content).replace(/from ['"]vue['"]/g, `from ${JS
     .replace(/from ['"]\.\/public-session['"]/, `from ${JSON.stringify(helper('public-session.ts'))}`)
     .replace(/from ['"]\.\/api['"]/, `from ${JSON.stringify(url('export const poll=()=>{}; export const api=()=>{}; export class ApiError extends Error{}; export const errorMessage=()=>"Error";'))}`)
     .replace(/from ['"]\.\/StageRenderer.vue['"]/, `from ${JSON.stringify(stub)}`)
+    .replace(/from ['"]\.\/FinishedLesson.vue['"]/, `from ${JSON.stringify(finished)}`)
     .replace(/from ['"]\.\/RuntimeStatus.vue['"]/, `from ${JSON.stringify(stub)}`);
 const component = (await import(url(compiled))).default;
-async function render(mode, points) {
-    globalThis.__publicCounterFixture = { id: 'real-session', status: 'running', currentStageId: 'stage', kindnessPoints: points, stage: { id: 'stage', blocks: [], content: { title: 'Stage' }, config: {} } };
+async function render(mode, points, state = {}) {
+    globalThis.__publicCounterFixture = { id: 'real-session', status: 'running', locale: 'de', currentStageId: 'stage', kindnessPoints: points, stage: { id: 'stage', blocks: [], content: { title: 'Stage' }, config: {} }, ...state };
     try { return await renderToString(createSSRApp(component, { mode, messages: { kindness_points: 'Kindness points' } })); }
     finally { delete globalThis.__publicCounterFixture; }
 }
@@ -33,6 +37,7 @@ test('student status renders both earned and zero actual kindnessPoints from the
     for (const points of [0, 4]) {
         const html = await render('student', points);
         assert.match(html, /public-lesson-points/);
+        assert.match(html, /class="public-lesson-stage-title">Stage<\/strong>/);
         assert.match(html, new RegExp(`✦<\\/span> ${points}<\\/span>`));
     }
 });
@@ -40,4 +45,16 @@ test('student status renders both earned and zero actual kindnessPoints from the
 test('projector and responses without an actual personal score never synthesize a counter', async () => {
     assert.doesNotMatch(await render('projector', 4), /public-lesson-points/);
     assert.doesNotMatch(await render('student', undefined), /public-lesson-points/);
+});
+
+test('finished student and projector render the released closing content and locale return link', async () => {
+    const closing = { content: { title: 'Original closing title', eyebrow: 'Original ending', text: 'Exact released thanks', quote: 'Exact released quotation', source: 'Original source' } };
+    for (const mode of ['student', 'projector']) {
+        const html = await render(mode, undefined, { status: 'finished', closing });
+        assert.match(html, /class="finished-lesson"/);
+        assert.doesNotMatch(html, /class="public-lesson-status"/);
+        for (const text of Object.values(closing.content)) assert.ok(html.includes(text));
+        assert.match(html, /href="\/de\/catalog"/);
+        assert.doesNotMatch(await render(mode, undefined, { status: 'running', closing }), /class="finished-lesson"/);
+    }
 });

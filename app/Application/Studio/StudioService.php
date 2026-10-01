@@ -12,6 +12,7 @@ use App\Domain\Lessons\Audience;
 use App\Domain\Lessons\BlockRegistry;
 use App\Domain\Lessons\LessonDocument;
 use App\Domain\Lessons\ValidationException;
+use App\Models\CatalogEntry;
 use App\Models\LessonMaterial;
 use App\Models\LessonSaveReceipt;
 use App\Models\LessonVersion;
@@ -33,7 +34,7 @@ final readonly class StudioService
 
     public function listOwned(string $ownerKey, bool $archived = false): array
     {
-        return LessonMaterial::query()->where('owner_key', $ownerKey)->where('archived', $archived)->with('currentVersion')
+        return LessonMaterial::query()->where('owner_key', $ownerKey)->whereNull('purged_at')->where('archived', $archived)->with('currentVersion')
             ->orderByDesc('updated_at')->orderBy('id')->get()->map(fn (LessonMaterial $material): array => $this->summary($material))->all();
     }
 
@@ -43,11 +44,38 @@ final readonly class StudioService
             $material = $this->lockOwned($ownerKey, $lessonId, $expectedRevision, includeArchived: true);
             if ($material->archived !== $archived) {
                 $material->archived = $archived;
+                $material->archived_at = $archived ? CarbonImmutable::now('UTC') : null;
                 $material->revision++;
                 $material->save();
             }
 
             return $this->summary($material->load('currentVersion'));
+        });
+    }
+
+    /** Permanent removal from authoring; immutable snapshots remain available to existing classes. */
+    public function purge(string $ownerKey, array $lessons): array
+    {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $lessons): array {
+            $materials = [];
+            foreach ($lessons as $lesson) {
+                $material = $this->lockOwned($ownerKey, $lesson['id'], $lesson['expectedRevision'], includeArchived: true);
+                if (! $material->archived) {
+                    throw new ApiProblem('invalid_state', 409);
+                }
+                if (CatalogEntry::query()->whereIn('lesson_version_id', $material->versions()->select('id'))->exists()) {
+                    throw new ApiProblem('catalog_source_protected', 409);
+                }
+                $materials[] = $material;
+            }
+            $now = CarbonImmutable::now('UTC');
+            foreach ($materials as $material) {
+                $material->purged_at = $now;
+                $material->revision++;
+                $material->save();
+            }
+
+            return ['deletedIds' => array_map(fn (LessonMaterial $material): string => $material->id, $materials)];
         });
     }
 
@@ -58,7 +86,8 @@ final readonly class StudioService
 
         return ['id' => $material->id, 'title' => $document['content'][$document['defaultLocale']]['title'],
             'revision' => $material->revision, 'status' => $version->status, 'favorite' => (bool) $material->favorite,
-            'archived' => (bool) $material->archived, 'updatedAt' => $material->updated_at->toIso8601String()];
+            'archived' => (bool) $material->archived, 'archivedAt' => $material->archived_at?->utc()->toISOString(),
+            'updatedAt' => $material->updated_at->toIso8601String()];
     }
 
     public function create(string $ownerKey, array $payload): LessonMaterial
@@ -198,6 +227,9 @@ final readonly class StudioService
     {
         $material = LessonMaterial::query()->where('owner_key', $ownerKey)->lockForUpdate()->find($lessonId)
             ?? throw new ApiProblem('not_found', 404);
+        if ($material->purged_at !== null) {
+            throw new ApiProblem('not_found', 404);
+        }
         if (! $includeArchived) {
             $this->assertAvailable($material);
         }
@@ -210,6 +242,9 @@ final readonly class StudioService
 
     private function assertAvailable(LessonMaterial $material): void
     {
+        if ($material->purged_at !== null) {
+            throw new ApiProblem('not_found', 404);
+        }
         if ($material->archived) {
             throw new ApiProblem('lesson_in_trash', 409);
         }
