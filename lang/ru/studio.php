@@ -6,6 +6,8 @@ return [
     'scan_qr' => 'Наведите камеру',
     'stage_plan_hint' => 'Подсказка ведущему',
     'lesson_finished_thanks' => 'Спасибо за участие!',
+    'lesson_close_window' => 'Закрыть окно',
+    'lesson_close_window_hint' => 'Если окно не закрылось, закройте эту вкладку браузера.',
 
     'kindness_points' => 'Лучи добра',
     'workspace' => 'Мастерская занятий',

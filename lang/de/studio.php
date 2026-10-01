@@ -6,6 +6,8 @@ return [
     'scan_qr' => 'QR-Code mit der Kamera scannen',
     'stage_plan_hint' => 'Hinweis für die Lehrkraft',
     'lesson_finished_thanks' => 'Vielen Dank fürs Mitmachen!',
+    'lesson_close_window' => 'Fenster schließen',
+    'lesson_close_window_hint' => 'Falls das Fenster offen bleibt, schließen Sie diesen Browser-Tab.',
 
     'kindness_points' => 'Strahlen der Güte',
     'workspace' => 'Unterrichtswerkstatt',

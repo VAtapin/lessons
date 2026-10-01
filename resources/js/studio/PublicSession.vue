@@ -54,7 +54,7 @@ async function answer(blockId: string, value: AnswerValue) {
         <p v-if="error" role="alert" class="error-banner public-lesson-notice">{{ error }}</p>
         <div ref="canvas" class="public-lesson-canvas">
             <p v-if="!session && !accessLost" class="public-lesson-loading" role="status">{{ messages.loading }}</p>
-            <FinishedLesson v-if="session?.status === 'finished'" :block="session.closing" :messages="messages" :return-url="`/${session.locale}/catalog`" />
+            <FinishedLesson v-if="session?.status === 'finished'" :block="session.closing" :messages="messages" :return-url="`/${session.locale}/catalog`" :student="mode === 'student'" />
             <StageRenderer v-else-if="session" :key="session.currentStageId" :stage="session.stage" :messages="messages" :focus="true" :interactive="mode === 'student'" :answers="session.ownAnswers" :prepared="session.status === 'prepared'" :busy="mode !== 'student' || !connected || busy || !['prepared', 'running'].includes(session.status)" @answer="answer" />
         </div>
     </div>
