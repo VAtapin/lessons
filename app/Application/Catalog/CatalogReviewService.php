@@ -23,6 +23,9 @@ final readonly class CatalogReviewService
 
         return OwnerMutation::transaction([$owner, TaxonomyService::MUTEX], function () use ($owner, $lessonId, $versionId, $expectedRevision, $slug, $metadata): array {
             $material = LessonMaterial::query()->where('owner_key', $owner)->lockForUpdate()->find($lessonId) ?? throw new ApiProblem('not_found', 404);
+            if ($material->archived) {
+                throw new ApiProblem('lesson_in_trash', 409);
+            }
             if ($material->revision !== $expectedRevision) {
                 throw new ApiProblem('revision_conflict', 409);
             }

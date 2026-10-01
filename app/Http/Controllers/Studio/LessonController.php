@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Studio;
 
+use App\Application\Shared\ApiProblem;
 use App\Application\Shared\GuestIdentity;
 use App\Application\Studio\EditorProblem;
 use App\Application\Studio\EditorSaveRequest;
@@ -19,7 +20,22 @@ final class LessonController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        return response()->json(['lessons' => $this->studio->listOwned($this->identity->key($request))]);
+        $request->validate(['archived' => ['sometimes', 'boolean']]);
+
+        return response()->json(['lessons' => $this->studio->listOwned($this->identity->key($request), $request->boolean('archived'))]);
+    }
+
+    public function archive(Request $request, string $id): JsonResponse
+    {
+        $owner = $this->identity->key($request);
+        $data = $request->all();
+        $keys = array_keys($data);
+        sort($keys);
+        if ($keys !== ['archived', 'expectedRevision'] || ! is_bool($data['archived']) || ! is_int($data['expectedRevision']) || $data['expectedRevision'] < 1) {
+            throw new ApiProblem('invalid_action', 422);
+        }
+
+        return response()->json(['lesson' => $this->studio->archive($owner, $id, $data['expectedRevision'], $data['archived'])]);
     }
 
     public function store(Request $request): JsonResponse

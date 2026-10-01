@@ -9,5 +9,6 @@ Route::prefix('api/studio/lessons')->group(function () {
     Route::get('/{id}', [LessonController::class, 'show']);
     Route::put('/{id}', [LessonController::class, 'update']);
     Route::post('/{id}/release', [LessonController::class, 'release']);
+    Route::post('/{id}/archive', [LessonController::class, 'archive'])->middleware('throttle:studio-write');
     Route::post('/{id}/preview', [LessonController::class, 'preview'])->middleware('throttle:studio-write');
 });

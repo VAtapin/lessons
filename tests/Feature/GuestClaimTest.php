@@ -80,6 +80,28 @@ final class GuestClaimTest extends TestCase
         $this->getJson('/api/account/guest-claim')->assertJsonPath('claim.status', 'claimed')->assertJsonPath('claim.available', false);
     }
 
+    public function test_claim_includes_trashed_lessons_and_account_can_restore_the_same_copy(): void
+    {
+        [$lesson] = $this->workspace();
+        $revision = LessonMaterial::findOrFail($lesson['id'])->revision;
+        $this->postJson('/api/studio/lessons/'.$lesson['id'].'/archive', ['expectedRevision' => $revision, 'archived' => true])->assertOk();
+        $versions = LessonVersion::query()->get()->toArray();
+        $user = $this->login();
+        $this->getJson('/api/account/guest-claim')->assertOk()->assertJsonPath('claim.counts.lessons', 1);
+        $this->postJson('/api/account/guest-claim')->assertOk();
+        $this->getJson('/api/studio/lessons')->assertOk()->assertExactJson(['lessons' => []]);
+        $this->getJson('/api/studio/lessons?archived=1')->assertOk()->assertJsonPath('lessons.0.id', $lesson['id']);
+        $this->assertSame($user->owner_key, LessonMaterial::findOrFail($lesson['id'])->owner_key);
+        $this->postJson('/api/studio/lessons/'.$lesson['id'].'/archive', ['expectedRevision' => $revision + 1, 'archived' => false])->assertOk();
+        $this->getJson('/api/studio/lessons/'.$lesson['id'])->assertOk();
+        $this->assertSame($versions, LessonVersion::query()->get()->toArray());
+        $this->postJson('/api/auth/logout')->assertNoContent();
+        $this->withSession(['studio_owner_key' => $this->guest, AuthService::GUEST_PROOF => $this->guest]);
+        Auth::guard('web')->forgetUser();
+        $this->postJson('/api/studio/lessons/'.$lesson['id'].'/archive', ['expectedRevision' => $revision + 2, 'archived' => true])->assertNotFound();
+        $this->assertFalse(LessonMaterial::findOrFail($lesson['id'])->archived);
+    }
+
     public function test_quota_overflow_and_counter_mismatch_roll_back_claim_and_preserve_guest_access(): void
     {
         [$lesson] = $this->workspace();

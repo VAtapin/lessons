@@ -35,7 +35,7 @@ final readonly class HistoryService
         $scope = hash('sha256', json_encode([$owner, $status, $mode], JSON_THROW_ON_ERROR));
         $account = User::query()->where('owner_key', $owner)->exists();
         $now = CarbonImmutable::now('UTC');
-        $query = TeachingSession::query()->where('owner_key', $owner)->with('version')->select('teaching_sessions.*')->addSelect([
+        $query = TeachingSession::query()->where('owner_key', $owner)->with('version.material')->select('teaching_sessions.*')->addSelect([
             'participant_count' => SessionParticipant::query()->selectRaw('count(*)')->whereColumn('teaching_session_id', 'teaching_sessions.id'),
         ])->orderByDesc('created_at')->orderByDesc('id');
         // SQL removes expired rows; the one-day calendar-year margin is checked
@@ -198,6 +198,7 @@ final readonly class HistoryService
         $available = $this->policy->detailsAvailable($session);
 
         return ['id' => $session->id, 'lessonId' => $session->version->lesson_material_id, 'lessonVersionId' => $session->lesson_version_id,
+            'lessonArchived' => (bool) $session->version->material->archived,
             'title' => $session->version->document['content'][$session->locale]['title'], 'locale' => $session->locale,
             'mode' => $session->mode, 'status' => $session->status, 'revision' => $session->revision,
             'createdAt' => $session->created_at->utc()->toISOString(), 'startedAt' => $session->started_at?->utc()->toISOString(),

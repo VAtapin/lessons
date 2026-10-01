@@ -32,7 +32,7 @@ final class PlatformCheck extends Command
                 'catalog_terms' => ['id', 'kind', 'key', 'labels', 'active', 'revision'],
                 'common_templates' => ['id', 'block_template_record_id', 'labels', 'visible'],
                 'operation_runs' => ['id', 'operation', 'status', 'dry_run', 'counts', 'error_code', 'started_at', 'finished_at'],
-                'lesson_materials' => ['id', 'owner_key', 'revision', 'current_version_id', 'favorite'],
+                'lesson_materials' => ['id', 'owner_key', 'revision', 'current_version_id', 'favorite', 'archived'],
                 'lesson_versions' => ['id', 'lesson_material_id', 'status', 'document', 'purpose', 'editor_draft'],
                 'lesson_documentations' => ['lesson_version_id', 'payload', 'source_hash', 'created_at'],
                 'lesson_save_receipts' => ['id', 'lesson_material_id', 'save_id', 'fingerprint', 'applied_revision', 'applied_version_id', 'created_at'],
@@ -54,6 +54,9 @@ final class PlatformCheck extends Command
                 'block_template_versions' => ['id', 'block_template_record_id', 'version_no', 'block', 'locales', 'default_locale', 'attribution'],
             ];
             foreach ($tables as $table => $columns) {
+                if (! $connection->getSchemaBuilder()->hasColumns($table, $columns)) {
+                    throw new RuntimeException;
+                }
                 $connection->table($table)->select($columns)->limit(0)->get();
             }
 

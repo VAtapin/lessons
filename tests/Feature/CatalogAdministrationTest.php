@@ -81,6 +81,17 @@ final class CatalogAdministrationTest extends TestCase
         $this->assertDatabaseCount('users', 2);
     }
 
+    public function test_trashed_personal_copy_cannot_create_a_new_publication_submission(): void
+    {
+        $author = $this->user();
+        $body = $this->proposal($author);
+        $this->identity($author);
+        $this->postJson('/api/studio/lessons/'.$body['lessonId'].'/archive', ['expectedRevision' => $body['expectedLessonRevision'], 'archived' => true])->assertOk();
+        $this->postJson('/api/studio/catalog/submissions', $body)->assertConflict()->assertJsonPath('error.code', 'lesson_in_trash');
+        $this->assertDatabaseCount('catalog_submissions', 0);
+        $this->assertDatabaseCount('catalog_entries', 0);
+    }
+
     public function test_owner_submits_exact_release_and_admin_approval_does_not_follow_new_author_draft(): void
     {
         $author = $this->user();

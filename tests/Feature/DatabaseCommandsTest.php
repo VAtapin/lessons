@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -47,6 +48,22 @@ final class DatabaseCommandsTest extends TestCase
             'media_owner_quotas', 'media_assets', 'media_versions', 'block_template_records', 'block_template_versions', 'teacher_invitations', 'teacher_grants', 'catalog_submissions', 'common_templates', 'operation_runs'] as $table) {
             $this->assertDatabaseCount($table, 0);
         }
+    }
+
+    public function test_schema_check_refuses_a_missing_archive_column_without_writing_data(): void
+    {
+        $this->withEmptyDatabase(function (): void {
+            // Use an isolated SQLite schema so MariaDB DDL never escapes the test transaction.
+            foreach (glob(database_path('migrations/*.php')) as $path) {
+                (require $path)->up();
+            }
+            $this->artisan('lessons:check')->assertSuccessful();
+            Schema::table('lesson_materials', function (Blueprint $table): void {
+                $table->dropColumn('archived');
+            });
+            $this->artisan('lessons:check')->expectsOutputToContain('Platform database check failed.')->assertFailed();
+            $this->assertDatabaseCount('lesson_materials', 0);
+        });
     }
 
     public function test_empty_preflight_also_refuses_a_view_without_tables(): void

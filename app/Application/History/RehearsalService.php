@@ -21,6 +21,9 @@ final readonly class RehearsalService
         return OwnerMutation::transaction([$owner], function () use ($owner, $lessonId, $revision, $locale): array {
             $material = LessonMaterial::query()->where('owner_key', $owner)->lockForUpdate()->find($lessonId)
                 ?? throw new ApiProblem('not_found', 404);
+            if ($material->archived) {
+                throw new ApiProblem('lesson_in_trash', 409);
+            }
             if ($material->revision !== $revision) {
                 throw new ApiProblem('revision_conflict', 409);
             }

@@ -39,7 +39,8 @@ final class RuntimeService
     public function startSnapshot(string $ownerKey, LessonVersion $version, ?string $locale, string $mode, bool $prepare = false): array
     {
         return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $version, $locale, $mode, $prepare): array {
-            if ($version->material->owner_key !== $ownerKey || $version->status !== 'released'
+            $this->studio->findOwned($ownerKey, $version->lesson_material_id);
+            if ($version->status !== 'released'
                 || ! in_array($mode, ['lesson', 'rehearsal'], true)
                 || $version->purpose !== ($mode === 'rehearsal' ? 'rehearsal' : 'authoring')) {
                 throw new ApiProblem('not_found', 404);

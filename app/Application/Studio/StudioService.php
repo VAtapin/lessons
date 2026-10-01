@@ -24,21 +24,41 @@ final readonly class StudioService
 
     public function findOwned(string $ownerKey, string $lessonId): LessonMaterial
     {
-        return LessonMaterial::query()->where('owner_key', $ownerKey)->with('currentVersion')->find($lessonId)
+        $material = LessonMaterial::query()->where('owner_key', $ownerKey)->with('currentVersion')->find($lessonId)
             ?? throw new ApiProblem('not_found', 404);
+        $this->assertAvailable($material);
+
+        return $material;
     }
 
-    public function listOwned(string $ownerKey): array
+    public function listOwned(string $ownerKey, bool $archived = false): array
     {
-        return LessonMaterial::query()->where('owner_key', $ownerKey)->with('currentVersion')
-            ->orderByDesc('updated_at')->orderBy('id')->get()->map(function (LessonMaterial $material): array {
-                $version = $material->currentVersion;
-                $document = $version->editor_draft ?? $version->document;
+        return LessonMaterial::query()->where('owner_key', $ownerKey)->where('archived', $archived)->with('currentVersion')
+            ->orderByDesc('updated_at')->orderBy('id')->get()->map(fn (LessonMaterial $material): array => $this->summary($material))->all();
+    }
 
-                return ['id' => $material->id, 'title' => $document['content'][$document['defaultLocale']]['title'],
-                    'revision' => $material->revision, 'status' => $version->status, 'favorite' => (bool) $material->favorite,
-                    'updatedAt' => $material->updated_at->toIso8601String()];
-            })->all();
+    public function archive(string $ownerKey, string $lessonId, int $expectedRevision, bool $archived): array
+    {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $lessonId, $expectedRevision, $archived): array {
+            $material = $this->lockOwned($ownerKey, $lessonId, $expectedRevision, includeArchived: true);
+            if ($material->archived !== $archived) {
+                $material->archived = $archived;
+                $material->revision++;
+                $material->save();
+            }
+
+            return $this->summary($material->load('currentVersion'));
+        });
+    }
+
+    private function summary(LessonMaterial $material): array
+    {
+        $version = $material->currentVersion;
+        $document = $version->editor_draft ?? $version->document;
+
+        return ['id' => $material->id, 'title' => $document['content'][$document['defaultLocale']]['title'],
+            'revision' => $material->revision, 'status' => $version->status, 'favorite' => (bool) $material->favorite,
+            'archived' => (bool) $material->archived, 'updatedAt' => $material->updated_at->toIso8601String()];
     }
 
     public function create(string $ownerKey, array $payload): LessonMaterial
@@ -174,15 +194,25 @@ final readonly class StudioService
             'appliedRevision' => $receipt->applied_revision, 'appliedVersionId' => $receipt->applied_version_id];
     }
 
-    private function lockOwned(string $ownerKey, string $lessonId, ?int $expectedRevision = null): LessonMaterial
+    private function lockOwned(string $ownerKey, string $lessonId, ?int $expectedRevision = null, bool $includeArchived = false): LessonMaterial
     {
         $material = LessonMaterial::query()->where('owner_key', $ownerKey)->lockForUpdate()->find($lessonId)
             ?? throw new ApiProblem('not_found', 404);
+        if (! $includeArchived) {
+            $this->assertAvailable($material);
+        }
         if ($expectedRevision !== null) {
             $this->checkRevision($material, $expectedRevision);
         }
 
         return $material;
+    }
+
+    private function assertAvailable(LessonMaterial $material): void
+    {
+        if ($material->archived) {
+            throw new ApiProblem('lesson_in_trash', 409);
+        }
     }
 
     private function checkRevision(LessonMaterial $material, int $revision): void
