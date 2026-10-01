@@ -11,6 +11,10 @@
     --scene-cream: #fffaf0;
     color: var(--ink);
 }
+.conducting-app.conducting-app .focus-backdrop,
+.conducting-app.conducting-app .focus-backdrop:hover:not(:disabled) {
+    background: #3d241745;
+}
 .conducting-app.conducting-app.public-session.public-lesson-app {
     width: 100%; max-width: none; height: 100dvh; min-height: 0; margin: 0;
     display: flex; flex-direction: column; overflow: hidden;

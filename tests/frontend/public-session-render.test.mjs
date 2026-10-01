@@ -54,6 +54,11 @@ test('public conducting layouts override the legacy projector width cap', () => 
     assert.match(css, /\.conducting-app\.conducting-app\.public-session\.public-lesson-app\s*\{[^}]*width:\s*100%;\s*max-width:\s*none;/);
 });
 
+test('teacher drawer backdrop remains translucent when the pointer moves over the scene', () => {
+    const css = fs.readFileSync(new URL('../../resources/css/public-lesson-app.css', import.meta.url), 'utf8');
+    assert.match(css, /\.conducting-app\.conducting-app \.focus-backdrop,\s*\.conducting-app\.conducting-app \.focus-backdrop:hover:not\(:disabled\)\s*\{\s*background: #3d241745;/);
+});
+
 test('finished student and projector render the released closing content and locale return link', async () => {
     const closing = { content: { title: 'Original closing title', eyebrow: 'Original ending', text: 'Exact released thanks', quote: 'Exact released quotation', source: 'Original source' } };
     for (const mode of ['student', 'projector']) {
