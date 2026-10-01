@@ -24,6 +24,7 @@ Route::get('/media/builtin/{versionId}', function (string $versionId, MediaCatal
 Route::prefix('{locale}')->where(['locale' => implode('|', config('lessons.ui_locales'))])->group(function () {
     Route::get('/catalog/{slug?}', [HomeController::class, 'catalog'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*');
     Route::get('/studio', [WorkspacePageController::class, 'studio']);
+    Route::get('/admin', [WorkspacePageController::class, 'administration']);
     Route::get('/library', [WorkspacePageController::class, 'library']);
     Route::get('/media', [WorkspacePageController::class, 'media']);
     Route::get('/studio/lessons/{lessonId}', [WorkspacePageController::class, 'editor']);
@@ -41,5 +42,6 @@ require __DIR__.'/templates.php';
 require __DIR__.'/account.php';
 require __DIR__.'/account-pages.php';
 require __DIR__.'/history.php';
+require __DIR__.'/admin.php';
 require __DIR__.'/catalog.php';
 require __DIR__.'/collaboration.php';

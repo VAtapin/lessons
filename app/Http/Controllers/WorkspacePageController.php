@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Application\Catalog\AdminAccess;
 use App\Application\History\HistoryService;
 use App\Application\History\RehearsalService;
 use App\Application\History\RetentionPolicy;
@@ -22,7 +23,7 @@ final class WorkspacePageController extends Controller
 
         return view('home', [
             'locale' => $locale, 'page' => $page, 'context' => $context,
-            'messages' => trans('interface'), 'studioMessages' => array_merge(trans('studio'), trans('deletion'), trans('collaboration')),
+            'messages' => trans('interface'), 'studioMessages' => array_merge(trans('studio'), trans('deletion'), trans('collaboration'), trans('admin')),
         ]);
     }
 
@@ -31,6 +32,13 @@ final class WorkspacePageController extends Controller
         $identity->key($request);
 
         return $this->page($locale, 'studio');
+    }
+
+    public function administration(Request $request, AdminAccess $access, string $locale): View
+    {
+        $access->require($request->user());
+
+        return $this->page($locale, 'admin');
     }
 
     public function library(Request $request, GuestIdentity $identity, string $locale): View

@@ -22,13 +22,13 @@ return Application::configure(basePath: dirname(__DIR__))
         // deliberate text whitespace must survive the standard form transforms.
         $authoredDocument = fn (Request $request) => $request->isMethod('POST') && $request->is('api/studio/lessons')
             || $request->isMethod('PUT') && $request->is('api/studio/lessons/*')
-            || $request->isMethod('POST') && $request->is('api/studio/lessons/*/preview');
+            || $request->isMethod('POST') && $request->is('api/studio/lessons/*/preview', 'api/studio/catalog/submissions');
         $runtimeCommand = fn (Request $request) => $request->isMethod('POST') && $request->is('api/studio/sessions/*/commands', 'api/conduct/sessions/*/commands', 'api/teacher-invitations/accept');
         $runtimeAnswer = fn (Request $request) => $request->isMethod('POST')
             && $request->is('api/participation/*/answers', 'api/studio/rehearsals/*/answers');
         $historyNotes = fn (Request $request) => $request->isMethod('PATCH') && $request->is('api/studio/sessions/*/history');
         $libraryContent = fn (Request $request) => in_array($request->method(), ['POST', 'PUT'], true)
-            && ($request->is('api/studio/templates', 'api/studio/templates/*', 'api/studio/media', 'api/studio/media/*'));
+            && ($request->is('api/studio/templates', 'api/studio/templates/*', 'api/studio/media', 'api/studio/media/*', 'api/admin/templates', 'api/admin/templates/*'));
         $authInput = fn (Request $request) => $request->is('api/auth/*', 'api/account', 'api/account/*');
         $middleware->trimStrings(except: [$authInput, $authoredDocument, $runtimeCommand, $runtimeAnswer, $historyNotes, $libraryContent]);
         $middleware->convertEmptyStringsToNull(except: [$authInput, $authoredDocument, $runtimeCommand, $runtimeAnswer, $historyNotes, $libraryContent]);

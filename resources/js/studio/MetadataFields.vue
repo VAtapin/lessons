@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { parseTags, rightsBases } from './library';
 import type { Messages, Metadata, RightsBasis } from './types';
-const props = defineProps<{ modelValue: Metadata; messages: Messages }>();
+const props = defineProps<{ modelValue: Metadata; messages: Messages; publicContext?: boolean }>();
 const emit = defineEmits<{ 'update:modelValue': [value: Metadata] }>();
 function update(key: keyof Metadata, value: string | string[]) { emit('update:modelValue', { ...props.modelValue, [key]: value }); }
 const tags = computed(() => props.modelValue.tags.join(', '));
@@ -15,6 +15,6 @@ const tags = computed(() => props.modelValue.tags.join(', '));
         <label>{{ messages.source }}<textarea :value="modelValue.source" required maxlength="2000" rows="2" @input="update('source', ($event.target as HTMLTextAreaElement).value)" /></label>
         <label>{{ messages.rights_basis }}<select :value="modelValue.rightsBasis" @change="update('rightsBasis', ($event.target as HTMLSelectElement).value as RightsBasis)"><option v-for="basis in rightsBases" :key="basis" :value="basis">{{ messages['rights_' + basis] }}</option></select></label>
         <label>{{ messages.usage_rights }}<textarea :value="modelValue.usageRights" required maxlength="2000" rows="2" @input="update('usageRights', ($event.target as HTMLTextAreaElement).value)" /></label>
-        <p class="field-hint">{{ messages.rights_hint }}</p>
+        <p class="field-hint">{{ publicContext ? messages.admin_rights_hint : messages.rights_hint }}</p>
     </div>
 </template>

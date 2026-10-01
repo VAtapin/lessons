@@ -10,6 +10,8 @@ import EditorPreview from './EditorPreview.vue';
 import { useEditorDraft } from './useEditorDraft';
 import { copyBlock, copyStage, addContentLocale, removeContentLocale, pointerSegment, blankOtherTranslations } from './editor-document';
 import TemplatePicker from './TemplatePicker.vue';
+import CommonLibrary from './CommonLibrary.vue';
+import CatalogSubmissions from './CatalogSubmissions.vue';
 import MetadataFields from './MetadataFields.vue';
 import { emptyMetadata } from './library';
 import type { Block, BlockType, EditorIssue, EditorLesson, Media, MediaResponse, Messages, TeacherState } from './types';
@@ -28,6 +30,7 @@ const notice = ref('');
 const busy = ref(true);
 const preview = ref(false);
 const pickerOpen = ref(false);
+const commonLibraryOpen = ref(false), publicationOpen = ref(false);
 const templateBlockId = ref('');
 const templateMetadata = ref(emptyMetadata());
 const templateBusy = ref(false);
@@ -99,9 +102,9 @@ function addBlock(type: BlockType) {
     activeStage.value.blocks.push(blankOtherTranslations(newBlock(type, document.value.locales, props.messages, image), contentLocale.value));
 }
 function insertTemplate(block: Block) {
-    if (!activeStage.value) return;
+    if (!activeStage.value || busy.value || save.status === 'blocked' || conflict.value) return;
     markOperation();
-    activeStage.value.blocks.push(block); pickerOpen.value = false;
+    activeStage.value.blocks.push(block); pickerOpen.value = false; commonLibraryOpen.value = false;
 }
 function prepareTemplate(blockId: string) {
     if (!actionsAllowed.value || !lesson.value) { error.value = props.messages.save_before_template; return; }
@@ -125,7 +128,9 @@ function duration(event: Event) {
 </script>
 <template>
     <div class="page-heading"><div><p class="eyebrow">{{ messages.constructor }}</p><h1>{{ document ? (document.content[contentLocale]?.title || messages.untitled_material) : messages.loading }}</h1></div><span v-if="lesson" class="status-pill">{{ messages[lesson.status] }} · {{ messages.revision }} {{ lesson.revision }}</span></div>
-    <div class="editor-library-links"><a class="button-link" :href="`/${locale}/library`" target="_blank" rel="noopener">{{ messages.block_library }} ↗</a><a class="button-link" :href="`/${locale}/media`" target="_blank" rel="noopener">{{ messages.media_library }} ↗</a><button type="button" :disabled="busy" @click="refreshMedia">{{ messages.refresh_media }}</button></div>
+    <div class="editor-library-links"><button type="button" :disabled="busy || save.status === 'blocked'" :aria-expanded="commonLibraryOpen" @click="commonLibraryOpen = !commonLibraryOpen">{{ messages.admin_editor_common }}</button><button type="button" :aria-expanded="publicationOpen" @click="publicationOpen = !publicationOpen">{{ messages.admin_publication_panel }}</button><a class="button-link" :href="`/${locale}/library`" target="_blank" rel="noopener">{{ messages.block_library }} ↗</a><a class="button-link" :href="`/${locale}/media`" target="_blank" rel="noopener">{{ messages.media_library }} ↗</a><button type="button" :disabled="busy" @click="refreshMedia">{{ messages.refresh_media }}</button></div>
+    <CatalogSubmissions v-if="publicationOpen && lesson" :locale="locale" :messages="messages" :lesson="lesson" :media="media" />
+    <CommonLibrary v-if="commonLibraryOpen && document" :locale="locale" :messages="messages" :locales="document.locales" :inert="busy || save.status === 'blocked' || conflict ? true : undefined" @insert="insertTemplate" />
     <p v-if="error" role="alert" class="error-banner">{{ error }}</p>
     <EditorSaveStatus :status="save.status" :pending="!!save.pending" :issues="save.issues" :messages="messages" @retry="persist(true)" @focus="focusIssue" />
     <div v-if="conflict" class="info-banner"><p>{{ messages.conflict_help }}</p><label class="checkbox-field"><input v-model="preview" type="checkbox" />{{ messages.preview }}</label><button :disabled="busy" @click="load">{{ messages.discard_reload }}</button></div>
@@ -148,6 +153,8 @@ function duration(event: Event) {
     </form>
     <details v-if="document && lesson" class="studio-card release-translations"><summary>{{ messages.release_languages }}</summary><label v-for="locale in lesson.readiness.readyLocales" :key="locale" class="checkbox-field"><input v-model="releaseLocales" type="checkbox" :value="locale" :disabled="locale === document.defaultLocale" />{{ locale }}</label><p v-if="!readyToRun" class="field-hint">{{ messages.ready_translation_required }}</p></details>
     <p v-if="dirty" class="field-hint">{{ messages.save_before_rehearsal }}</p>
+
+
     <TemplatePicker v-if="pickerOpen && document" :locales="document.locales" :messages="messages" @insert="insertTemplate" @close="pickerOpen = false" />
     <form v-if="templateBlockId" class="studio-card save-template-form" @submit.prevent="saveTemplate"><div class="section-heading"><h2>{{ messages.save_to_library }}</h2><button type="button" :disabled="templateBusy" @click="templateBlockId = ''">{{ messages.close }}</button></div><fieldset :disabled="templateBusy" class="editor-fields"><MetadataFields v-model="templateMetadata" :messages="messages" /><button class="primary" :disabled="templateBusy || !actionsAllowed">{{ messages.save_to_library }}</button></fieldset></form>
     <EditorPreview v-if="preview && document && lesson && activeStage" :lesson-id="lessonId" :document="document" :revision="save.revision" :stage-id="activeStage.id" :locale="contentLocale" :media="media" :blocked="save.flight || !!save.pending || conflict || save.status === 'blocked'" :messages="messages" />

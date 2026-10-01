@@ -24,10 +24,13 @@ final class PlatformCheck extends Command
 
             $connection = DB::connection();
             $tables = [
-                'users' => ['id', 'owner_key', 'ui_locale', 'email_verified_at'],
+                'users' => ['id', 'owner_key', 'ui_locale', 'email_verified_at', 'is_admin'],
                 'guest_workspace_claims' => ['source_owner_key', 'target_user_id', 'target_owner_key', 'result'],
                 'account_deletion_requests' => ['id', 'user_id', 'revision', 'status', 'requested_at', 'cancelled_at'],
-                'catalog_entries' => ['id', 'slug', 'lesson_version_id', 'metadata', 'status', 'approved_at', 'source_revision', 'source_hash'],
+                'catalog_entries' => ['id', 'slug', 'lesson_version_id', 'metadata', 'status', 'approved_at', 'source_revision', 'source_hash', 'revision'],
+                'catalog_submissions' => ['id', 'owner_key', 'lesson_version_id', 'slug', 'metadata', 'revision', 'status', 'reason', 'reviewed_by', 'reviewed_at', 'catalog_entry_id'],
+                'catalog_terms' => ['id', 'kind', 'key', 'labels', 'active', 'revision'],
+                'common_templates' => ['id', 'block_template_record_id', 'labels', 'visible'],
                 'lesson_materials' => ['id', 'owner_key', 'revision', 'current_version_id', 'favorite'],
                 'lesson_versions' => ['id', 'lesson_material_id', 'status', 'document', 'purpose', 'editor_draft'],
                 'lesson_save_receipts' => ['id', 'lesson_material_id', 'save_id', 'fingerprint', 'applied_revision', 'applied_version_id', 'created_at'],

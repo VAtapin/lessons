@@ -35,6 +35,7 @@ final class AccountIdentity
         $locale = $user->ui_locale ?? config('app.locale');
 
         return ['id' => $user->id, 'name' => $user->name, 'email' => $user->email,
+            'isAdmin' => User::query()->whereKey($user->id)->whereNotNull('email_verified_at')->where('is_admin', true)->exists(),
             'verified' => $user->hasVerifiedEmail(), 'uiLocale' => in_array($locale, $locales, true) ? $locale : $locales[0]];
     }
 }

@@ -24,7 +24,7 @@ final readonly class CatalogService
     /** Approval is an explicit trusted administrative operation, never part of personal release. */
     public function approve(LessonVersion $version, array $metadata, string $reviewer, string $slug, ?string $sourceRevision = null, ?string $sourceHash = null): CatalogEntry
     {
-        if ($reviewer === '' || strlen($reviewer) > 120 || ! preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug) || strlen($slug) > 120) {
+        if ($reviewer === '' || strlen($reviewer) > 120 || ! preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug) || strlen($slug) > 120 || in_array($slug, ['taxonomy', 'templates'], true)) {
             throw new ApiProblem('invalid_catalog_entry', 422);
         }
         $this->validatePublication($version, $metadata);
@@ -43,7 +43,8 @@ final readonly class CatalogService
         }
         foreach ($document->locales as $locale) {
             foreach (['title', 'description'] as $field) {
-                if (! is_string($metadata['translations'][$locale][$field] ?? null) || trim($metadata['translations'][$locale][$field]) === '') {
+                if (! is_string($metadata['translations'][$locale][$field] ?? null) || trim($metadata['translations'][$locale][$field]) === ''
+                    || mb_strlen($metadata['translations'][$locale][$field]) > ($field === 'title' ? 200 : 2000)) {
                     throw new ApiProblem('invalid_catalog_entry', 422);
                 }
             }

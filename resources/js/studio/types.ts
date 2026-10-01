@@ -38,7 +38,7 @@ export interface TeacherInvitationInfo { id: string; expiresAt: string; accepted
 export interface TeacherGrantInfo { id: string; displayName: string; expiresAt: string; revokedAt: string | null; isPresenter: boolean }
 export interface CollaborationState { controlEpoch: number; presenter: { kind: 'owner' | 'grant' | 'vacant'; grantId?: string; displayName?: string }; invitations?: TeacherInvitationInfo[]; grants?: TeacherGrantInfo[] }
 export interface TeacherActorResponse { session: TeacherState; actor: TeacherActorState; collaboration: CollaborationState; acknowledgedCommandId?: string; invitation?: { id: string; expiresAt: string; url: string } }
-export interface User { id: number; name: string; email: string; verified: boolean; uiLocale: string }
+export interface User { id: number; name: string; email: string; verified: boolean; uiLocale: string; isAdmin?: boolean }
 export interface Account { user: User | null; guestClaimAvailable: boolean; quota: MediaQuota }
 export interface ClaimCounts { lessons: number; templates: number; mediaAssets: number; sessions: number }
 export interface GuestClaim { claim: { available: boolean; status: 'none' | 'pending' | 'claimed'; counts: ClaimCounts; bytes: number }; quota: { usedBytes: number; limitBytes: number; afterClaimBytes: number }; verificationRequired: boolean }

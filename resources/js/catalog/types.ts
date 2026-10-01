@@ -10,3 +10,7 @@ export interface CatalogList {
     pagination: { page: number; total: number; perPage: number; lastPage: number };
 }
 export type CatalogMessages = Record<string, string>;
+export type CatalogTermKind = 'age' | 'topic' | 'audience' | 'format';
+export interface CatalogTerm {
+    id: string; kind: CatalogTermKind; key: string; label: string; active: boolean; revision: number;
+}
