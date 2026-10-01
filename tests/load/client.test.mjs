@@ -1,7 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import { Client, guardedUrl, metrics, rememberCookies } from './client.mjs';
+import { Client, guardedUrl, isStoredAnswerId, metrics, rememberCookies } from './client.mjs';
+
+test('stored answer IDs follow the integer SessionAnswer schema, not the UUID session schema', () => {
+    for (const value of [1, 90, 900, Number.MAX_SAFE_INTEGER]) assert.equal(isStoredAnswerId(value), true);
+    for (const value of [0, -1, 1.5, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1, null, undefined, '1', '7b4c695a-1eb4-45e1-ae16-1f1cde8bdcb1']) {
+        assert.equal(isStoredAnswerId(value), false);
+    }
+});
 
 test('load destination rejects production, URL credentials and redirect-like base paths', () => {
     assert.equal(guardedUrl('http://127.0.0.1:8765/').origin, 'http://127.0.0.1:8765');

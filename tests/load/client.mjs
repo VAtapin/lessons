@@ -1,6 +1,11 @@
 import http from 'node:http';
 import { performance } from 'node:perf_hooks';
 
+// SessionAnswer uses a database integer primary key; sessions/participants use UUIDs.
+export function isStoredAnswerId(value) {
+    return Number.isSafeInteger(value) && value > 0;
+}
+
 export function guardedUrl(value) {
     const url = new URL(value);
     if (url.protocol !== 'http:' || url.hostname !== '127.0.0.1' || !url.port

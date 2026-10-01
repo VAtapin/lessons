@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
-import { Client, guardedUrl, metrics } from './client.mjs';
+import { Client, guardedUrl, isStoredAnswerId, metrics } from './client.mjs';
 
 const agents = [];
 const samples = new Map();
@@ -195,7 +195,7 @@ try {
             check(state.participants.find((participant) => participant.id === student.id)?.name === student.name);
             const answers = state.answers.filter((answer) => answer.participantId === student.id);
             check(answers.length === 3 && answers.every((answer) => answer.revision === 1 && ids.has(answer.participantId)));
-            for (const answer of answers) uuid(answer.id);
+            for (const answer of answers) check(isStoredAnswerId(answer.id));
             check(answers.find((answer) => answer.blockId === 'free')?.value.text === `room-${room.index}/student-${student.studentIndex}`);
             check(answers.find((answer) => answer.blockId === 'single')?.value.optionId === (student.studentIndex % 2 ? 'b' : 'a'));
             check(answers.find((answer) => answer.blockId === 'poll')?.value.optionId === (student.studentIndex % 2 ? 'a' : 'b'));
