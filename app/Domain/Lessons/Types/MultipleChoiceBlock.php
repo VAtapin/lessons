@@ -10,6 +10,11 @@ use App\Domain\Lessons\Shape;
 
 final class MultipleChoiceBlock extends InteractiveDefinition
 {
+    public function translatedTextFields(): array
+    {
+        return $this->textFields('question', ['options']);
+    }
+
     public function id(): string
     {
         return 'core.multiple-choice';

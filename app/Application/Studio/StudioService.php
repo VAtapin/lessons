@@ -7,16 +7,19 @@ namespace App\Application\Studio;
 use App\Application\Shared\ApiProblem;
 use App\Application\Shared\MediaCatalogue;
 use App\Application\Shared\OwnerMutation;
+use App\Domain\Lessons\Audience;
 use App\Domain\Lessons\BlockRegistry;
 use App\Domain\Lessons\LessonDocument;
 use App\Domain\Lessons\ValidationException;
 use App\Models\LessonMaterial;
+use App\Models\LessonSaveReceipt;
 use App\Models\LessonVersion;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
 
 final readonly class StudioService
 {
-    public function __construct(private BlockRegistry $registry, private MediaCatalogue $media) {}
+    public function __construct(private BlockRegistry $registry, private MediaCatalogue $media, private CurrentDraftResolver $drafts) {}
 
     public function findOwned(string $ownerKey, string $lessonId): LessonMaterial
     {
@@ -29,7 +32,7 @@ final readonly class StudioService
         return LessonMaterial::query()->where('owner_key', $ownerKey)->with('currentVersion')
             ->orderByDesc('updated_at')->orderBy('id')->get()->map(function (LessonMaterial $material): array {
                 $version = $material->currentVersion;
-                $document = $version->document;
+                $document = $version->editor_draft ?? $version->document;
 
                 return ['id' => $material->id, 'title' => $document['content'][$document['defaultLocale']]['title'],
                     'revision' => $material->revision, 'status' => $version->status, 'favorite' => (bool) $material->favorite,
@@ -54,7 +57,11 @@ final readonly class StudioService
     public function save(string $ownerKey, string $lessonId, int $expectedRevision, array $payload): LessonMaterial
     {
         return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $lessonId, $expectedRevision, $payload): LessonMaterial {
-            $material = $this->lockOwned($ownerKey, $lessonId, $expectedRevision);
+            $material = $this->lockOwned($ownerKey, $lessonId);
+            if ($material->currentVersion->editor_draft !== null) {
+                throw new EditorProblem('editor_update_required', 409, lesson: $this->present($material));
+            }
+            $this->checkRevision($material, $expectedRevision);
             $document = $this->validate($payload, $ownerKey);
             $version = $material->currentVersion;
             if ($version->status === 'released') {
@@ -74,13 +81,54 @@ final readonly class StudioService
         });
     }
 
-    public function release(string $ownerKey, string $lessonId, int $expectedRevision): LessonVersion
+    public function saveEditor(string $ownerKey, string $lessonId, EditorSaveRequest $request): array
     {
-        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $lessonId, $expectedRevision): LessonVersion {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $lessonId, $request): array {
+            $material = $this->lockOwned($ownerKey, $lessonId);
+            $receipt = LessonSaveReceipt::query()->where('lesson_material_id', $lessonId)->where('save_id', $request->saveId)->first();
+            if ($receipt !== null && $receipt->created_at->greaterThan(CarbonImmutable::now('UTC')->subDays(30))) {
+                if (! hash_equals($receipt->fingerprint, $request->fingerprint)) {
+                    throw new EditorProblem('save_conflict', 409, lesson: $this->present($material));
+                }
+
+                return $this->acknowledge($material, $receipt);
+            }
+            if ($receipt !== null || $material->revision !== $request->revision) {
+                throw new EditorProblem('revision_conflict', 409, lesson: $this->present($material));
+            }
+            $draft = $this->drafts->parse($request->document, $ownerKey);
+            $working = $draft->toArray();
+            $version = $material->currentVersion;
+            $baseline = $version->document;
+            if ($draft->readiness()['readyLocales'] === $working['locales']) {
+                $baseline = $draft->readyDocument($working['locales'])->toArray();
+            }
+            if ($version->status === 'released') {
+                $version = new LessonVersion(['lesson_material_id' => $material->id, 'status' => 'draft', 'purpose' => 'authoring']);
+                $version->id = (string) Str::uuid();
+                $material->current_version_id = $version->id;
+            }
+            $baseline['id'] = $working['id'] = $version->id;
+            $version->document = $baseline;
+            $version->editor_draft = $working;
+            $version->save();
+            $material->revision++;
+            $material->save();
+            $receipt = LessonSaveReceipt::query()->create(['lesson_material_id' => $lessonId, 'save_id' => $request->saveId,
+                'fingerprint' => $request->fingerprint, 'applied_revision' => $material->revision, 'applied_version_id' => $version->id]);
+
+            return $this->acknowledge($material->load('currentVersion'), $receipt);
+        });
+    }
+
+    public function release(string $ownerKey, string $lessonId, int $expectedRevision, ?array $locales = null, ?string $selectedLocale = null): LessonVersion
+    {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $lessonId, $expectedRevision, $locales, $selectedLocale): LessonVersion {
             $material = $this->lockOwned($ownerKey, $lessonId, $expectedRevision);
             $version = $material->currentVersion;
-            $this->validate($version->document, $ownerKey);
+            $document = $this->drafts->snapshot($version, $ownerKey, $locales, $selectedLocale);
             if ($version->status === 'draft') {
+                $version->document = $document->toArray();
                 $version->status = 'released';
                 $version->save();
                 $material->revision++;
@@ -96,7 +144,7 @@ final readonly class StudioService
         $version = $material->currentVersion;
 
         return ['id' => $material->id, 'revision' => $material->revision, 'status' => $version->status, 'favorite' => (bool) $material->favorite,
-            'versionId' => $version->id, 'document' => $version->document];
+            'versionId' => $version->id, 'document' => $version->editor_draft ?? $version->document, 'readiness' => $this->drafts->working($version)->readiness()];
     }
 
     /** Copy a saved block under the same owner/revision lock used by editing. */
@@ -104,28 +152,43 @@ final readonly class StudioService
     {
         return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $lessonId, $expectedRevision, $blockId): array {
             $material = $this->lockOwned($ownerKey, $lessonId, $expectedRevision);
-            $document = $this->validate($material->currentVersion->document, $ownerKey);
-            foreach ($document->stages as $stage) {
-                foreach ($stage->blocks as $block) {
-                    if ($block->id === $blockId) {
-                        return ['block' => $block, 'locales' => $document->locales, 'defaultLocale' => $document->defaultLocale];
-                    }
-                }
-            }
 
-            throw new ApiProblem('not_found', 404);
+            return $this->drafts->block($material->currentVersion, $ownerKey, $blockId);
         });
     }
 
-    private function lockOwned(string $ownerKey, string $lessonId, int $expectedRevision): LessonMaterial
+    public function preview(string $ownerKey, string $lessonId, int $revision, array $payload, Audience $audience, string $locale, string $stageId): array
+    {
+        $material = $this->findOwned($ownerKey, $lessonId);
+        $this->checkRevision($material, $revision);
+        $draft = $this->drafts->parse($payload, $ownerKey);
+
+        return ['audience' => $audience->value, 'locale' => $locale, 'revision' => $material->revision,
+            'stage' => $this->drafts->preview($draft, $ownerKey, $audience, $locale, $stageId), 'readiness' => $draft->readiness()];
+    }
+
+    private function acknowledge(LessonMaterial $material, LessonSaveReceipt $receipt): array
+    {
+        return ['lesson' => $this->present($material), 'acknowledgedSaveId' => $receipt->save_id,
+            'appliedRevision' => $receipt->applied_revision, 'appliedVersionId' => $receipt->applied_version_id];
+    }
+
+    private function lockOwned(string $ownerKey, string $lessonId, ?int $expectedRevision = null): LessonMaterial
     {
         $material = LessonMaterial::query()->where('owner_key', $ownerKey)->lockForUpdate()->find($lessonId)
             ?? throw new ApiProblem('not_found', 404);
-        if ($material->revision !== $expectedRevision) {
-            throw new ApiProblem('revision_conflict', 409);
+        if ($expectedRevision !== null) {
+            $this->checkRevision($material, $expectedRevision);
         }
 
         return $material;
+    }
+
+    private function checkRevision(LessonMaterial $material, int $revision): void
+    {
+        if ($material->revision !== $revision) {
+            throw new ApiProblem('revision_conflict', 409);
+        }
     }
 
     private function validate(array $payload, string $ownerKey): LessonDocument

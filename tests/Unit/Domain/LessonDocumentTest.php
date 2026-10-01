@@ -29,6 +29,24 @@ final class LessonDocumentTest extends TestCase
         self::assertSame($document->toArray(), LessonDocument::fromArray($document->toArray(), BlockRegistry::core())->toArray());
     }
 
+    public function test_supported_layouts_preserve_block_order_in_storage_and_all_audience_projections(): void
+    {
+        foreach (['vertical', 'two-columns', 'material-above-task'] as $layout) {
+            $data = self::document();
+            $data['stages'][0]['config'] = ['layout' => $layout, 'durationSeconds' => 30];
+            $document = LessonDocument::fromArray($data, BlockRegistry::core());
+            self::assertSame($data['stages'][0]['config'], $document->stages[0]->config);
+            self::assertSame(['text-1', 'image-1', 'choice-1'], array_column($document->toArray()['stages'][0]['blocks'], 'id'));
+            foreach (Audience::cases() as $audience) {
+                self::assertSame(['text-1', 'image-1', 'choice-1'], array_column($document->project($audience, 'de')['stages'][0]['blocks'], 'id'));
+            }
+        }
+        self::assertSame('vertical', LessonDocument::fromArray(self::document(), BlockRegistry::core())->stages[0]->config['layout']);
+        $data['stages'][0]['config']['layout'] = 'pixel-editor';
+        $this->expectException(ValidationException::class);
+        LessonDocument::fromArray($data, BlockRegistry::core());
+    }
+
     public function test_duplicate_registration_is_rejected(): void
     {
         $registry = BlockRegistry::core();

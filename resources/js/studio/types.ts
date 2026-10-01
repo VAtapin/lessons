@@ -15,6 +15,11 @@ export interface Block {
 export interface Stage { id: string; content: Record<string, { title: string; notes?: string }>; config: { layout?: string; durationSeconds?: number }; blocks: Block[] }
 export interface LessonDocument { id: string; schemaVersion: number; defaultLocale: string; locales: string[]; content: Record<string, { title: string }>; stages: Stage[] }
 export interface Lesson { id: string; revision: number; status: 'draft' | 'released'; versionId: string; document: LessonDocument }
+export interface EditorIssue { code: string; path: string; locale?: string; stageId?: string; blockId?: string }
+export interface Readiness { defaultLocale: string; readyLocales: string[]; locales: { locale: string; status: 'draft' | 'partial' | 'ready'; issues: EditorIssue[] }[] }
+export interface EditorLesson extends Lesson { readiness: Readiness }
+export interface SaveRequest { saveId: string; expectedRevision: number; document: LessonDocument }
+export interface SaveResponse { lesson: EditorLesson; acknowledgedSaveId: string; appliedRevision: number; appliedVersionId: string }
 export interface LessonSummary { id: string; title: string; revision: number; status: 'draft' | 'released'; updatedAt: string; favorite?: boolean }
 export interface Media { assetId: string; versionId: string; url: string; labelKey?: string; title?: string; versionNo?: number; mime?: string; bytes?: number; width?: number; height?: number; archived?: boolean }
 export type BlockStatus = 'prepared' | 'open' | 'closed' | 'revealed';
@@ -34,7 +39,7 @@ export interface GuestClaim { claim: { available: boolean; status: 'none' | 'pen
 export interface AuthoringVersion { id: string; status: 'draft' | 'released'; purpose: 'authoring'; createdAt: string; current: boolean }
 export interface HistorySummary { id: string; lessonId: string; lessonVersionId: string; title: string; locale: string; mode: 'lesson' | 'rehearsal'; status: RuntimeState['status']; revision: number; createdAt: string; startedAt: string | null; finishedAt: string | null; visitedStageIds: string[] | null; detailsAvailable: boolean; detailsExpiresAt: string | null; historyExpiresAt: string | null }
 export interface HistoryAggregate { stageId: string; blockId: string; type: BlockType; schemaVersion: number; submittedCount: number; gradedCount: number; correctCount: number; incorrectCount: number; options?: { optionId: string; count: number }[]; roles?: { roleId: string; count: number }[]; signals?: { readyCount: number; questionCount: number } }
-export interface HistoryDetail extends HistorySummary { aggregates: HistoryAggregate[]; teacherNotes: string; participants: TeacherState['participants']; answers: TeacherAnswer[] }
+export interface HistoryDetail extends HistorySummary { aggregates: HistoryAggregate[]; teacherNotes: string; participants: TeacherState['participants']; answers: TeacherAnswer[]; snapshotDocument?: LessonDocument }
 export type RightsBasis = 'self_created' | 'permission' | 'public_domain' | 'licensed' | 'ai_generated';
 export interface Metadata { title: string; tags: string[]; author: string; source: string; rightsBasis: RightsBasis; usageRights: string }
 export interface Usage { lessonId?: string; lessonVersionId?: string; templateId?: string; templateVersionId?: string; title: string; status?: string; blockId?: string }

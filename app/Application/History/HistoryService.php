@@ -9,6 +9,7 @@ use App\Application\Runtime\RuntimeConflict;
 use App\Application\Runtime\RuntimeService;
 use App\Application\Shared\ApiProblem;
 use App\Application\Shared\OwnerMutation;
+use App\Application\Studio\CurrentDraftResolver;
 use App\Domain\Lessons\BlockRegistry;
 use App\Domain\Lessons\LessonDocument;
 use App\Models\LessonMaterial;
@@ -115,7 +116,8 @@ final readonly class HistoryService
                 'id' => $participant->id, 'name' => $participant->name,
                 'connected' => $participant->last_seen_at !== null && $participant->last_seen_at->greaterThanOrEqualTo(CarbonImmutable::now('UTC')->subSeconds(config('lessons.runtime.connected_seconds'))),
                 'lastSeenAt' => $participant->last_seen_at?->utc()->toISOString(),
-            ])->all() : [], 'answers' => $available ? $this->answers->teacher($session, $document) : []];
+            ])->all() : [], 'answers' => $available ? $this->answers->teacher($session, $document) : []]
+            + ($session->mode === 'rehearsal' ? ['snapshotDocument' => $session->version->document] : []);
     }
 
     public function notes(string $owner, string $id, int $revision, string $notes): array
@@ -164,7 +166,13 @@ final readonly class HistoryService
         $version = $this->material($owner, $id)->versions()->where('purpose', 'authoring')->find($versionId)
             ?? throw new ApiProblem('not_found', 404);
 
-        return ['id' => $version->id, 'status' => $version->status, 'createdAt' => $version->created_at->utc()->toISOString(), 'document' => $version->document];
+        $data = ['id' => $version->id, 'status' => $version->status, 'createdAt' => $version->created_at->utc()->toISOString(), 'document' => $version->document];
+        if ($version->editor_draft !== null) {
+            $data['editorDocument'] = $version->editor_draft;
+            $data['readiness'] = app(CurrentDraftResolver::class)->working($version)->readiness();
+        }
+
+        return $data;
     }
 
     public function again(string $owner, string $id): array

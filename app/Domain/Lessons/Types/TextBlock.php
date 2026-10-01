@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace App\Domain\Lessons\Types;
 
 use App\Domain\Lessons\BlockInstance;
-use App\Domain\Lessons\BlockType;
+use App\Domain\Lessons\EditorTextFields;
 use App\Domain\Lessons\Shape;
 use App\Domain\Lessons\ValidationException;
 
-final class TextBlock implements BlockType
+final class TextBlock implements EditorTextFields
 {
+    public function translatedTextFields(): array
+    {
+        return [['path' => ['text'], 'required' => true, 'blankMode' => 'trim']];
+    }
+
     public function id(): string
     {
         return 'core.text';

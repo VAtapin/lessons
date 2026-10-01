@@ -11,6 +11,11 @@ use App\Domain\Lessons\ValidationException;
 
 final class SignalsBlock extends InteractiveDefinition
 {
+    public function translatedTextFields(): array
+    {
+        return $this->textFields('text');
+    }
+
     public function id(): string
     {
         return 'core.signals';

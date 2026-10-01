@@ -5,12 +5,20 @@ declare(strict_types=1);
 namespace App\Domain\Lessons\Types;
 
 use App\Domain\Lessons\BlockInstance;
-use App\Domain\Lessons\BlockType;
+use App\Domain\Lessons\EditorTextFields;
 use App\Domain\Lessons\Shape;
 use App\Domain\Lessons\ValidationException;
 
-final class ImageBlock implements BlockType
+final class ImageBlock implements EditorTextFields
 {
+    public function translatedTextFields(): array
+    {
+        return [
+            ['path' => ['alt'], 'required' => true, 'blankMode' => 'trim'],
+            ['path' => ['caption'], 'required' => false, 'blankMode' => 'trim'],
+        ];
+    }
+
     public function id(): string
     {
         return 'core.image';

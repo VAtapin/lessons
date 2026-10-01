@@ -1,6 +1,7 @@
 <?php
 
 use App\Application\Shared\ApiProblem;
+use App\Application\Studio\EditorProblem;
 use App\Http\Middleware\AccountSession;
 use App\Http\Middleware\LessonJsonMaps;
 use Illuminate\Foundation\Application;
@@ -19,7 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // The domain validates authored JSON; optional empty captions/notes and
         // deliberate text whitespace must survive the standard form transforms.
         $authoredDocument = fn (Request $request) => $request->isMethod('POST') && $request->is('api/studio/lessons')
-            || $request->isMethod('PUT') && $request->is('api/studio/lessons/*');
+            || $request->isMethod('PUT') && $request->is('api/studio/lessons/*')
+            || $request->isMethod('POST') && $request->is('api/studio/lessons/*/preview');
         $runtimeCommand = fn (Request $request) => $request->isMethod('POST') && $request->is('api/studio/sessions/*/commands');
         $runtimeAnswer = fn (Request $request) => $request->isMethod('POST')
             && $request->is('api/participation/*/answers', 'api/studio/rehearsals/*/answers');
@@ -31,6 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->convertEmptyStringsToNull(except: [$authInput, $authoredDocument, $runtimeCommand, $runtimeAnswer, $historyNotes, $libraryContent]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(fn (EditorProblem $problem) => response()->json($problem->payload(), $problem->status));
         $exceptions->render(fn (ApiProblem $problem) => response()->json(
             ['error' => ['code' => $problem->problemCode]], $problem->status,
         ));

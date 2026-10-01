@@ -9,6 +9,11 @@ use App\Domain\Lessons\InteractiveShape;
 
 final class SequenceBlock extends InteractiveDefinition
 {
+    public function translatedTextFields(): array
+    {
+        return $this->textFields('question', ['items']);
+    }
+
     public function id(): string
     {
         return 'core.sequence';

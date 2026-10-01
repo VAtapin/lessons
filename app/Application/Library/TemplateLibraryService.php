@@ -8,6 +8,7 @@ use App\Application\Shared\ApiProblem;
 use App\Application\Shared\LibraryMetadata;
 use App\Application\Shared\MediaCatalogue;
 use App\Application\Shared\OwnerMutation;
+use App\Application\Studio\LessonContentSources;
 use App\Application\Studio\StudioService;
 use App\Domain\Lessons\BlockInstance;
 use App\Domain\Lessons\BlockRegistry;
@@ -150,15 +151,23 @@ final readonly class TemplateLibraryService
         $usages = [];
         $lessons = LessonVersion::query()->whereHas('material', fn ($query) => $query->where('owner_key', $ownerKey))->orderBy('created_at')->orderBy('id')->get();
         foreach ($lessons as $lesson) {
-            $document = $lesson->document;
-            foreach ($document['stages'] as $stage) {
-                foreach ($stage['blocks'] as $block) {
-                    $origin = $block['origin'] ?? null;
-                    if (is_array($origin) && ($origin['templateId'] ?? null) === $id && in_array($origin['versionId'] ?? null, $versionIds, true)) {
-                        $usages[] = [
-                            'lessonId' => $lesson->lesson_material_id, 'lessonVersionId' => $lesson->id,
-                            'title' => $document['content'][$document['defaultLocale']]['title'], 'status' => $lesson->status, 'blockId' => $block['id'],
-                        ];
+            $seen = [];
+            foreach (LessonContentSources::forVersion($lesson) as $source) {
+                $document = $source['document'];
+                foreach ($document['stages'] as $stage) {
+                    foreach ($stage['blocks'] as $block) {
+                        $origin = $block['origin'] ?? null;
+                        if (is_array($origin) && ($origin['templateId'] ?? null) === $id && in_array($origin['versionId'] ?? null, $versionIds, true)) {
+                            $key = json_encode([$block['id'], $origin['templateId'], $origin['versionId']], JSON_THROW_ON_ERROR);
+                            if (isset($seen[$key])) {
+                                continue;
+                            }
+                            $seen[$key] = true;
+                            $usages[] = [
+                                'kind' => 'lesson', 'lessonId' => $lesson->lesson_material_id, 'lessonVersionId' => $lesson->id, 'contentSource' => $source['source'],
+                                'title' => $document['content'][$document['defaultLocale']]['title'], 'status' => $lesson->status, 'blockId' => $block['id'],
+                            ];
+                        }
                     }
                 }
             }

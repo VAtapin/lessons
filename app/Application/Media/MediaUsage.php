@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Media;
 
+use App\Application\Studio\LessonContentSources;
 use App\Models\BlockTemplateVersion;
 use App\Models\LessonVersion;
 use App\Models\MediaVersion;
@@ -17,15 +18,23 @@ final class MediaUsage
         $mediaVersionIds = MediaVersion::query()->where('media_asset_id', $assetId)->pluck('id')->all();
         $versions = LessonVersion::query()->whereHas('material', fn ($query) => $query->where('owner_key', $ownerKey))->get();
         foreach ($versions as $version) {
-            $document = $version->document;
-            foreach ($document['stages'] as $stage) {
-                foreach ($stage['blocks'] as $block) {
-                    $reference = $block['media']['image'] ?? null;
-                    if ($block['type'] === 'core.image' && is_array($reference) && $reference['assetId'] === $assetId
-                        && in_array($reference['versionId'], $mediaVersionIds, true)) {
-                        $usages[] = ['kind' => 'lesson', 'lessonId' => $version->lesson_material_id, 'lessonVersionId' => $version->id,
-                            'versionId' => $reference['versionId'], 'title' => $document['content'][$document['defaultLocale']]['title'],
-                            'status' => $version->status, 'blockId' => $block['id']];
+            $seen = [];
+            foreach (LessonContentSources::forVersion($version) as $source) {
+                $document = $source['document'];
+                foreach ($document['stages'] as $stage) {
+                    foreach ($stage['blocks'] as $block) {
+                        $reference = $block['media']['image'] ?? null;
+                        if ($block['type'] === 'core.image' && is_array($reference) && $reference['assetId'] === $assetId
+                            && in_array($reference['versionId'], $mediaVersionIds, true)) {
+                            $key = json_encode([$block['id'], $reference['assetId'], $reference['versionId']], JSON_THROW_ON_ERROR);
+                            if (isset($seen[$key])) {
+                                continue;
+                            }
+                            $seen[$key] = true;
+                            $usages[] = ['kind' => 'lesson', 'lessonId' => $version->lesson_material_id, 'lessonVersionId' => $version->id,
+                                'versionId' => $reference['versionId'], 'title' => $document['content'][$document['defaultLocale']]['title'],
+                                'status' => $version->status, 'blockId' => $block['id'], 'contentSource' => $source['source']];
+                        }
                     }
                 }
             }

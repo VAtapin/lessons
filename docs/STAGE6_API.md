@@ -125,6 +125,8 @@ Prepared/running/paused **реальные** занятия никогда не 
 
 ## 6B. Autosave, undo и языковые границы — отдельная реализация
 
+Этот раздел фиксирует исходную границу 6A. Её расширение с private partial translations, readiness и save receipts описано в [STAGE6_EDITOR_API.md](STAGE6_EDITOR_API.md); оно не ослабляет строгие опубликованные/runtime snapshots. Подтверждённый статус расширения указан в PROJECT_STATUS.
+
 - 6A сохраняет существующий ручной full strict save. Autosave нельзя объявить готовым вместе с auth/history. 6B использует тот же Studio save + strict revision/domain/media validation; autosave не создаёт параллельное хранилище опубликованных документов.
 - Для network retry autosave нужен отдельный согласованный saveId UUID/receipt/fingerprint и acknowledged revision; это расширение, не уже существующий HTTP параметр. До его реализации pending save сравнивает server revision/document и требует явного reconcile, не перезаписывает другой tab автоматически.
 - Локальное undo/redo относится к editor draft, не отменяет чужой server commit, release, runtime command или media file replacement. Unsaved/invalid/saving/saved/conflict/offline различаются; local state не показывается как persisted.

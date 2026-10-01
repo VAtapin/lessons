@@ -9,6 +9,7 @@ import { isInteractive, valueText } from './interactive';
 import StageRenderer from './StageRenderer.vue';
 import RuntimeStatus from './RuntimeStatus.vue';
 import RuntimeTimer from './RuntimeTimer.vue';
+import StudioIcon from './StudioIcon.vue';
 import { activeStageAnswers, countAnsweredParticipants } from './conducting';
 import type { ProjectedStage } from './types';
 import type { Messages, TeacherState } from './types';
@@ -43,7 +44,7 @@ const index = computed(() => session.value?.document.stages.findIndex(item => it
 const stageAnswers = computed(() => activeStageAnswers(session.value?.answers ?? [], stage.value));
 const answeredParticipants = computed(() => countAnsweredParticipants(stageAnswers.value));
 const stageImage = (item: ProjectedStage) => item.blocks.find(block => block.resources?.image)?.resources?.image;
-const stageSymbol = (item: ProjectedStage) => item.blocks.some(block => block.type === 'core.single-choice') ? '?' : item.blocks.some(block => block.type === 'core.image') ? '▧' : 'Aa';
+const stageSymbol = (item: ProjectedStage) => item.blocks.some(block => isInteractive(block.type) || block.type === 'core.prompt') ? 'question' : item.blocks.some(block => block.type === 'core.image') ? 'media' : 'text';
 const disabled = computed(() => busy.value || !!pending.value || !connected.value || session.value?.status === 'finished');
 const solutions = computed(() => stage.value?.blocks.flatMap(block => {
     if (!block.solution) return [];
@@ -147,9 +148,8 @@ function finish() { confirmFinish.value = true; }
 <template>
     <div :class="['teacher-panel', { 'compact-control': compact }]">
         <div class="page-heading conducting-heading">
-            <div class="conducting-title"><h1>{{ messages.teacher_panel }}</h1><p class="lesson-subtitle">{{ session?.document.content.title ?? messages.loading }}</p></div>
+            <div class="conducting-title"><div class="conducting-title-row"><h1>{{ messages.teacher_panel }}</h1><span v-if="session" :class="['status-pill', 'session-state', session.status]" role="status"><span class="state-dot" aria-hidden="true"></span>{{ messages['session_' + session.status] }}</span></div><p class="lesson-subtitle">{{ session?.document.content.title ?? messages.loading }}</p></div>
             <div class="heading-actions">
-                <span v-if="session" :class="['status-pill', 'session-state', session.status]" role="status"><span class="state-dot" aria-hidden="true"></span>{{ messages['session_' + session.status] }}</span>
                 <button v-if="session?.status === 'prepared'" class="primary" :disabled="disabled" @click="send('begin')">{{ messages.begin_session }}</button>
                 <a v-if="session && session.mode !== 'rehearsal'" class="button-link projector-link" :href="session.projectorUrl" target="_blank" rel="noopener"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="13" rx="1" /><path d="M12 17v4m-4 0h8" /></svg>{{ messages.open_projector }} ↗</a>
             </div>
@@ -168,7 +168,7 @@ function finish() { confirmFinish.value = true; }
             <div :class="['teacher-layout', { 'stages-collapsed': !stagesOpen, detached, compact }]">
                 <aside v-if="!detached" class="studio-card stage-list conducting-stages">
                     <div class="section-heading"><h2>{{ messages.stages }}</h2><button class="stage-collapse" :aria-label="stagesOpen ? messages.hide_stages : messages.show_stages" :aria-expanded="stagesOpen" aria-controls="conducting-stages" @click="stagesOpen = !stagesOpen">{{ stagesOpen ? '−' : '+' }}</button></div><p class="stage-progress">{{ index + 1 }} / {{ session.document.stages.length }}</p>
-                    <div v-if="stagesOpen" id="conducting-stages"><button v-for="(item, number) in session.document.stages" :key="item.id" :disabled="disabled" :class="['stage-select', { active: item.id === session.currentStageId }]" :aria-current="item.id === session.currentStageId ? 'step' : undefined" @click="navigate(item.id)"><span class="stage-number">{{ number + 1 }}</span><img v-if="stageImage(item)" :src="stageImage(item)" alt="" class="stage-thumbnail" /><span v-else class="stage-type-symbol" aria-hidden="true">{{ stageSymbol(item) }}</span><strong>{{ item.content.title }}</strong></button></div>
+                    <div v-if="stagesOpen" id="conducting-stages"><button v-for="(item, number) in session.document.stages" :key="item.id" :disabled="disabled" :class="['stage-select', { active: item.id === session.currentStageId }]" :aria-current="item.id === session.currentStageId ? 'step' : undefined" @click="navigate(item.id)"><span class="stage-number">{{ number + 1 }}</span><img v-if="stageImage(item)" :src="stageImage(item)" alt="" class="stage-thumbnail" /><span v-else class="stage-type-symbol" aria-hidden="true"><StudioIcon :name="stageSymbol(item)" /></span><strong>{{ item.content.title }}</strong></button></div>
                 </aside>
                 <div class="teacher-main">
                     <div v-if="!compact" class="studio-card screen-preview">
@@ -185,7 +185,7 @@ function finish() { confirmFinish.value = true; }
                         <details class="timer-settings" :open="session.timer.status === 'idle'"><summary>{{ messages.set_timer }}</summary><form class="timer-form" @submit.prevent="send('timer.start', { seconds: Number(seconds) })"><label>{{ messages.timer_seconds }}<input v-model="seconds" type="number" required min="1" max="7200" :disabled="disabled" /></label><button :disabled="disabled || session.status !== 'running'">{{ messages.start_timer }}</button></form><p class="field-hint">{{ messages.timer_hint }}</p></details>
                     </section>
                     <TeacherBlockTools :session="session" :stage="stage" :messages="messages" :disabled="disabled" @command="send" />
-                    <section class="studio-card quick-actions"><h2>{{ messages.quick_actions }}</h2><button class="wave-button" :disabled="disabled" @click="send('wave')"><span aria-hidden="true">♥</span>{{ messages.send_wave }}</button>
+                    <section class="studio-card quick-actions"><h2>{{ messages.quick_actions }}</h2><button class="wave-button" :disabled="disabled" @click="send('wave')"><StudioIcon name="heart" />{{ messages.send_wave }}</button>
                         <details class="message-action"><summary><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v12H9l-5 4z" /><path d="M8 8h8M8 12h5" /></svg>{{ messages.screen_message }}</summary><form @submit.prevent="send('message.set', { text: message })"><label>{{ messages.screen_message }}<textarea v-model="message" maxlength="1000" rows="2" :disabled="disabled" required /></label><div class="action-row"><button :disabled="disabled || !message.trim()">{{ messages.show_message }}</button><button type="button" :disabled="disabled || !session.message" @click="send('message.clear')">{{ messages.clear_message }}</button></div></form></details>
                         <button v-if="session.status === 'running'" class="session-action" :disabled="disabled" @click="send('pause')"><span aria-hidden="true">Ⅱ</span>{{ messages.pause_session }}</button><button v-if="session.status === 'paused'" class="session-action primary" :disabled="disabled" @click="send('resume')"><span aria-hidden="true">▶</span>{{ messages.resume_session }}</button>
                         <button v-if="session.status !== 'finished' && !confirmFinish" class="finish-link" :disabled="disabled" @click="finish">{{ messages.finish_session }}</button><div v-if="confirmFinish && session.status !== 'finished'" role="alert" class="info-banner finish-confirmation"><p>{{ messages.finish_confirm }}</p><div class="action-row"><button class="primary" :disabled="disabled" @click="confirmFinish = false; send('finish')">{{ messages.finish_yes }}</button><button @click="confirmFinish = false">{{ messages.cancel }}</button></div></div>

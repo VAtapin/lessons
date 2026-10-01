@@ -32,8 +32,8 @@ final readonly class Stage
         $config = array_key_exists('config', $data) ? $data['config'] : [];
         Shape::object($config, [], ['layout', 'durationSeconds'], 'stage.config');
         $config += ['layout' => 'vertical'];
-        if ($config['layout'] !== 'vertical') {
-            throw new ValidationException('Only the vertical stage layout is supported.');
+        if (! in_array($config['layout'], ['vertical', 'two-columns', 'material-above-task'], true)) {
+            throw new ValidationException('The stage layout is unsupported.');
         }
 
         if (array_key_exists('durationSeconds', $config)

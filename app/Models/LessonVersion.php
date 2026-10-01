@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use LogicException;
 
-#[Fillable(['lesson_material_id', 'status', 'document', 'purpose'])]
+#[Fillable(['lesson_material_id', 'status', 'document', 'purpose', 'editor_draft'])]
 final class LessonVersion extends Model
 {
     use HasUuids;
@@ -26,7 +26,7 @@ final class LessonVersion extends Model
 
     protected function casts(): array
     {
-        return ['document' => 'array'];
+        return ['document' => 'array', 'editor_draft' => 'array'];
     }
 
     public function material(): BelongsTo

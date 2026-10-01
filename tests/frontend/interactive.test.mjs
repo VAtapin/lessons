@@ -94,7 +94,9 @@ test('new commands retain pending UUID and revision through reload for safe retr
 test('both interface dictionaries contain renderer and editor labels, including optional text heading', () => {
     const folder = new URL('../../resources/js/studio/', import.meta.url);
     for (const locale of ['ru', 'de']) {
-        const dictionary = fs.readFileSync(new URL(`../../lang/${locale}/studio.php`, import.meta.url), 'utf8');
+        const dictionary = ['studio', 'deletion', 'admin', 'collaboration']
+            .map(group => new URL(`../../lang/${locale}/${group}.php`, import.meta.url))
+            .filter(file => fs.existsSync(file)).map(file => fs.readFileSync(file, 'utf8')).join('\n');
         const keys = new Set([...dictionary.matchAll(/'([^']+)'\s*=>/g)].map(match => match[1]));
         for (const file of fs.readdirSync(folder).filter(file => /\.(vue|ts)$/.test(file))) {
             for (const match of fs.readFileSync(new URL(file, folder), 'utf8').matchAll(/messages\.([A-Za-z_]+)/g)) assert.equal(keys.has(match[1]), true, `${locale}: ${file} label ${match[1]}`);

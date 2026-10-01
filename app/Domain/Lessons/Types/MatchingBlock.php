@@ -11,6 +11,11 @@ use App\Domain\Lessons\ValidationException;
 
 final class MatchingBlock extends InteractiveDefinition
 {
+    public function translatedTextFields(): array
+    {
+        return $this->textFields('question', ['left', 'right']);
+    }
+
     public function id(): string
     {
         return 'core.matching';

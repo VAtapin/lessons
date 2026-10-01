@@ -11,6 +11,11 @@ use App\Domain\Lessons\ValidationException;
 
 final class FreeResponseBlock extends InteractiveDefinition
 {
+    public function translatedTextFields(): array
+    {
+        return $this->textFields('question');
+    }
+
     public function id(): string
     {
         return 'core.free-response';

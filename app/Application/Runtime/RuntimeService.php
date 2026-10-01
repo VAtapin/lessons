@@ -26,7 +26,7 @@ final class RuntimeService
     public function start(string $ownerKey, string $lessonId, int $expectedRevision, ?string $locale, bool $prepare = false): array
     {
         return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $lessonId, $expectedRevision, $locale, $prepare): array {
-            $version = $this->studio->release($ownerKey, $lessonId, $expectedRevision);
+            $version = $this->studio->release($ownerKey, $lessonId, $expectedRevision, selectedLocale: $locale);
 
             return $this->startSnapshot($ownerKey, $version, $locale, 'lesson', $prepare);
         });

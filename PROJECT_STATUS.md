@@ -5,7 +5,7 @@
 ## Реализовано
 
 - Laravel 13.34, Vue 3/TypeScript/Vite 8; независимый строгий домен документа и единый registry блоков.
-- Гостевой кабинет RU/DE, конструктор этапов, ручное сохранение с optimistic revision/conflict, общий renderer и preview. Immutable released-снимок не меняется при последующей правке материала.
+- Гостевой кабинет RU/DE, конструктор этапов и общий renderer. Этап 6B: autosave с подтверждёнными UUID/revision, безопасный повтор после ошибки связи, undo/redo, независимые копии блоков/этапов, три раскладки, приватные незавершённые переводы и выпуск только готовых языков. Immutable released-снимок не меняется при последующей правке материала.
 - Пульт, ученический экран и read-only проектор: подготовка/начало/пауза/продолжение/завершение, навигация без потери ответов, независимый серверный таймер, сообщение, ограниченная временем «волна добра», QR и активность участников. UUID/fingerprint/receipt делает повтор команды безопасным.
 - Пульт следует teacher-panel-concept-v1.png: скрываемое меню, этапы слева, preview в центре, таймер/действия справа, ответы/заметки снизу. Компактный отдельный пульт подтверждает подключение BroadcastChannel и возвращает управление при потере связи.
 - Личная библиотека заготовок: переводы, поиск/метки/версии, независимые вставки. Приватная медиатека PNG/JPEG/WebP: загрузка/замена, immutable версии, права/происхождение, использование, архив/восстановление. 19 общих иллюстраций; новая сцена взаимопомощи и её промпт находятся в assets/library.
@@ -14,6 +14,8 @@
 - Этап 6A: Laravel register/login/logout, signed email verification, password broker/reset и отзыв прежних authenticated sessions; RU/DE профиль, квота аккаунта 1 GiB, explicit verified guest claim всех четырёх видов ресурсов с permanent receipt и общим owner mutex. Смена identity блокирует открытые вкладки; неприсвоенный guest proof сохраняется при logout/reset, account access не сохраняется.
 - Подтверждение почты и восстановление пароля: фирменные HTML-письма в кремовой/коричневой/оранжевой палитре сайта и plain-text альтернатива. Тема, текст, кнопка и reset URL используют сохранённый язык аккаунта RU/DE; registration/resend/forgot не зависят от текущего языка запроса. Штатные signed verification URL и password broker сохранены.
 - История с фильтрами/пагинацией, избранное, просмотр authoring versions, продолжение и чистый новый запуск той же версии; личные заметки, anonymous aggregates и достоверные UTC lifecycle anchors. Закрытая owner-only репетиция использует immutable internal snapshot и общий runtime, без ordinary join/bearer доступа.
+- Кабинет и пульт приведены к композиции утверждённого teacher-panel-concept-v1.png: бумажный фон, акварельный пейзаж, иконки, обзор и карточки материалов; скрытое меню не занимает место. Данные участников, ответов и сохранения показываются только по фактическому серверному состоянию.
+- Аккаунт поддерживает подтверждённую паролем заявку на удаление и её отмену. Это сохранённая обратимая заявка; автоматическое удаление аккаунта не запускается.
 - Retention policy проверяет expiry при чтении, включая published free text и media; bounded CLI/dry-run и queue job реализованы. Автоматическое расписание и production write cleanup пока выключены.
 - Авторизация owner/participant/projector и выдача exact media version по активному этапу. GD полностью декодирует изображение, ограничены bytes/pixels/dimensions. Чужие ответы, закрытые заметки и ещё не раскрытые решения исключены из публичных DTO.
 - Read-only проверки схемы/БД, additive migrations. Deployment --migrate для непустой БД сначала создаёт приватный SQL/media bundle с manifest, SHA256 и проверкой всех committed immutable версий; ошибка блокирует миграции. SQL-only backup остаётся отдельной командой.
@@ -21,10 +23,10 @@
 ## Принятые решения
 
 - Сначала движок и переиспользуемые блоки; технические сборки не являются готовыми учебными темами.
-- Языки интерфейса и содержания независимы. Сохранённый документ пока обязан содержать полные переводы; добавление языка через UI и незавершённые переводы — следующий этап.
+- Языки интерфейса и содержания независимы. Новый язык начинается с пустых полей; частичный перевод сохраняется только в private editor_draft. Выпускаемый снимок обязан содержать полные переводы выбранных языков; основной язык должен быть готов. Приватные заметки/решения доступны только учительскому preview.
 - Гостевой доступ связан с серверной cookie-сессией браузера; после потери cookies восстановление пока отсутствует. Регистрация не является условием проведения.
 - Cookie-запросы сериализуются file lock; команды/ответы — session row lock. Ответы не увеличивают revision команд ведущего. Block IDs case-sensitive; role capacities остаются JSON object даже при ID «0»/«1».
-- Polling раз в две секунды; один снимок block states на response, устаревшие GET отбрасываются. Ручное сохранение сохраняет локальные правки при конфликте и предупреждает перед уходом.
+- Polling раз в две секунды; один снимок block states на response, устаревшие GET отбрасываются. Autosave сериализует запросы, не прерывает IME и сохраняет локальные правки при конфликте; повтор использует неизменённый UUID и тело. Загрузка чужой новой редакции требует явного действия.
 - Таймер и пауза занятия независимы; переход между этапами не сбрасывает ответы/время. Revealed пока терминален: reset/new attempt ещё отсутствует.
 - 20 MiB на файл, 100 MiB на гостя, 1 GiB на аккаунт; все старые и архивные private versions учитываются. Claim переносит ресурсы/quota целиком, сохраняя IDs, версии, файлы, ответы и действующие ссылки.
 - Отправитель lessons@atapin.de через PHP/Plesk; private production .env настроен на sendmail, wrapper и CLI/FPM flags подтверждены. Скриншот пользователя подтверждает получение прежнего штатного письма; получение нового оформления в реальном почтовом клиенте ещё не проверено. Finished guest lesson/details — 30 дней от finished_at, account history — 2 календарных года, finished rehearsal — 7 дней от created_at, receipts — 30 дней. Активные реальные занятия/legacy unknown anchors/authoring resources/claim tombstones защищены; auto schedule выключен до эксплуатационной проверки.
@@ -33,6 +35,8 @@
 
 ## Проверки
 
+- Этап 6B и заявка: scoped PHP suite 174 tests / 172 passed / 1303 assertions / 2 Windows MariaDB skips; 45 frontend tests, Vue typecheck и полный Pint прошли. Vite production build прошёл. Предыдущий полный PHP прогон выявил только два устаревших ожидания главной; их исправление проверено отдельно (5 tests / 13 assertions) и относится к следующему коммиту каталога.
+- Этап 6B, локальный браузер: autosave/reload, пустой DE перевод и ready RU, копии/undo/redo и две колонки проверены. Учительский серверный preview показывает приватную заметку; ученический её не содержит. Две настоящие вкладки: первая сохранила редакцию 8, вторая получила conflict и сохранила локальный текст без overwrite. Выпуск RU при частичном DE подтвердил released редакцию 9. Проверка полного browser matrix и сетевого восстановления остаётся итоговой приёмке.
 - Фирменная почта: BrandedMailTest, UserMailLocaleTest и существующий AccountAuthTest — 27 tests / 303 assertions, passed; scoped Pint и diff-check прошли. Реальный Laravel MailChannel с memory-only ArrayTransport собирает multipart HTML/plain text; проверены RU/DE registration/resend/forgot, независимость от текущего App locale, escaping имени, подпись/изменённая ссылка/expiry, hash/reset/expiry broker token и legacy locale fallback. Письма людям при проверке не отправлялись. HTML-превью RU/DE просмотрены в браузере; DE при 360 px, включая длинную тестовую ссылку, без горизонтального overflow. Read-only SSH подтвердил sendmail и lessons@atapin.de без изменения .env.
 - Этап 6A, полный Composer test: 310 tests, 301 passed, 2744 assertions, 9 Windows skips (4 POSIX/symlink, 3 runtime и 2 claim MariaDB concurrency). Composer validate --strict и Pint прошли после исправления порядка imports. Frontend: 31 tests, Vue typecheck и Vite build прошли. Local lessons:check/dry-run retention прошли без writes, все planned counts 0.
 - Этап 5, полный Composer test: 268 tests, 261 passed, 2125 assertions, 7 skips на Windows (4 POSIX/symlink, 3 реальной MariaDB concurrency). Полный Pint и composer validate --strict прошли. Vue typecheck, Vite build и 22 frontend tests прошли.
@@ -41,7 +45,7 @@
 - Библиотека/медиа: реальный локальный upload → exact version → сохранение/reload → заготовка → две независимые вставки. Новая версия/архив не меняют старый проектор. RU/DE и 360 px проверены. На production проверены все 19 builtins и независимость шаблонов; private browser upload проверен локально и в CI, на production не выполнялся.
 - Пульт: 360/768/1366 px и compact DE 360 px; timer/pause/reload, отделение/возврат, меню с клавиатуры и восстановление после остановки локального сервера проверены. Native popup подключение наблюдалось на parent, команды compact — отдельной вкладкой; полная popup/browser matrix ещё не проверена.
 - Последний production технический запуск 01a0f4a4-6a2b-702a-a6d4-490f5d042281: begin → timer90 → pause28 → reload28 → finish подтверждены. Исходное занятие пользователя не изменялось.
-- CI текущего production commit 5841fff: run 36799713525, PHP 8.4/8.5, Node22, MariaDB10.6 — passed. Git deployment с backup/migrations 130000/140000, lessons:check и /up прошли. Финальный curl при deployment получил transient DNS error; отдельная повторная HTTPS-проверка /up завершилась успешно, server main чистый.
+- CI текущего production commit 215fbc0: run 36846682619, PHP 8.4/8.5, Node22, MariaDB10.6 — passed. Фирменные письма установлены через Git и штатный deploy-plesk.sh; Composer/build/lessons:check/HTTPS /up прошли, server main чистый. Новые изменения 6B ещё не установлены на production.
 - Реальный production bundle lessons-20260930-233058-3f98af9dc168cfe0 вне httpdocs: SQL 42301 bytes/0600, directories0700, manifest SHA256 2eff5c32c8d47f8197410a4678666485795c6a07deebdf72edbd6e23be10e9b5. Private media versions тогда отсутствовали; копирование bytes/архивов и failure cleanup проверены fixture tests. Реальный dump подтверждён; restore пока не выполнялся.
 - Перед migration этапа 5 создан bundle lessons-20261001-001454-92042856343d0cbd: SQL 42496 bytes/0600, manifest SHA256 6c59b537695eaf65cf5d7b39476a0e52b1e0294e3c2c168766d36d2321e7e1c6; metadata и post-deployment health подтверждены.
 - Перед migrations этапа 6A создан bundle lessons-20261001-011236-f51c8a08d4bb50c0: SQL 57481 bytes/0600, manifest SHA256 96b576b01cbc915829ee87a2bfa8e9ec47e19f8bec10037f1bb8a0524ac82f21. Private mail configuration не меняла credentials/APP_KEY; production retention dry-run показал все counts 0, запись/расписание не включались.
@@ -51,13 +55,13 @@
 
 ## Git и production
 
-- main → origin/main, https://github.com/VAtapin/lessons.git. Последний связанный предшествующий implementation commit и подтверждённая версия production: 5841fff53495b3b121d888539aa71e90a8ac0d65 — Add teacher accounts, workspace transfer and lesson history. Фирменные письма входят в текущий atomic commit `Style and localize account emails`; его hash определяется после commit.
+- main → origin/main, https://github.com/VAtapin/lessons.git. Последний связанный commit и подтверждённая версия production: 215fbc08186ce85e2ff7421bf051fe65d972d507 — Style and localize account emails. Текущий atomic commit завершает редактор и кабинет; его hash определяется после commit.
 - SSH lessons.atapin.de:2377; /var/www/vhosts/lessons.atapin.de/httpdocs, document root httpdocs/public. Исходники доставляются только Git.
 - Production .env private0600/debug=false/secure HTTPS session cookie; APP_KEY неизменен. Секреты, local DB, backups и build исключены из Git.
 - Windows PHP child commands требуют PHPRC=D:\Projekte\lessons\.local\php.ini; Node22 находится в .local/node/node-v22.23.3-win-x64.
 
 ## Что дальше и ограничения
 
-- Этап 6A проверен, отправлен в Git и установлен на production. В работе этап 6B: autosave/undo, копирование/layouts, private partial translations/readiness и preview трёх audiences по согласованному STAGE6_EDITOR_API.
-- Совместный учитель и публичный каталог ещё не реализованы. После движка добавить OLD/kto-moi-blizhnii как материал из переиспользуемых блоков и БД на RU/DE; выполнена только локальная инвентаризация, тема пока не реализована. Full browser matrix, получение нового оформления письма, restore, автоматическое retention расписание и нагрузка остаются приёмке.
+- Этап 6B реализован и локально проверен; CI/MariaDB и production проверяются после push. Главная/каталог и тема OLD/kto-moi-blizhnii подготовлены следующей отдельной задачей, пока не установлены на production.
+- Совместное проведение, административная проверка публикаций и эксплуатационная приёмка находятся в работе. Full browser matrix, получение нового оформления письма, реальный restore, автоматическое retention расписание и согласованная нагрузка ещё не закрыты.
 - Полный backup требует immutable media и отсутствия physical cleanup/DDL во время копирования. Внешняя копия/rotation/restore ещё не проверены. Активные занятия нельзя очищать по одному старому created_at.

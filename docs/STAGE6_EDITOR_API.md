@@ -1,6 +1,6 @@
 # Этап 6B: полноценный конструктор и рабочие переводы
 
-**Проект конкретного контракта для review перед реализацией.** Это дополнение к [6A](STAGE6_API.md), [BLOCK_CONTRACT](BLOCK_CONTRACT.md) и [интерактивности](STAGE5_API.md), основанное на ТЗ §10, §15 и §24.6. Наличие документа не означает, что autosave, undo, layouts или partial translations уже реализованы. В этой задаче изменяется только этот документ.
+Контракт реализации дополняет [6A](STAGE6_API.md), [BLOCK_CONTRACT](BLOCK_CONTRACT.md) и [интерактивность](STAGE5_API.md), основан на ТЗ §10, §15 и §24.6. Подтверждённые проверки и установленная версия production записаны отдельно в [PROJECT_STATUS](../PROJECT_STATUS.md); наличие API-контракта само по себе не означает завершённую приёмку.
 
 ## Граница рабочего черновика и строгого содержания
 
@@ -158,7 +158,7 @@ Blank/partial перевод доступен в private editing preview с read
 
 ### Domain handoff перед implementation
 
-Все следующие signatures относятся к `App\Domain\Lessons`, не имеют HTTP/Laravel dependency и пока не являются реализованным кодом:
+Следующие реализованные signatures относятся к `App\Domain\Lessons` и не имеют HTTP/Laravel dependency:
 
 ```php
 interface EditorTextFields extends BlockType

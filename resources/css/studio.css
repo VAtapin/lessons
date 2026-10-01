@@ -426,5 +426,36 @@
 .history-participants summary, .version-browser summary { cursor: pointer; line-height: 1.6; }
 .version-browser { margin-top: 20px; }
 .version-browser .stage-renderer { margin-top: 18px; }
+
+/* Editor working drafts share the public renderer and preserve block order. */
+.editor-save-status { margin: 16px 0; padding: 14px 18px; border: 1px solid var(--border); border-radius: 12px; background: #fbf6eb; overflow-wrap: anywhere; }
+.editor-save-status.clean { border-color: #a7b595; }
+.editor-save-status.conflict, .editor-save-status.invalid, .editor-save-status.retry-required { border-color: #b89170; }
+.editor-save-status p { margin: 8px 0; }
+.editor-save-status ul, .editor-languages ul { padding-inline-start: 20px; }
+.editor-save-status li + li, .editor-languages li + li { margin-top: 8px; }
+.editor-save-status li button, .editor-languages li button { text-align: start; white-space: normal; }
+.editor-languages { margin-top: 18px; }
+.language-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.language-chips [aria-pressed="true"] { background: #e9e9d7; border-color: var(--olive); }
+.editor-languages .action-row { display: flex; align-items: end; flex-wrap: wrap; gap: 10px; }
+.editor-languages .action-row label { flex: 1 1 160px; margin: 0; }
+.release-translations { margin-top: 18px; }
+.editor-preview { margin-top: 22px; }
+.editor-preview .stage-renderer { margin-top: 24px; }
+.editor-preview .section-heading { flex-wrap: wrap; }
+.editor-preview .section-heading label { max-width: 100%; margin: 0; }
+.stage-blocks { min-width: 0; }
+.stage-block { min-width: 0; }
+.layout-two-columns .stage-blocks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; align-items: start; }
+.layout-two-columns .stage-blocks > .render-block { margin: 0; padding: 0; border: 0; }
+.layout-material-above-task .task-block { border-inline-start: 3px solid var(--olive); padding-inline-start: 18px; }
+.layout-material-above-task .task-block + .task-block { border-top: 0; }
+@media (max-width: 650px) {
+    .layout-two-columns .stage-blocks { grid-template-columns: minmax(0, 1fr); }
+    .editor-toolbar > button { flex: 1 1 130px; white-space: normal; }
+    .editor-languages .action-row > button { flex: 1 1 130px; }
+    .editor-preview .section-heading > * { width: 100%; }
+}
 .rehearsal-links { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 @media (max-width: 700px) { .account-layout { grid-template-columns: minmax(0, 1fr); } .auth-card { padding: 18px; } .history-overview dl > div { display: grid; gap: 4px; } .history-item .action-row > * { flex: 1 1 150px; } }

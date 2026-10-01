@@ -5,13 +5,22 @@ declare(strict_types=1);
 namespace App\Domain\Lessons\Types;
 
 use App\Domain\Lessons\BlockInstance;
+use App\Domain\Lessons\EditorTextFields;
 use App\Domain\Lessons\InteractiveBlockType;
 use App\Domain\Lessons\InteractiveShape;
 use App\Domain\Lessons\Shape;
 use App\Domain\Lessons\ValidationException;
 
-final class SingleChoiceBlock implements InteractiveBlockType
+final class SingleChoiceBlock implements EditorTextFields, InteractiveBlockType
 {
+    public function translatedTextFields(): array
+    {
+        return [
+            ['path' => ['question'], 'required' => true, 'blankMode' => 'trim'],
+            ['path' => ['options', '*', 'text'], 'required' => true, 'blankMode' => 'trim'],
+        ];
+    }
+
     public function id(): string
     {
         return 'core.single-choice';

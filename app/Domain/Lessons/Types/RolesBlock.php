@@ -11,6 +11,11 @@ use App\Domain\Lessons\ValidationException;
 
 final class RolesBlock extends InteractiveDefinition
 {
+    public function translatedTextFields(): array
+    {
+        return $this->textFields('text', ['roles']);
+    }
+
     public function id(): string
     {
         return 'core.roles';
