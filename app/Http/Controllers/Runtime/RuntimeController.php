@@ -70,10 +70,10 @@ final class RuntimeController extends Controller
     public function answer(Request $request, string $id): JsonResponse
     {
         $input = $request->validate([
-            'stageId' => ['required', 'string', 'max:128'], 'blockId' => ['required', 'string', 'max:128'], 'optionId' => ['required', 'string', 'max:128'],
+            'stageId' => ['required', 'string', 'max:128'], 'blockId' => ['required', 'string', 'max:128'],
         ]);
 
-        return response()->json(['session' => $this->runtime->answer($id, $this->participantId($request, $id), $input['stageId'], $input['blockId'], $input['optionId'])]);
+        return response()->json(['session' => $this->runtime->answer($id, $this->participantId($request, $id), $input['stageId'], $input['blockId'], $request->json()->all())]);
     }
 
     public function projector(string $token): JsonResponse

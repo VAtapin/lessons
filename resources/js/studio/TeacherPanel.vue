@@ -3,6 +3,9 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import QRCode from 'qrcode';
 import { api, ApiError, errorMessage, poll } from './api';
 import { command, connectedControl, acceptProjection, matchesControlMessage, controlReturnConfirmed, recoverCommand, type Command } from './runtime';
+import TeacherBlockTools from './TeacherBlockTools.vue';
+import TeacherAnswers from './TeacherAnswers.vue';
+import { isInteractive, valueText } from './interactive';
 import StageRenderer from './StageRenderer.vue';
 import RuntimeStatus from './RuntimeStatus.vue';
 import RuntimeTimer from './RuntimeTimer.vue';
@@ -43,9 +46,8 @@ const stageImage = (item: ProjectedStage) => item.blocks.find(block => block.res
 const stageSymbol = (item: ProjectedStage) => item.blocks.some(block => block.type === 'core.single-choice') ? '?' : item.blocks.some(block => block.type === 'core.image') ? '▧' : 'Aa';
 const disabled = computed(() => busy.value || !!pending.value || !connected.value || session.value?.status === 'finished');
 const solutions = computed(() => stage.value?.blocks.flatMap(block => {
-    if (block.type !== 'core.single-choice' || !block.solution) return [];
-    const option = block.content.options?.find(item => item.optionId === block.solution!.optionId);
-    return option ? [{ blockId: block.id, question: block.content.question, answer: option.text }] : [];
+    if (!block.solution) return [];
+    return [{ blockId: block.id, question: block.content.question, answer: valueText(block.content, block.solution, props.messages) }];
 }) ?? []);
 watch(() => stage.value?.id, () => { seconds.value = stage.value?.config.durationSeconds ?? 60; });
 watch(() => session.value?.joinUrl, async url => {
@@ -141,10 +143,6 @@ function closeReturnedControl() {
     returnTimeout = setTimeout(() => { location.assign(`/${props.locale}/teach/${props.sessionId}`); }, 150);
 }
 function finish() { confirmFinish.value = true; }
-function answerText(blockId: string, optionId: string) {
-    const block = session.value?.document.stages.flatMap(item => item.blocks).find(item => item.id === blockId);
-    return block?.content.options?.find(option => option.optionId === optionId)?.text ?? optionId;
-}
 </script>
 <template>
     <div :class="['teacher-panel', { 'compact-control': compact }]">
@@ -174,17 +172,19 @@ function answerText(blockId: string, optionId: string) {
                 </aside>
                 <div class="teacher-main">
                     <div v-if="!compact" class="studio-card screen-preview">
-                        <div class="section-heading preview-heading"><h2>{{ messages.shared_screen }}</h2><span v-if="stage.blocks.some(block => block.type === 'core.single-choice')" class="answer-count">{{ messages.answered }} {{ answeredParticipants }} / {{ session.participants.length }}</span></div>
+                        <div class="section-heading preview-heading"><h2>{{ messages.shared_screen }}</h2><span v-if="stage.blocks.some(block => isInteractive(block.type))" class="answer-count">{{ messages.answered }} {{ answeredParticipants }} / {{ session.participants.length }}</span></div>
                         <div class="preview-content" tabindex="0" role="region" :aria-label="messages.shared_screen"><StageRenderer :stage="session.publicStage" :messages="messages" /></div>
                         <div v-if="!detached" class="navigation-controls"><button :disabled="disabled || index === 0" @click="navigate(session.document.stages[index - 1]!.id)">← {{ messages.previous }}</button><button class="primary" :disabled="disabled || index === session.document.stages.length - 1" @click="navigate(session.document.stages[index + 1]!.id)">{{ messages.next }} →</button><a class="button-link answers-link" href="#conducting-answers">{{ messages.student_answers }} ↓</a></div>
                     </div>
                     <div v-if="compact" class="studio-card navigation-controls"><button :disabled="disabled || index === 0" @click="navigate(session.document.stages[index - 1]!.id)">← {{ messages.previous }}</button><span>{{ index + 1 }} / {{ session.document.stages.length }}</span><button class="primary" :disabled="disabled || index === session.document.stages.length - 1" @click="navigate(session.document.stages[index + 1]!.id)">{{ messages.next }} →</button></div>
                 </div>
                 <aside v-if="!detached" class="teacher-tools">
+
                     <section class="studio-card conducting-controls"><h2>{{ messages.timer }}</h2><RuntimeTimer :state="session" :messages="messages" prominent />
                         <div class="timer-buttons"><button v-if="session.timer.status === 'running'" class="round-button primary" :aria-label="messages.pause_timer" :title="messages.pause_timer" :disabled="disabled" @click="send('timer.pause')"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg></button><button v-if="session.timer.status === 'paused'" class="round-button primary" :aria-label="messages.resume_timer" :title="messages.resume_timer" :disabled="disabled || session.status !== 'running'" @click="send('timer.resume')"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="m8 5 11 7-11 7z" /></svg></button><button v-if="session.timer.status !== 'idle'" class="round-button" :aria-label="messages.clear_timer" :title="messages.clear_timer" :disabled="disabled" @click="send('timer.clear')"><svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m7 7 10 10m0-10L7 17" /></svg></button></div>
                         <details class="timer-settings" :open="session.timer.status === 'idle'"><summary>{{ messages.set_timer }}</summary><form class="timer-form" @submit.prevent="send('timer.start', { seconds: Number(seconds) })"><label>{{ messages.timer_seconds }}<input v-model="seconds" type="number" required min="1" max="7200" :disabled="disabled" /></label><button :disabled="disabled || session.status !== 'running'">{{ messages.start_timer }}</button></form><p class="field-hint">{{ messages.timer_hint }}</p></details>
                     </section>
+                    <TeacherBlockTools :session="session" :stage="stage" :messages="messages" :disabled="disabled" @command="send" />
                     <section class="studio-card quick-actions"><h2>{{ messages.quick_actions }}</h2><button class="wave-button" :disabled="disabled" @click="send('wave')"><span aria-hidden="true">♥</span>{{ messages.send_wave }}</button>
                         <details class="message-action"><summary><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v12H9l-5 4z" /><path d="M8 8h8M8 12h5" /></svg>{{ messages.screen_message }}</summary><form @submit.prevent="send('message.set', { text: message })"><label>{{ messages.screen_message }}<textarea v-model="message" maxlength="1000" rows="2" :disabled="disabled" required /></label><div class="action-row"><button :disabled="disabled || !message.trim()">{{ messages.show_message }}</button><button type="button" :disabled="disabled || !session.message" @click="send('message.clear')">{{ messages.clear_message }}</button></div></form></details>
                         <button v-if="session.status === 'running'" class="session-action" :disabled="disabled" @click="send('pause')"><span aria-hidden="true">Ⅱ</span>{{ messages.pause_session }}</button><button v-if="session.status === 'paused'" class="session-action primary" :disabled="disabled" @click="send('resume')"><span aria-hidden="true">▶</span>{{ messages.resume_session }}</button>
@@ -192,8 +192,8 @@ function answerText(blockId: string, optionId: string) {
                     </section>
                 </aside>
                 <div v-if="!detached" class="teacher-bottom">
-                    <section id="conducting-answers" class="studio-card participants" tabindex="-1"><div class="section-heading"><h2>{{ messages.student_answers }}</h2><span class="answer-total">{{ messages.answers_received }}: {{ stageAnswers.length }}</span></div><p class="field-hint">{{ messages.activity_hint }}</p><p v-if="!session.participants.length" class="field-hint">{{ messages.waiting_participants }}</p><div v-for="participant in session.participants" :key="participant.id" class="participant"><span class="participant-initial" aria-hidden="true">{{ Array.from(participant.name.trim())[0]?.toLocaleUpperCase() }}</span><div class="participant-content"><div class="participant-name"><strong>{{ participant.name }}</strong><span class="participant-activity">{{ participant.connected ? messages.participant_connected : messages.participant_away }}</span></div><ul v-if="stageAnswers.some(answer => answer.participantId === participant.id)"><li v-for="answer in stageAnswers.filter(answer => answer.participantId === participant.id)" :key="answer.blockId">{{ answerText(answer.blockId, answer.optionId) }}</li></ul><small v-else>{{ messages.no_answers }}</small></div></div></section>
-                    <div class="teacher-private"><details v-if="stage.content.notes" class="studio-card teacher-notes" :open="!compact"><summary>{{ messages.notes }}</summary><p class="plain-text">{{ stage.content.notes }}</p></details><details v-if="solutions.length" class="studio-card teacher-solutions"><summary>{{ messages.correct_answers }}</summary><dl><div v-for="solution in solutions" :key="solution.blockId"><dt>{{ solution.question }}</dt><dd>{{ solution.answer }}</dd></div></dl></details></div>
+                    <TeacherAnswers :session="session" :stage="stage" :answers="stageAnswers" :messages="messages" :disabled="disabled" @command="send" />
+                    <div class="teacher-private"><details v-for="block in stage.blocks.filter(block => block.teacherNotes)" :key="block.id" class="studio-card teacher-notes"><summary>{{ messages.block_notes }} · {{ block.content.title ?? block.content.question ?? messages.text }}</summary><p class="plain-text">{{ block.teacherNotes }}</p></details><details v-if="stage.content.notes" class="studio-card teacher-notes" :open="!compact"><summary>{{ messages.notes }}</summary><p class="plain-text">{{ stage.content.notes }}</p></details><details v-if="solutions.length" class="studio-card teacher-solutions"><summary>{{ messages.correct_answers }}</summary><dl><div v-for="solution in solutions" :key="solution.blockId"><dt>{{ solution.question }}</dt><dd>{{ solution.answer }}</dd></div></dl></details></div>
                 </div>
             </div>
         </template>

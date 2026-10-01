@@ -29,7 +29,9 @@ final class PlatformCheck extends Command
                 'teaching_sessions' => ['id', 'lesson_version_id', 'owner_key', 'locale', 'current_stage_id', 'revision', 'join_code', 'projector_token',
                     'status', 'timer_status', 'timer_ends_at', 'timer_remaining_seconds', 'timer_resume_on_session_resume', 'message', 'wave_id', 'wave_expires_at'],
                 'session_participants' => ['id', 'teaching_session_id', 'name', 'last_seen_at'],
-                'session_answers' => ['id', 'teaching_session_id', 'session_participant_id', 'block_id', 'option_id'],
+                'session_answers' => ['id', 'teaching_session_id', 'session_participant_id', 'block_id', 'option_id',
+                    'value', 'revision', 'moderation_status', 'display_text', 'published', 'acknowledged'],
+                'session_block_states' => ['id', 'teaching_session_id', 'block_id', 'status', 'attempt_no'],
                 'session_command_receipts' => ['id', 'teaching_session_id', 'command_id', 'fingerprint'],
                 'media_owner_quotas' => ['owner_key', 'used_bytes'],
                 'media_assets' => ['id', 'owner_key', 'title', 'revision', 'current_version_id', 'archived'],
@@ -47,6 +49,13 @@ final class PlatformCheck extends Command
                     [$connection->getDatabaseName()],
                 );
                 if ($column === null || $column->collation_name !== 'utf8mb4_bin') {
+                    throw new RuntimeException;
+                }
+                $stateColumn = $connection->selectOne(
+                    "SELECT COLLATION_NAME AS collation_name FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'session_block_states' AND COLUMN_NAME = 'block_id'",
+                    [$connection->getDatabaseName()],
+                );
+                if ($stateColumn === null || $stateColumn->collation_name !== 'utf8mb4_bin') {
                     throw new RuntimeException;
                 }
                 $version = $connection->selectOne('SELECT VERSION() AS version')->version;

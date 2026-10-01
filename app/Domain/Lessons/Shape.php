@@ -78,6 +78,35 @@ final class Shape
         return $value;
     }
 
+    public static function boundedText(mixed $value, string $path, int $maximum, bool $allowEmpty = false): string
+    {
+        if (! is_string($value) || preg_match('//u', $value) !== 1
+            || mb_strlen($value, 'UTF-8') > $maximum
+            || (! $allowEmpty && preg_match('/\A[\p{Z}\s]*\z/u', $value) === 1)) {
+            throw new ValidationException("{$path} must be valid text within its length limit.");
+        }
+
+        return $value;
+    }
+
+    public static function boolean(mixed $value, string $path): bool
+    {
+        if (! is_bool($value)) {
+            throw new ValidationException("{$path} must be boolean.");
+        }
+
+        return $value;
+    }
+
+    public static function integer(mixed $value, string $path, int $minimum, int $maximum): int
+    {
+        if (! is_int($value) || $value < $minimum || $value > $maximum) {
+            throw new ValidationException("{$path} must be an integer within its bounds.");
+        }
+
+        return $value;
+    }
+
     public static function id(mixed $value, string $path): string
     {
         if (! is_string($value) || preg_match('/\A[A-Za-z0-9][A-Za-z0-9._:-]{0,127}\z/', $value) !== 1) {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Application\Shared\ApiProblem;
+use App\Http\Middleware\LessonJsonMaps;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,15 +14,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [LessonJsonMaps::class]);
         // The domain validates authored JSON; optional empty captions/notes and
         // deliberate text whitespace must survive the standard form transforms.
         $authoredDocument = fn (Request $request) => $request->isMethod('POST') && $request->is('api/studio/lessons')
             || $request->isMethod('PUT') && $request->is('api/studio/lessons/*');
         $runtimeCommand = fn (Request $request) => $request->isMethod('POST') && $request->is('api/studio/sessions/*/commands');
+        $runtimeAnswer = fn (Request $request) => $request->isMethod('POST') && $request->is('api/participation/*/answers');
         $libraryContent = fn (Request $request) => in_array($request->method(), ['POST', 'PUT'], true)
             && ($request->is('api/studio/templates', 'api/studio/templates/*', 'api/studio/media', 'api/studio/media/*'));
-        $middleware->trimStrings(except: [$authoredDocument, $runtimeCommand, $libraryContent]);
-        $middleware->convertEmptyStringsToNull(except: [$authoredDocument, $runtimeCommand, $libraryContent]);
+        $middleware->trimStrings(except: [$authoredDocument, $runtimeCommand, $runtimeAnswer, $libraryContent]);
+        $middleware->convertEmptyStringsToNull(except: [$authoredDocument, $runtimeCommand, $runtimeAnswer, $libraryContent]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(fn (ApiProblem $problem) => response()->json(

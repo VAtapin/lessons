@@ -79,7 +79,8 @@ final class RuntimeTest extends TestCase
         $this->getJson('/api/participation/'.$session['id'].'?participantId='.$participant['id'])->assertNotFound();
         $this->answer($session, 'choice-1', 'first', ['participantId' => $participant['id'], 'name' => 'Same name'])->assertNotFound();
         $other = $this->join($session, 'Same name');
-        $this->answer($session, 'choice-1', 'second', ['participantId' => $participant['id']])->assertOk();
+        $this->answer($session, 'choice-1', 'second', ['participantId' => $participant['id']])->assertUnprocessable();
+        $this->answer($session, 'choice-1', 'second')->assertOk();
         $this->assertDatabaseHas('session_answers', ['session_participant_id' => $other['id'], 'option_id' => 'second']);
         $this->assertDatabaseMissing('session_answers', ['session_participant_id' => $participant['id']]);
     }
@@ -124,7 +125,7 @@ final class RuntimeTest extends TestCase
         $state = $this->getJson('/api/participation/'.$session['id'])->assertOk()->json('session');
         $this->assertSame([
             ['blockId' => 'choice-1', 'optionId' => 'first'], ['blockId' => 'choice-2', 'optionId' => 'second'],
-        ], $state['ownAnswers']);
+        ], array_map(fn (array $answer): array => array_intersect_key($answer, array_flip(['blockId', 'optionId'])), $state['ownAnswers']));
     }
 
     public function test_navigation_requires_current_revision_and_a_stage_in_the_fixed_document(): void
@@ -205,9 +206,9 @@ final class RuntimeTest extends TestCase
         $this->answer($session, 'Choice', 'first')->assertOk();
         $this->navigate($session, 'stage-2', 1)->assertOk();
         $this->answer($session, 'choice', 'second', ['stageId' => 'stage-2'])->assertOk();
-        $this->getJson('/api/participation/'.$session['id'])->assertOk()->assertJsonPath('session.ownAnswers', [
-            ['blockId' => 'Choice', 'optionId' => 'first'], ['blockId' => 'choice', 'optionId' => 'second'],
-        ]);
+        $this->getJson('/api/participation/'.$session['id'])->assertOk()
+            ->assertJsonPath('session.ownAnswers.0.blockId', 'Choice')->assertJsonPath('session.ownAnswers.0.optionId', 'first')
+            ->assertJsonPath('session.ownAnswers.1.blockId', 'choice')->assertJsonPath('session.ownAnswers.1.optionId', 'second');
         $this->assertDatabaseCount('session_answers', 2);
     }
 

@@ -10,7 +10,6 @@ use App\Domain\Lessons\Audience;
 use App\Domain\Lessons\BlockRegistry;
 use App\Domain\Lessons\LessonDocument;
 use App\Domain\Lessons\Stage;
-use App\Models\SessionAnswer;
 use App\Models\SessionCommandReceipt;
 use App\Models\SessionParticipant;
 use App\Models\TeachingSession;
@@ -19,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 
 final class RuntimeService
 {
-    public function __construct(private StudioService $studio, private BlockRegistry $registry, private RuntimeCommands $commands, private SessionTimer $timer, private RuntimeMediaProjection $mediaProjection) {}
+    public function __construct(private StudioService $studio, private BlockRegistry $registry, private RuntimeCommands $commands, private SessionTimer $timer, private RuntimeMediaProjection $mediaProjection, private RuntimeBlocks $blocks, private RuntimeAnswers $answers) {}
 
     public function start(string $ownerKey, string $lessonId, int $expectedRevision, ?string $locale, bool $prepare = false): array
     {
@@ -159,46 +158,34 @@ final class RuntimeService
         return $this->publicState($session, Audience::Projector);
     }
 
-    public function answer(string $sessionId, ?string $participantId, string $stageId, string $blockId, string $optionId): array
+    public function answer(string $sessionId, ?string $participantId, string $stageId, string $blockId, array $body): array
     {
-        return DB::transaction(function () use ($sessionId, $participantId, $stageId, $blockId, $optionId): array {
-            // One lock serializes navigation and all answers for this session.
+        return DB::transaction(function () use ($sessionId, $participantId, $stageId, $blockId, $body): array {
+            // One lock serializes navigation, role capacity, moderation and answers.
             $session = TeachingSession::query()->whereKey($sessionId)->lockForUpdate()->first()
                 ?? throw new ApiProblem('not_found', 404);
             $participant = $this->participant($sessionId, $participantId);
+            $keys = array_keys($body);
+            sort($keys);
+            $legacy = $keys === ['blockId', 'optionId', 'stageId'];
+            if (! $legacy && $keys !== ['blockId', 'stageId', 'value']) {
+                throw new ApiProblem('invalid_action', 422);
+            }
             if ($session->status !== 'running') {
                 throw new ApiProblem('invalid_state', 409);
             }
             if ($session->current_stage_id !== $stageId) {
                 throw new ApiProblem('invalid_action', 422);
             }
-
-            $stage = $this->stage($this->document($session), $stageId);
-            $block = null;
-            foreach ($stage->blocks as $candidate) {
-                if ($candidate->id === $blockId) {
-                    $block = $candidate;
-                    break;
-                }
-            }
-            if ($block === null || $block->type !== 'core.single-choice'
-                || ! in_array($optionId, array_column($block->content[$session->locale]['options'], 'optionId'), true)) {
+            $block = $this->blocks->find($this->document($session), $blockId, $stageId);
+            if ($legacy && $block->type !== 'core.single-choice') {
                 throw new ApiProblem('invalid_action', 422);
             }
-
-            $answer = SessionAnswer::query()->where('teaching_session_id', $sessionId)
-                ->where('session_participant_id', $participant->id)->where('block_id', $blockId)->first();
-            if ($answer !== null && $answer->option_id !== $optionId && ! $block->config['allowRepeat']) {
-                throw new ApiProblem('answer_locked', 409);
+            $value = $legacy ? ['optionId' => $body['optionId']] : $body['value'];
+            if (! is_array($value)) {
+                throw new ApiProblem('invalid_action', 422);
             }
-            if ($answer === null) {
-                SessionAnswer::create([
-                    'teaching_session_id' => $sessionId, 'session_participant_id' => $participant->id,
-                    'block_id' => $blockId, 'option_id' => $optionId,
-                ]);
-            } elseif ($answer->option_id !== $optionId) {
-                $answer->update(['option_id' => $optionId]);
-            }
+            $this->answers->submit($session, $participant, $block, $value);
 
             return $this->publicState($session, Audience::Student, $participant);
         });
@@ -207,6 +194,7 @@ final class RuntimeService
     private function teacherState(TeachingSession $session): array
     {
         $document = $this->document($session);
+        $blockSnapshot = $this->blocks->snapshot($session);
         $teacherDocument = $document->project(Audience::Teacher, $session->locale);
         $teacherDocument['stages'] = array_map(
             fn (array $stage): array => $this->mediaProjection->stage($stage, $session, Audience::Teacher),
@@ -224,7 +212,7 @@ final class RuntimeService
             'projectorUrl' => url('/'.$uiLocale.'/project/'.$session->projector_token),
             'joinUrl' => url('/'.$uiLocale.'/join').'?code='.rawurlencode($session->join_code),
             'publicStage' => $this->mediaProjection->stage(
-                $this->stage($document, $session->current_stage_id)->project(Audience::Projector, $session->locale),
+                $this->blocks->project($this->stage($document, $session->current_stage_id), $session, Audience::Projector, $blockSnapshot),
                 $session, Audience::Projector,
             ),
             'participants' => SessionParticipant::query()->where('teaching_session_id', $session->id)
@@ -233,25 +221,23 @@ final class RuntimeService
                     'connected' => $participant->last_seen_at !== null && $participant->last_seen_at->greaterThanOrEqualTo(CarbonImmutable::now('UTC')->subSeconds(config('lessons.runtime.connected_seconds'))),
                     'lastSeenAt' => $participant->last_seen_at?->utc()->toISOString(),
                 ])->all(),
-            'answers' => SessionAnswer::query()->where('teaching_session_id', $session->id)
-                ->orderBy('id')->get()->map(fn (SessionAnswer $answer) => [
-                    'participantId' => $answer->session_participant_id, 'blockId' => $answer->block_id, 'optionId' => $answer->option_id,
-                ])->all(),
+            'blockStates' => $this->blocks->allStates($document, $blockSnapshot),
+            'answers' => $this->answers->teacher($session, $document),
         ];
     }
 
     private function publicState(TeachingSession $session, Audience $audience, ?SessionParticipant $participant = null): array
     {
+        $document = $this->document($session);
+        $blockSnapshot = $this->blocks->snapshot($session);
         $state = $this->baseState($session) + [
             'stage' => $this->mediaProjection->stage(
-                $this->stage($this->document($session), $session->current_stage_id)->project($audience, $session->locale),
+                $this->blocks->project($this->stage($document, $session->current_stage_id), $session, $audience, $blockSnapshot),
                 $session, $audience,
             ),
         ];
         if ($participant !== null) {
-            $state['ownAnswers'] = SessionAnswer::query()->where('teaching_session_id', $session->id)
-                ->where('session_participant_id', $participant->id)->orderBy('id')->get()
-                ->map(fn (SessionAnswer $answer) => ['blockId' => $answer->block_id, 'optionId' => $answer->option_id])->all();
+            $state['ownAnswers'] = $this->answers->own($session, $document, $participant, $blockSnapshot);
         }
 
         return $state;

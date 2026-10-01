@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { blockTypes, blockLabel } from './interactive';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { ApiError, api, errorMessage } from './api';
 import { move, newBlock, newStage, projectStage } from './document';
@@ -26,8 +27,8 @@ const templateMetadata = ref(emptyMetadata());
 const templateBusy = ref(false);
 const activeStage = computed(() => document.value?.stages.find(stage => stage.id === activeStageId.value));
 const activeStageIndex = computed(() => document.value?.stages.findIndex(stage => stage.id === activeStageId.value) ?? -1);
-const types: BlockType[] = ['core.text', 'core.image', 'core.single-choice'];
-const labelFor = (type: BlockType) => props.messages[type === 'core.text' ? 'text' : type === 'core.image' ? 'image' : 'single_choice'];
+const types = blockTypes;
+const labelFor = (type: BlockType) => blockLabel(type, props.messages);
 function adopt(value: Lesson) {
     lesson.value = value;
     document.value = structuredClone(value.document);

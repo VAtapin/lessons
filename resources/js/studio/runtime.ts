@@ -10,7 +10,7 @@ export function recoverCommand(serialized: string | null): Command | undefined {
         const value = JSON.parse(serialized);
         if (!value || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value.commandId)
             || !Number.isInteger(value.expectedRevision) || value.expectedRevision < 1
-            || !['begin', 'pause', 'resume', 'finish', 'stage', 'timer.start', 'timer.pause', 'timer.resume', 'timer.clear', 'message.set', 'message.clear', 'wave'].includes(value.action)
+            || !['begin', 'pause', 'resume', 'finish', 'stage', 'timer.start', 'timer.pause', 'timer.resume', 'timer.clear', 'message.set', 'message.clear', 'wave', 'block.open', 'block.close', 'block.reveal', 'answer.moderate', 'answer.publish', 'answer.unpublish', 'role.assign', 'signal.ack'].includes(value.action)
             || !value.payload || typeof value.payload !== 'object' || Array.isArray(value.payload)) return;
         return value as Command;
     } catch { return; }

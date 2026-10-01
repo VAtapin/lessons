@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Domain\Lessons\Types;
 
 use App\Domain\Lessons\BlockInstance;
-use App\Domain\Lessons\BlockType;
+use App\Domain\Lessons\InteractiveBlockType;
+use App\Domain\Lessons\InteractiveShape;
 use App\Domain\Lessons\Shape;
 use App\Domain\Lessons\ValidationException;
 
-final class SingleChoiceBlock implements BlockType
+final class SingleChoiceBlock implements InteractiveBlockType
 {
     public function id(): string
     {
@@ -24,6 +25,28 @@ final class SingleChoiceBlock implements BlockType
     public function defaults(): array
     {
         return ['allowRepeat' => false];
+    }
+
+    public function initialState(): string
+    {
+        return 'open';
+    }
+
+    public function validateAnswer(BlockInstance $block, array $value): array
+    {
+        $value = InteractiveShape::answer($value, ['optionId']);
+
+        return ['optionId' => InteractiveShape::member($value['optionId'], InteractiveShape::ids($block, 'options', 'optionId'))];
+    }
+
+    public function grade(BlockInstance $block, array $value): ?bool
+    {
+        return $block->solution === null ? null : $value === $this->publicResult($block);
+    }
+
+    public function publicResult(BlockInstance $block): ?array
+    {
+        return $block->solution === null ? null : ['optionId' => $block->solution['optionId']];
     }
 
     public function validate(BlockInstance $block, array $locales): void

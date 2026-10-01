@@ -113,6 +113,31 @@ final class TemplateLibraryTest extends TestCase
         $this->assertDatabaseCount('block_template_versions', 1);
     }
 
+    public function test_translated_private_block_notes_follow_requested_locales_and_never_enter_public_projection(): void
+    {
+        $document = $this->document();
+        $document['stages'][0]['blocks'][0]['teacherNotes'] = ['ru' => 'Private RU note', 'de' => 'Private DE note'];
+        $lesson = $this->createLesson($document);
+        $template = $this->postJson('/api/studio/templates', $this->metadata() + [
+            'lessonId' => $lesson['id'], 'expectedLessonRevision' => $lesson['revision'], 'blockId' => 'Choice',
+        ])->assertCreated()->json('template');
+        $copy = $this->instantiate($template, ['de']);
+        $this->assertSame(['de' => 'Private DE note'], $copy['teacherNotes']);
+        $this->assertSame(['ru' => 'Private RU note', 'de' => 'Private DE note'], $template['versions'][0]['block']['teacherNotes']);
+        $document['locales'] = ['de'];
+        $document['defaultLocale'] = 'de';
+        $document['content'] = ['de' => $document['content']['de']];
+        $document['stages'][0]['content'] = ['de' => $document['stages'][0]['content']['de']];
+        $document['stages'][0]['blocks'] = [$copy];
+        $newLesson = $this->createLesson($document);
+        $session = $this->postJson('/api/studio/lessons/'.$newLesson['id'].'/sessions', ['expectedRevision' => $newLesson['revision']])
+            ->assertCreated()->json('session');
+        $this->assertSame('Private DE note', $session['document']['stages'][0]['blocks'][0]['teacherNotes']);
+        $this->assertArrayNotHasKey('teacherNotes', $session['publicStage']['blocks'][0]);
+        $projection = $this->getJson('/api/projection/'.basename($session['projectorUrl']))->assertOk()->json('session');
+        $this->assertStringNotContainsString('Private DE note', json_encode($projection));
+    }
+
     public function test_source_revision_and_block_identity_are_checked_before_creating_a_snapshot(): void
     {
         $lesson = $this->createLesson();

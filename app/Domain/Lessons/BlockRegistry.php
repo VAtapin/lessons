@@ -4,8 +4,17 @@ declare(strict_types=1);
 
 namespace App\Domain\Lessons;
 
+use App\Domain\Lessons\Types\FreeResponseBlock;
 use App\Domain\Lessons\Types\ImageBlock;
+use App\Domain\Lessons\Types\MatchingBlock;
+use App\Domain\Lessons\Types\MultipleChoiceBlock;
+use App\Domain\Lessons\Types\PollBlock;
+use App\Domain\Lessons\Types\PromptBlock;
+use App\Domain\Lessons\Types\RolesBlock;
+use App\Domain\Lessons\Types\SequenceBlock;
+use App\Domain\Lessons\Types\SignalsBlock;
 use App\Domain\Lessons\Types\SingleChoiceBlock;
+use App\Domain\Lessons\Types\StructuredTextBlock;
 use App\Domain\Lessons\Types\TextBlock;
 
 final class BlockRegistry
@@ -19,6 +28,15 @@ final class BlockRegistry
         $registry->register(new TextBlock);
         $registry->register(new ImageBlock);
         $registry->register(new SingleChoiceBlock);
+        $registry->register(new StructuredTextBlock);
+        $registry->register(new PromptBlock);
+        $registry->register(new MultipleChoiceBlock);
+        $registry->register(new PollBlock);
+        $registry->register(new FreeResponseBlock);
+        $registry->register(new SequenceBlock);
+        $registry->register(new MatchingBlock);
+        $registry->register(new RolesBlock);
+        $registry->register(new SignalsBlock);
 
         return $registry;
     }

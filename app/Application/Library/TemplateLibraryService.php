@@ -100,6 +100,9 @@ final readonly class TemplateLibraryService
                 $source = BlockInstance::fromArray($version->block, $this->registry, $version->locales);
                 $copy = (new BlockTemplate($record->id, $version->id, $source))->instantiate((string) Str::uuid())->toArray();
                 $copy['content'] = array_intersect_key($copy['content'], array_flip($locales));
+                if (isset($copy['teacherNotes'])) {
+                    $copy['teacherNotes'] = array_intersect_key($copy['teacherNotes'], array_flip($locales));
+                }
                 $instance = BlockInstance::fromArray($copy, $this->registry, $locales);
             } catch (ValidationException) {
                 throw new ApiProblem('invalid_document', 422);

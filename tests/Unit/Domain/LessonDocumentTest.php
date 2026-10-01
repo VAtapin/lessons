@@ -111,7 +111,7 @@ final class LessonDocumentTest extends TestCase
         $data['stages'][0]['blocks'][0]['type'] = 'plugin.unknown';
         yield 'unregistered block type' => [$data];
         $data = $base;
-        $data['stages'][0]['blocks'][0]['schemaVersion'] = 2;
+        $data['stages'][0]['blocks'][0]['schemaVersion'] = 3;
         yield 'unsupported block version' => [$data];
         $data = $base;
         $data['stages'][0]['blocks'][0]['schemaVersion'] = '1';

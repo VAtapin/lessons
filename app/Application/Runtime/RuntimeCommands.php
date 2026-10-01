@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 final class RuntimeCommands
 {
-    public function __construct(private SessionTimer $timer) {}
+    public function __construct(private SessionTimer $timer, private InteractiveCommands $interactive) {}
 
     public function fingerprint(int $revision, string $action, array $payload, array $extraFields = []): string
     {
@@ -21,6 +21,11 @@ final class RuntimeCommands
 
     public function apply(TeachingSession $session, LessonDocument $document, string $action, array $payload, CarbonImmutable $now): void
     {
+        if ($this->interactive->supports($action)) {
+            $this->interactive->apply($session, $document, $action, $payload);
+
+            return;
+        }
         $this->validate($action, $payload);
         if ($session->status === 'finished') {
             throw new ApiProblem('invalid_state', 409);

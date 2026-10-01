@@ -368,3 +368,39 @@
     .teacher-panel .qr-popover { width: 185px; }
     .teacher-panel .conducting-heading { gap: 12px; }
 }
+/* Stage 5: shared exercises, accessible answer controls and teacher moderation. */
+.interactive-block fieldset, .editor-collection { min-width: 0; border: 0; padding: 0; margin: 0; }
+.interactive-block legend { font-size: 1.2rem; line-height: 1.5; width: 100%; overflow-wrap: anywhere; margin-bottom: 10px; }
+.interactive-block fieldset > button { margin-top: 14px; }
+.interactive-block .choice-option > span { min-width: 0; overflow-wrap: anywhere; flex: 1; }
+.interactive-block .choice-option small { flex-shrink: 0; }
+.block-state { color: var(--muted); font: .8rem/1.5 system-ui, sans-serif; margin-block: 8px !important; }
+.sequence-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.sequence-row > span { min-width: 0; flex: 1; overflow-wrap: anywhere; }
+.sequence-row button { flex-shrink: 0; }
+.matching-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.matching-columns ul, .text-list { padding-inline-start: 24px; line-height: 1.7; overflow-wrap: anywhere; }
+.render-block blockquote { margin: 14px 0; border-inline-start: 3px solid var(--olive); padding-inline-start: 18px; }
+.render-block h3 { margin-bottom: 12px; }
+.text-source { display: block; color: var(--muted); margin-top: 10px; }
+.prompt-block { padding: 18px; border-radius: 9px; background: #f1edda; border: 1px solid var(--border); }
+.block-results { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px; }
+.block-results > p { margin-top: 8px; }
+.editor-collection { margin-block: 16px; }
+.editor-collection legend { font: 600 .9rem/1.4 system-ui, sans-serif; }
+.block-teacher-notes { margin-top: 20px; }
+.block-teacher-notes summary, .block-tools summary { cursor: pointer; font: 500 .85rem/1.5 system-ui, sans-serif; }
+.block-tool { display: grid; gap: 10px; padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--border); font: .85rem/1.5 system-ui, sans-serif; }
+.block-tool > strong { overflow-wrap: anywhere; }
+.block-tool .action-row { gap: 6px; }
+.block-tool .action-row button { flex: 1 1 110px; padding-inline: 8px; }
+.role-assignment { display: grid; gap: 8px; margin-top: 12px; }
+.role-assignment label { margin: 0; }
+.signal-summary { display: grid; gap: 12px; }
+.teacher-answer { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 12px; }
+.teacher-answer > small { color: var(--muted); }
+.teacher-answer > p { margin-top: 8px; }
+.moderation-form { margin-top: 10px; }
+.moderation-form .action-row { margin-top: 12px; flex-wrap: wrap; }
+.teacher-panel .teacher-answer .plain-text { overflow-wrap: anywhere; }
+@media (max-width: 600px) { .editor-collection .option-edit { flex-wrap: wrap; } .editor-collection .option-edit label { flex: 1 1 150px; } .moderation-form .action-row button { flex: 1 1 120px; } .teacher-panel .participants .participant { padding-inline: 0; } }
