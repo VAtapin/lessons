@@ -42,7 +42,7 @@
 
 ## Git и следующие работы
 
-- main → origin/main, https://github.com/VAtapin/lessons.git. Последний связанный commit: 313ffc09a02bd521c098acffc6b95502dc3d2a23 — Restore original lesson interactions in the block engine. Новый commit включает этот статус; его hash сообщает Git отчёт.
+- main → origin/main, https://github.com/VAtapin/lessons.git. Последний связанный commit: bffbb9331b916a8885125febefc4514875194a84 — Match homepage proportions to the approved design. Новый commit включает этот статус; его hash сообщает Git отчёт.
 - Git никогда не содержит .env, credentials, cookies, private data, local DB, logs, backups или build. Windows PHP child commands требуют PHPRC=D:\Projekte\lessons\.local\php.ini; Node22 — .local/node/node-v22.23.3-win-x64.
 - Этапы 7/8 установлены и проверены. Production администратор пока не назначен: требуется точный verified email владельца.
 - Этап 9: restore, execution records, очереди backup/retention и HTTP load harness прошли локальные проверки, Linux CI/production настройка ещё впереди. Targeted Astra checkpoint C не выявил P0/P1; два P2 исправлены: named lock на весь restore и queue:restart внутри deployment до up. Предварительный load10×30 не считается согласованной нагрузочной приёмкой.
@@ -50,3 +50,5 @@
 - Нужны ответы владельца: существующий verified email для production admin и согласованный load target. Внешняя копия, полная browser matrix, итоговая визуальная/keyboard приёмка и получение нового письма пока не закрыты. Актуальные UI замечания и методические материалы имеют приоритет следующего implementation блока; не объявлять весь roadmap завершённым.
 
 - Текущий перенос проверен локально: полный PHP 550 tests / 533 passed / 6322 assertions / 17 Windows skips; полный Pint, frontend 93 tests, typecheck и build 162 modules passed. OLD реально открыт с отдельным пультом/учеником; новая v2 проверена на собственном техническом занятии: роль/смена, личный ответ, approve/publish, reveal, board strike, голосование, собственный неверный путь с reload и разбором 3/5, правильная общая дорога, цитата, школьные вопросы, минутный таймер, отдельный tab, добровольный поступок и итог. 360 px: нет горизонтального overflow, задания доступны без сайта; desktop 1366×768. Установка на production ожидает Git/CI; активные занятия пользователя не изменялись.
+
+- Общая библиотека подготовлена к наполнению через lessons:install-common: 16 полных RU/DE заготовок (8 обычных заданий и 8 встроенных иллюстраций); используются существующие immutable template records и независимые вставки. Локальная установка выполнена. Scoped 8 tests / 540 assertions, полный suite/Pint passed; источник/права/медиабайты проверены, повтор сохраняет редакторские версии и скрытие/архив. На production установка выполняется после Git deployment. CI переноса 313ffc0 (36876304320) passed: PHP8.4/8.5, MariaDB10.6 с restore/load и frontend.
