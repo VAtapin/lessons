@@ -14,6 +14,7 @@ use App\Domain\Lessons\Stage;
 use App\Models\SessionAnswer;
 use App\Models\SessionBlockState;
 use App\Models\TeachingSession;
+use Carbon\CarbonImmutable;
 
 final class RuntimeBlocks
 {
@@ -45,19 +46,61 @@ final class RuntimeBlocks
         return $type;
     }
 
+    public function isTask(BlockInstance $block): bool
+    {
+        return $block->type !== 'core.presentation' && $this->registry->resolve($block->type, $block->schemaVersion) instanceof InteractiveBlockType;
+    }
+
     public function state(TeachingSession $session, BlockInstance $block): array
     {
         $row = SessionBlockState::query()->where('teaching_session_id', $session->id)->where('block_id', $block->id)->first();
+        $state = $this->readState($block, $row === null ? [] : [$block->id => ['status' => $row->status, 'presentation' => $row->presentation]]);
+        if ($state['status'] === 'open' && in_array($block->id, $this->expiredTaskIds($session), true)) {
+            $state['status'] = 'closed';
+        }
 
-        return $this->readState($block, $row === null ? [] : [$block->id => ['status' => $row->status, 'presentation' => $row->presentation]]);
+        return $state;
+    }
+
+    private function expiredTaskIds(TeachingSession $session): array
+    {
+        $stage = collect($session->version->document['stages'])->firstWhere('id', $session->current_stage_id);
+
+        return ($stage['config']['closeOnTimer'] ?? false) && (new SessionTimer)->project($session, CarbonImmutable::now('UTC'))['status'] === 'expired'
+            ? array_column($stage['blocks'], 'id') : [];
+    }
+
+    /** Caller holds the session lock. Clearing/restarting an expired timer cannot reopen its tasks. */
+    public function freezeExpiredTasks(TeachingSession $session): void
+    {
+        $ids = $this->expiredTaskIds($session);
+        if ($ids === []) {
+            return;
+        }
+        $snapshot = $this->snapshot($session);
+        foreach ($ids as $id) {
+            if (($snapshot[$id]['status'] ?? null) === 'closed') {
+                SessionBlockState::updateOrCreate(['teaching_session_id' => $session->id, 'block_id' => $id], ['status' => 'closed', 'attempt_no' => 1]);
+            }
+        }
     }
 
     /** A fresh per-response read snapshot; mutations use state() under the session lock. */
     public function snapshot(TeachingSession $session): array
     {
-        return SessionBlockState::query()->where('teaching_session_id', $session->id)->get()->mapWithKeys(
+        $snapshot = SessionBlockState::query()->where('teaching_session_id', $session->id)->get()->mapWithKeys(
             fn (SessionBlockState $row) => [$row->block_id => ['status' => $row->status, 'presentation' => $row->presentation]],
         )->all();
+        foreach ($this->expiredTaskIds($session) as $id) {
+            $authored = collect($session->version->document['stages'])->firstWhere('id', $session->current_stage_id);
+            $block = collect($authored['blocks'])->firstWhere('id', $id);
+            $type = $this->registry->resolve($block['type'], $block['schemaVersion']);
+            if ($type instanceof InteractiveBlockType && ($snapshot[$id]['status'] ?? $type->initialState()) === 'open') {
+                $snapshot[$id]['status'] = 'closed';
+            }
+        }
+
+        return $snapshot;
     }
 
     public function readState(BlockInstance $block, array $snapshot): array
@@ -110,10 +153,22 @@ final class RuntimeBlocks
             if ($stage->id !== $session->current_stage_id || ! ($stage->config['openTasks'] ?? false)) {
                 continue;
             }
+            if ($stage->config['sequentialTasks'] ?? false) {
+                $tasks = array_values(array_filter($stage->blocks, fn ($block) => $this->isTask($block)));
+                foreach (array_slice($tasks, 1) as $future) {
+                    SessionBlockState::firstOrCreate(['teaching_session_id' => $session->id, 'block_id' => $future->id], ['status' => 'prepared', 'attempt_no' => 1]);
+                }
+            }
             foreach ($stage->blocks as $block) {
+                if (($stage->config['sequentialTasks'] ?? false) && ! $this->isTask($block)) {
+                    continue;
+                }
                 if ($this->registry->resolve($block->type, $block->schemaVersion) instanceof InteractiveBlockType
                     && $this->state($session, $block)['status'] === 'prepared') {
                     $this->transition($session, $block, 'block.open');
+                }
+                if ($stage->config['sequentialTasks'] ?? false) {
+                    break;
                 }
             }
         }
@@ -159,7 +214,8 @@ final class RuntimeBlocks
                     'ready' => $answers->filter(fn (SessionAnswer $answer): bool => (bool) ($answer->value['ready'] ?? false))->count(),
                     'question' => $answers->filter(fn (SessionAnswer $answer): bool => (bool) ($answer->value['question'] ?? false) && ! $answer->acknowledged)->count()];
             }
-            if ($detailsAvailable && in_array($block->type, ['core.poll', 'core.single-choice'], true)) {
+            if ($detailsAvailable && in_array($block->type, ['core.poll', 'core.single-choice', 'core.multiple-choice'], true)
+                && (! ($stage->config['closeOnTimer'] ?? false) || $state['status'] === 'revealed')) {
                 $runtime['summary'] = $this->pollResults($session, $block);
             }
             if ($block->type === 'core.free-response' && $audience === Audience::Projector && $detailsAvailable) {
@@ -170,13 +226,25 @@ final class RuntimeBlocks
                     $runtime['results'] = ['published' => $published];
                 }
             } elseif ($state['status'] === 'revealed') {
-                if ($block->type === 'core.poll') {
+                if ($block->type === 'core.poll' || ($block->type === 'core.multiple-choice' && $block->solution === null)) {
                     $runtime['results'] = $this->pollResults($session, $block);
                 } elseif (($result = $type->publicResult($block)) !== null) {
                     $runtime['results'] = $result;
                 }
             }
             $view['blocks'][$index]['runtime'] = $runtime;
+        }
+
+        if ($stage->config['sequentialTasks'] ?? false) {
+            $tasks = array_values(array_filter($stage->blocks, fn ($block) => $this->isTask($block)));
+            $active = $tasks[0]->id ?? null;
+            foreach ($tasks as $task) {
+                if ($this->readState($task, $snapshot)['status'] !== 'prepared') {
+                    $active = $task->id;
+                }
+            }
+            $ids = array_column($tasks, 'id');
+            $view['blocks'] = array_values(array_filter($view['blocks'], fn ($block) => ! in_array($block['id'], $ids, true) || $block['id'] === $active));
         }
 
         return $view;
@@ -199,7 +267,9 @@ final class RuntimeBlocks
         $answers = SessionAnswer::query()->where('teaching_session_id', $session->id)->where('block_id', $block->id)->get();
         $counts = [];
         foreach ($block->content[$session->locale]['options'] as $option) {
-            $counts[] = ['optionId' => $option['optionId'], 'count' => $answers->filter(fn (SessionAnswer $answer): bool => ($answer->value['optionId'] ?? $answer->option_id) === $option['optionId'])->count()];
+            $counts[] = ['optionId' => $option['optionId'], 'count' => $answers->filter(fn (SessionAnswer $answer): bool => $block->type === 'core.multiple-choice'
+                ? in_array($option['optionId'], $answer->value['optionIds'] ?? [], true)
+                : ($answer->value['optionId'] ?? $answer->option_id) === $option['optionId'])->count()];
         }
 
         return ['counts' => $counts, 'totalAnswers' => $answers->count()];

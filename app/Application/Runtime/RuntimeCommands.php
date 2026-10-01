@@ -21,6 +21,7 @@ final class RuntimeCommands
 
     public function apply(TeachingSession $session, LessonDocument $document, string $action, array $payload, CarbonImmutable $now): void
     {
+        $this->blocks->freezeExpiredTasks($session);
         if ($this->presentation->supports($action)) {
             if ($session->status === 'finished') {
                 throw new ApiProblem('invalid_state', 409);
@@ -77,6 +78,9 @@ final class RuntimeCommands
                     throw new ApiProblem('invalid_action', 422);
                 }
                 $session->current_stage_id = $payload['stageId'];
+                if (collect($document->stages)->firstWhere('id', $payload['stageId'])->config['closeOnTimer'] ?? false) {
+                    $this->timer->clear($session);
+                }
                 $this->blocks->openTasks($session, $document);
                 break;
             case 'timer.start':

@@ -88,3 +88,10 @@ test('editor never fills missing German plan with Russian source text', async ()
     assert.equal(html.includes('Только русский план'), false);
     assert.equal(document.documentation.content.de, undefined);
 });
+
+test('supplied document labels distinguish DOCX, PDF and scenario files without changing pinned links', async () => {
+    const html = await render({ plan: null, video: null, files: [{ fileId: 'words-docx', kind: 'plan', locale: 'ru', label: 'Сценарий · DOCX', url: '/lesson-files/words-docx' }] });
+    assert.match(html, /Сценарий · DOCX/);
+    assert.match(html, /href="\/lesson-files\/words-docx"/);
+    assert.doesNotMatch(html, />Plan/);
+});

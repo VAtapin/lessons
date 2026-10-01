@@ -16,6 +16,7 @@ export function valueText(content: BlockContent, value: AnswerValue, messages: M
     if (value.optionId) return option(value.optionId);
     if (value.optionIds) return value.optionIds.map(option).join('; ');
     if (value.text !== undefined) return value.text;
+    if (value.modeId) return content.modes?.find(mode => mode.modeId === value.modeId)?.text ?? value.modeId;
     if (value.itemIds) return value.itemIds.map(id => content.items?.find(item => item.itemId === id)?.text ?? id).join(' → ');
     if (value.pairs) return value.pairs.map(pair => `${content.left?.find(item => item.itemId === pair.leftId)?.text ?? pair.leftId} — ${content.right?.find(item => item.itemId === pair.rightId)?.text ?? pair.rightId}`).join('; ');
     if ('roleId' in value) return content.roles?.find(item => item.roleId === value.roleId)?.text ?? messages.no_role;

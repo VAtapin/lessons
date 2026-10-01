@@ -57,4 +57,13 @@ foreach (['road', 'wounded', 'priest', 'levite', 'samaritan', 'newcomer', 'books
     ];
 }
 
+$builtins[] = ['assetId' => 'builtin-words-cover', 'versionId' => 'builtin-words-cover-v1', 'file' => 'assets/library/slova-ranyat/01-cover.png', 'mime' => 'image/png', 'labelKey' => 'media_words_cover'];
+$builtins[] = ['assetId' => 'builtin-words-message', 'versionId' => 'builtin-words-message-v1', 'file' => 'assets/library/slova-ranyat/02-message.png', 'mime' => 'image/png', 'labelKey' => 'media_words_message'];
+$builtins[] = ['assetId' => 'builtin-words-spark', 'versionId' => 'builtin-words-spark-v1', 'file' => 'assets/library/slova-ranyat/03-spark.png', 'mime' => 'image/png', 'labelKey' => 'media_words_spark'];
+$builtins[] = ['assetId' => 'builtin-words-team', 'versionId' => 'builtin-words-team-v1', 'file' => 'assets/library/slova-ranyat/04-team.png', 'mime' => 'image/png', 'labelKey' => 'media_words_team'];
+$builtins[] = ['assetId' => 'builtin-words-pause', 'versionId' => 'builtin-words-pause-v1', 'file' => 'assets/library/slova-ranyat/05-pause.png', 'mime' => 'image/png', 'labelKey' => 'media_words_pause'];
+$builtins[] = ['assetId' => 'builtin-words-support', 'versionId' => 'builtin-words-support-v1', 'file' => 'assets/library/slova-ranyat/06-support.png', 'mime' => 'image/png', 'labelKey' => 'media_words_support'];
+$builtins[] = ['assetId' => 'builtin-words-repair', 'versionId' => 'builtin-words-repair-v1', 'file' => 'assets/library/slova-ranyat/07-repair.png', 'mime' => 'image/png', 'labelKey' => 'media_words_repair'];
+$builtins[] = ['assetId' => 'builtin-words-good-word', 'versionId' => 'builtin-words-good-word-v1', 'file' => 'assets/library/slova-ranyat/08-good-word.png', 'mime' => 'image/png', 'labelKey' => 'media_words_good_word'];
+
 return $builtins;

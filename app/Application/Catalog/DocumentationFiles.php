@@ -39,13 +39,13 @@ final class DocumentationFiles
     public function present(TeacherDocumentation $documentation, string $locale): array
     {
         $result = $documentation->project($locale);
-        $result['files'] = array_map(function (array $reference): array {
+        $result['files'] = array_map(function (array $reference) use ($locale): array {
             $file = $this->resolve($reference['fileId']);
             if ($file['kind'] !== $reference['kind'] || $file['locale'] !== $reference['locale']) {
                 throw new ApiProblem('invalid_document', 422);
             }
 
-            return [...$reference, 'url' => $file['url'], 'bytes' => $file['bytes']];
+            return [...$reference, 'url' => $file['url'], 'bytes' => $file['bytes'], ...isset($file['labelKey']) ? ['label' => __('studio.'.$file['labelKey'], [], $locale)] : []];
         }, $result['files']);
 
         return $result;

@@ -128,7 +128,7 @@ const solutions = computed(() => stage.value?.blocks.flatMap(block => {
     if (!block.solution) return [];
     return [{ blockId: block.id, question: block.content.question, answer: valueText(block.content, block.solution, props.messages) }];
 }) ?? []);
-watch(() => stage.value?.id, () => { seconds.value = stage.value?.config.durationSeconds ?? 60; });
+watch(() => stage.value?.id, () => { seconds.value = stage.value?.config.answerSeconds ?? stage.value?.config.durationSeconds ?? 60; });
 watch(joinUrl, async url => {
     qr.value = '';
     if (!url) return;

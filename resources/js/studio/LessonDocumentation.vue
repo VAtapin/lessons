@@ -11,7 +11,7 @@ const paragraphs = computed(() => props.documentation.plan?.split(/\n\s*\n/) ?? 
         <p class="documentation-hint">{{ messages.documentation_hint }}</p>
         <div class="documentation-files">
             <a v-for="file in documentation.files" :key="file.fileId" :href="file.url || '/lesson-files/' + encodeURIComponent(file.fileId)" class="button-link" download>
-                {{ messages['documentation_' + file.kind] }} · {{ file.locale.toUpperCase() }} ↓
+                {{ file.label ?? messages['documentation_' + file.kind] }} · {{ file.locale.toUpperCase() }} ↓
             </a>
             <a v-if="documentation.video" :href="'https://www.youtube.com/watch?v=' + documentation.video.id" class="button-link" target="_blank" rel="noopener noreferrer">
                 {{ messages.documentation_video }} · {{ documentation.video.locale.toUpperCase() }} ↗

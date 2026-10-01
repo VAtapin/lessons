@@ -13,7 +13,7 @@ use App\Models\TeachingSession;
 
 final class InteractiveCommands
 {
-    public function __construct(private RuntimeBlocks $blocks, private RuntimeAnswers $answers) {}
+    public function __construct(private RuntimeBlocks $blocks, private RuntimeAnswers $answers, private SessionTimer $timer) {}
 
     public function supports(string $action): bool
     {
@@ -50,6 +50,21 @@ final class InteractiveCommands
         $block = $this->blocks->find($document, $payload['blockId'], $session->current_stage_id);
         $this->blocks->interactive($block);
         if (str_starts_with($action, 'block.')) {
+            $stage = collect($document->stages)->firstWhere('id', $session->current_stage_id);
+            if ($action === 'block.open' && ($stage->config['sequentialTasks'] ?? false)) {
+                foreach ($stage->blocks as $previous) {
+                    if ($previous->id === $block->id) {
+                        break;
+                    }
+                    if ($this->blocks->isTask($previous)
+                        && $this->blocks->state($session, $previous)['status'] !== 'revealed') {
+                        throw new ApiProblem('invalid_state', 409);
+                    }
+                }
+                if ($stage->config['closeOnTimer'] ?? false) {
+                    $this->timer->clear($session);
+                }
+            }
             $this->blocks->transition($session, $block, $action);
 
             return;

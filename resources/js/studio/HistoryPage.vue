@@ -28,7 +28,7 @@ const questionGroups = computed(() => {
     const identifiers = [...new Set([...history.aggregates.map(item => item.blockId), ...answerIds])].filter(id => {
         if (answerIds.has(id)) return true;
         const block = blocks.find(item => item.block.id === id)?.block;
-        if (block) return block.type !== 'core.presentation' || block.config.kind === 'discussion';
+        if (block) return block.type !== 'core.presentation' || ['discussion', 'personal-choice'].includes(block.config.kind ?? '');
         return history.aggregates.find(item => item.blockId === id)?.type !== 'core.presentation';
     });
     const ordered = [...blocks.filter(item => identifiers.includes(item.block.id)).map(item => item.block.id), ...identifiers.filter(id => !blocks.some(item => item.block.id === id))];

@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import type { AnswerValue, Messages, OwnAnswer, ProjectedBlock } from './types';
 const props = defineProps<{ block: ProjectedBlock; messages: Messages; presenter?: boolean; interactive?: boolean; answer?: OwnAnswer; disabled?: boolean; conducting?: boolean }>();
 const emit = defineEmits<{ command: [action: string, payload: Record<string, unknown>]; answer: [blockId: string, value: AnswerValue] }>();
-const selectedModeId = computed(() => props.interactive ? props.answer?.value.modeId : props.block.runtime?.presentation?.modeId);
+const selectedModeId = computed(() => props.interactive ? props.answer?.value.modeId : props.block.config.kind === 'personal-choice' ? undefined : props.block.runtime?.presentation?.modeId);
 const selectedMode = computed(() => props.block.content.modes?.find(mode => mode.modeId === selectedModeId.value));
 function selectMode(modeId: string) {
     if (props.disabled) return;
@@ -37,6 +37,10 @@ function selectMode(modeId: string) {
             <p v-if="!conducting || block.runtime?.presentation?.visible" class="presentation-revealed plain-text">{{ block.content.text }}</p>
             <blockquote v-if="block.content.quote && (!conducting || block.runtime?.presentation?.visible)" class="scene-quote">{{ block.content.quote }}</blockquote>
             <small v-if="block.content.source && (!conducting || block.runtime?.presentation?.visible)" class="scene-source">{{ block.content.source }}</small>
+        </template>
+        <template v-else-if="block.config.kind === 'personal-choice'">
+            <p class="presentation-revealed plain-text">{{ block.content.text }}</p>
+            <div v-if="interactive" class="discussion-modes"><button v-for="mode in block.content.modes" :key="mode.modeId" type="button" :class="{ selected: selectedModeId === mode.modeId }" :aria-pressed="selectedModeId === mode.modeId" :disabled="disabled" @click="selectMode(mode.modeId)">{{ mode.label ?? mode.text }}</button></div>
         </template>
         <template v-else-if="block.config.kind === 'discussion'">
             <div class="discussion-modes"><button v-for="mode in block.content.modes" :key="mode.modeId" type="button" :data-mode="mode.modeId" :class="{ selected: selectedModeId === mode.modeId }" :aria-pressed="selectedModeId === mode.modeId" :disabled="disabled || (!presenter && !interactive)" @click="selectMode(mode.modeId)">{{ mode.label ?? mode.text }}</button><button v-if="presenter" class="discussion-minute" type="button" :disabled="disabled" @click="$emit('command', 'timer.start', { seconds: 60 })">{{ messages.discussion_minute }}</button></div>

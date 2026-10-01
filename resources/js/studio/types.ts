@@ -12,8 +12,8 @@ export interface Block {
     solution?: AnswerValue | null; teacherNotes?: Record<string, string>;
     origin?: { templateId: string; versionId: string } | null;
 }
-export interface Stage { id: string; content: Record<string, { title: string; notes?: string }>; config: { layout?: string; durationSeconds?: number; openTasks?: boolean }; blocks: Block[] }
-export interface DocumentationFile { fileId: string; kind: 'plan' | 'presentation'; locale: string; url?: string; bytes?: number }
+export interface Stage { id: string; content: Record<string, { title: string; notes?: string }>; config: { layout?: string; durationSeconds?: number; openTasks?: boolean; sequentialTasks?: boolean; closeOnTimer?: boolean; answerSeconds?: number }; blocks: Block[] }
+export interface DocumentationFile { fileId: string; kind: 'plan' | 'presentation'; locale: string; url?: string; bytes?: number; label?: string }
 export interface TeacherDocumentation { schemaVersion: 1; content: Record<string, { plan: string }>; files: DocumentationFile[]; video?: { id: string; locale: string } }
 export interface ProjectedDocumentation { plan: string | null; files: DocumentationFile[]; video: { id: string; locale: string } | null }
 export interface LessonDocument { id: string; schemaVersion: number; defaultLocale: string; locales: string[]; content: Record<string, { title: string }>; stages: Stage[]; documentation?: TeacherDocumentation }

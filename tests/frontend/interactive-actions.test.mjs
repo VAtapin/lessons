@@ -23,6 +23,7 @@ const component = evaluate(compileScript(descriptor, { id: 'interactive-actions-
     './ClassVoice.vue': { __esModule: true, default: { render: () => null } },
 }).default;
 const presentationComponent = evaluate(compileScript(parse(read('PresentationBlock.vue')).descriptor, { id: 'presentation-actions-test', inlineTemplate: true }).content, { vue: Vue }).default;
+const teacherToolsComponent = evaluate(compileScript(parse(read('TeacherBlockTools.vue')).descriptor, { id: 'teacher-tools-actions-test', inlineTemplate: true }).content, { vue: Vue, './interactive': evaluate(read('interactive.ts')), './BlockRenderer.vue': { __esModule: true, default: { render: () => null } } }).default;
 const qrRequests = [];
 const joinComponent = evaluate(compileScript(parse(read('JoinProjection.vue')).descriptor, { id: 'join-projection-test', inlineTemplate: true }).content, { vue: Vue, qrcode: { __esModule: true, default: { toDataURL: (...args) => { const pending = QRCode.toDataURL(...args); qrRequests.push(pending); return pending; } } } }).default;
 const stub = { __esModule: true, default: { render: () => null } };
@@ -344,4 +345,29 @@ test('runtime message renders as a classroom overlay and clear/QR-close events r
             assert.deepEqual(page.events.at(-1), ['hideJoin']);
         } else assert.equal(page.nodes('button').length, 0);
     }
+});
+
+test('private weekly choice saves only the student answer and has no projector or presenter buttons', async t => {
+    const block = { id: 'private', type: 'core.presentation', config: { kind: 'personal-choice' }, content: { text: 'Choose privately', modes: [{ modeId: 'pause', text: 'Pause' }, { modeId: 'apology', text: 'Apologize' }] }, runtime: { presentation: { modeId: 'pause' } } };
+    const page = fixture(t, block, { answer: { value: { modeId: 'apology' } } }, presentationComponent);
+    assert.equal(page.button('Apologize').props['aria-pressed'], true);
+    page.click('Pause');
+    assert.deepEqual(page.events, [['answer', 'private', { modeId: 'pause' }]]);
+    for (const presenter of [false, true]) {
+        const publicPage = fixture(t, structuredClone(block), { interactive: false, presenter }, presentationComponent);
+        assert.equal(publicPage.nodes('button').length, 0);
+        assert.equal(content(publicPage.root), 'Choose privately');
+    }
+});
+
+test('sequential teacher control opens the next phrase only after the previous result is revealed', async t => {
+    const stage = { config: { sequentialTasks: true }, blocks: ['first', 'second'].map(id => ({ id, type: 'core.poll', config: {}, content: { question: id } })) };
+    const session = { publicStage: stage, blockStates: [{ blockId: 'first', status: 'open' }, { blockId: 'second', status: 'prepared' }], answers: [], participants: [] };
+    const page = fixture(t, {}, { stage, session, disabled: false, messages: { next_task: 'Next phrase', review_together: 'Review' } }, teacherToolsComponent);
+    assert.equal(page.button('Next phrase').props.disabled, true);
+    page.props.session.blockStates[0].status = 'revealed';
+    await Vue.nextTick();
+    assert.equal(page.button('Next phrase').props.disabled, false);
+    page.click('Next phrase');
+    assert.deepEqual(page.events, [['command', 'block.open', { blockId: 'second' }]]);
 });

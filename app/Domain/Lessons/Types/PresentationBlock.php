@@ -45,7 +45,7 @@ final class PresentationBlock extends InteractiveDefinition
             || (array_key_exists('imageSide', $block->config) && (! in_array($block->config['imageSide'], ['left', 'right'], true) || $block->config['kind'] !== 'scene'))) {
             throw new ValidationException('Unsupported scene composition.');
         }
-        if (! in_array($block->config['kind'], ['reveal', 'discussion', 'response-board', 'scene', 'summary', 'closing'], true)
+        if (! in_array($block->config['kind'], ['reveal', 'discussion', 'personal-choice', 'response-board', 'scene', 'summary', 'closing'], true)
             || $block->solution !== null || ! is_int($block->config['maxItems'])
             || $block->config['maxItems'] < 1 || $block->config['maxItems'] > 50) {
             throw new ValidationException('Invalid presentation configuration.');
@@ -107,7 +107,7 @@ final class PresentationBlock extends InteractiveDefinition
             }
             $identity = $ids;
         }
-        if (($block->config['kind'] === 'discussion') !== ($identity !== [])
+        if (in_array($block->config['kind'], ['discussion', 'personal-choice'], true) !== ($identity !== [])
             || ($block->config['kind'] !== 'response-board' && $sources !== [])
             || ($block->config['kind'] !== 'reveal' && $block->config['reviewBlockId'] !== null)) {
             throw new ValidationException('Presentation fields do not match its kind.');
@@ -116,7 +116,7 @@ final class PresentationBlock extends InteractiveDefinition
 
     public function validateAnswer(BlockInstance $block, array $value): array
     {
-        if ($block->config['kind'] !== 'discussion') {
+        if (! in_array($block->config['kind'], ['discussion', 'personal-choice'], true)) {
             throw new ValidationException('This presentation does not accept student answers.');
         }
         $value = InteractiveShape::answer($value, ['modeId']);

@@ -30,9 +30,14 @@ final readonly class Stage
         }
 
         $config = array_key_exists('config', $data) ? $data['config'] : [];
-        Shape::object($config, [], ['layout', 'durationSeconds', 'openTasks'], 'stage.config');
-        if (array_key_exists('openTasks', $config)) {
-            Shape::boolean($config['openTasks'], 'stage.config.openTasks');
+        Shape::object($config, [], ['layout', 'durationSeconds', 'openTasks', 'sequentialTasks', 'closeOnTimer', 'answerSeconds'], 'stage.config');
+        if (array_key_exists('answerSeconds', $config)) {
+            Shape::integer($config['answerSeconds'], 'stage.config.answerSeconds', 1, 3600);
+        }
+        foreach (['openTasks', 'sequentialTasks', 'closeOnTimer'] as $flag) {
+            if (array_key_exists($flag, $config)) {
+                Shape::boolean($config[$flag], 'stage.config.'.$flag);
+            }
         }
         $config += ['layout' => 'vertical'];
         if (! in_array($config['layout'], ['vertical', 'two-columns', 'material-above-task'], true)) {
