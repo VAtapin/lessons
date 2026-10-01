@@ -25,6 +25,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Process\ExecutableFinder;
 use Tests\Support\EditorFixture;
 use Tests\Support\RestoreRuntimeFixture;
@@ -214,11 +215,14 @@ final class BackupRestoreTest extends TestCase
             }
         };
         $this->app->instance(DatabaseRestoreProcess::class, $overlapImporter);
-        $this->assertSame(0, Artisan::call('lessons:restore-test', $options), Artisan::output());
+        $restoreOutput = new BufferedOutput;
+        $restoreExit = Artisan::call('lessons:restore-test', $options, $restoreOutput);
+        $restoreText = $restoreOutput->fetch();
+        $this->assertSame(0, $restoreExit, $restoreText);
         $this->assertTrue($overlapAttempted, 'The overlapping two-connection check must precede the real SQL import.');
         $this->assertSame(1, (int) $second->selectOne('SELECT IS_FREE_LOCK(?) AS available', [RestoreDatabaseLock::NAME])->available, 'Successful restore must release its named lock.');
         $this->app->forgetInstance(DatabaseRestoreProcess::class);
-        $result = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
+        $result = json_decode($restoreText, true, flags: JSON_THROW_ON_ERROR);
         $this->assertSame(['database' => 'lessons_restore_test', 'mediaVersions' => 3, 'unreferencedMediaVersions' => 1, 'manifestSha256' => $hash], $result);
         $restored = $this->target->table('lesson_versions')->where('id', $version->id)->first();
         $this->assertSame($expectedDocument, json_decode($restored->document, true, flags: JSON_THROW_ON_ERROR));
