@@ -24,10 +24,13 @@ final class PlatformCheck extends Command
 
             $connection = DB::connection();
             $tables = [
-                'lesson_materials' => ['id', 'owner_key', 'revision', 'current_version_id'],
-                'lesson_versions' => ['id', 'lesson_material_id', 'status', 'document'],
+                'users' => ['id', 'owner_key', 'ui_locale', 'email_verified_at'],
+                'guest_workspace_claims' => ['source_owner_key', 'target_user_id', 'target_owner_key', 'result'],
+                'lesson_materials' => ['id', 'owner_key', 'revision', 'current_version_id', 'favorite'],
+                'lesson_versions' => ['id', 'lesson_material_id', 'status', 'document', 'purpose'],
                 'teaching_sessions' => ['id', 'lesson_version_id', 'owner_key', 'locale', 'current_stage_id', 'revision', 'join_code', 'projector_token',
-                    'status', 'timer_status', 'timer_ends_at', 'timer_remaining_seconds', 'timer_resume_on_session_resume', 'message', 'wave_id', 'wave_expires_at'],
+                    'status', 'timer_status', 'timer_ends_at', 'timer_remaining_seconds', 'timer_resume_on_session_resume', 'message', 'wave_id', 'wave_expires_at',
+                    'mode', 'started_at', 'finished_at', 'visited_stage_ids', 'final_aggregates', 'teacher_notes', 'details_purged_at', 'public_access_closed_at'],
                 'session_participants' => ['id', 'teaching_session_id', 'name', 'last_seen_at'],
                 'session_answers' => ['id', 'teaching_session_id', 'session_participant_id', 'block_id', 'option_id',
                     'value', 'revision', 'moderation_status', 'display_text', 'published', 'acknowledged'],

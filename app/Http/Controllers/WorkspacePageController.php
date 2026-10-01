@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Application\History\HistoryService;
+use App\Application\History\RehearsalService;
+use App\Application\History\RetentionPolicy;
 use App\Application\Runtime\RuntimeService;
 use App\Application\Shared\GuestIdentity;
 use App\Application\Studio\StudioService;
@@ -51,16 +54,16 @@ final class WorkspacePageController extends Controller
         return $this->page($locale, 'editor', ['lessonId' => $lessonId]);
     }
 
-    public function teacher(Request $request, GuestIdentity $identity, RuntimeService $runtime, string $locale, string $sessionId): View
+    public function teacher(Request $request, GuestIdentity $identity, RuntimeService $runtime, RetentionPolicy $policy, string $locale, string $sessionId): View
     {
-        $runtime->findOwned($identity->key($request), $sessionId);
+        $policy->assertOwnerReadable($runtime->findOwned($identity->key($request), $sessionId));
 
         return $this->page($locale, 'teacher', ['sessionId' => $sessionId]);
     }
 
-    public function control(Request $request, GuestIdentity $identity, RuntimeService $runtime, string $locale, string $sessionId): View
+    public function control(Request $request, GuestIdentity $identity, RuntimeService $runtime, RetentionPolicy $policy, string $locale, string $sessionId): View
     {
-        $runtime->findOwned($identity->key($request), $sessionId);
+        $policy->assertOwnerReadable($runtime->findOwned($identity->key($request), $sessionId));
 
         return $this->page($locale, 'control', ['sessionId' => $sessionId]);
     }
@@ -83,5 +86,39 @@ final class WorkspacePageController extends Controller
         $runtime->projector($projectorToken);
 
         return $this->page($locale, 'projector', ['projectorToken' => $projectorToken]);
+    }
+
+    public function authentication(Request $request, string $locale, string $kind): View
+    {
+        abort_unless(in_array($kind, ['login', 'register', 'forgot-password', 'verify-email', 'account'], true), 404);
+
+        return $this->page($locale, $kind);
+    }
+
+    public function resetPassword(Request $request, string $locale, string $token): View
+    {
+        $email = $request->query('email');
+
+        return $this->page($locale, 'reset-password', [
+            'resetToken' => $token, 'email' => is_string($email) ? mb_substr($email, 0, 254) : '',
+        ]);
+    }
+
+    public function history(Request $request, GuestIdentity $identity, HistoryService $history, string $locale, ?string $sessionId = null): View
+    {
+        $owner = $identity->key($request);
+        if ($sessionId !== null) {
+            $history->findOwned($owner, $sessionId);
+        }
+
+        return $this->page($locale, 'history', $sessionId === null ? [] : ['sessionId' => $sessionId]);
+    }
+
+    public function rehearsal(Request $request, GuestIdentity $identity, RehearsalService $rehearsals, string $locale, string $sessionId, string $audience): View
+    {
+        abort_unless(in_array($audience, ['student', 'projector'], true), 404);
+        $rehearsals->preview($identity->key($request), $sessionId, $audience);
+
+        return $this->page($locale, 'rehearsal', ['sessionId' => $sessionId, 'audience' => $audience]);
     }
 }

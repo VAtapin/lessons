@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use LogicException;
 
-#[Fillable(['lesson_material_id', 'status', 'document'])]
+#[Fillable(['lesson_material_id', 'status', 'document', 'purpose'])]
 final class LessonVersion extends Model
 {
     use HasUuids;
@@ -18,7 +18,7 @@ final class LessonVersion extends Model
     protected static function booted(): void
     {
         self::updating(function (self $version): void {
-            if ($version->getOriginal('status') === 'released' && $version->isDirty()) {
+            if (($version->getOriginal('status') === 'released' || $version->getOriginal('purpose') === 'rehearsal') && $version->isDirty()) {
                 throw new LogicException('Released lesson versions are immutable.');
             }
         });

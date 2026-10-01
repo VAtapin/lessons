@@ -37,3 +37,6 @@ require __DIR__.'/studio.php';
 require __DIR__.'/runtime.php';
 require __DIR__.'/media.php';
 require __DIR__.'/templates.php';
+require __DIR__.'/account.php';
+require __DIR__.'/account-pages.php';
+require __DIR__.'/history.php';

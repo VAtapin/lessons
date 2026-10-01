@@ -24,11 +24,12 @@ final readonly class RuntimeMediaProjection
             $imageUrl = $resolved['url'];
             if (! str_starts_with($imageUrl, '/media/builtin/')) {
                 $pair = rawurlencode($reference['assetId']).'/'.rawurlencode($reference['versionId']);
-                $imageUrl = match ($audience) {
-                    Audience::Teacher => '/media/owned/'.$pair,
-                    Audience::Student => '/media/participation/'.rawurlencode($session->id).'/'.$pair,
-                    Audience::Projector => '/media/projection/'.rawurlencode($session->projector_token).'/'.$pair,
-                };
+                $imageUrl = $session->mode === 'rehearsal' && $audience !== Audience::Teacher
+                    ? '/media/rehearsal/'.rawurlencode($session->id).'/'.$pair : match ($audience) {
+                        Audience::Teacher => '/media/owned/'.$pair,
+                        Audience::Student => '/media/participation/'.rawurlencode($session->id).'/'.$pair,
+                        Audience::Projector => '/media/projection/'.rawurlencode($session->projector_token).'/'.$pair,
+                    };
             }
             $block['resources'] = ['image' => $imageUrl];
         }

@@ -15,7 +15,7 @@ export interface Block {
 export interface Stage { id: string; content: Record<string, { title: string; notes?: string }>; config: { layout?: string; durationSeconds?: number }; blocks: Block[] }
 export interface LessonDocument { id: string; schemaVersion: number; defaultLocale: string; locales: string[]; content: Record<string, { title: string }>; stages: Stage[] }
 export interface Lesson { id: string; revision: number; status: 'draft' | 'released'; versionId: string; document: LessonDocument }
-export interface LessonSummary { id: string; title: string; revision: number; status: 'draft' | 'released'; updatedAt: string }
+export interface LessonSummary { id: string; title: string; revision: number; status: 'draft' | 'released'; updatedAt: string; favorite?: boolean }
 export interface Media { assetId: string; versionId: string; url: string; labelKey?: string; title?: string; versionNo?: number; mime?: string; bytes?: number; width?: number; height?: number; archived?: boolean }
 export type BlockStatus = 'prepared' | 'open' | 'closed' | 'revealed';
 export interface BlockRuntime { status: BlockStatus; attemptNo: number; availability?: { roleId: string; used: number; capacity: number }[]; results?: AnswerValue & { counts?: { optionId: string; count: number }[]; totalAnswers?: number; published?: { text: string }[] } }
@@ -24,9 +24,17 @@ export interface TeacherAnswer extends Omit<OwnAnswer, 'status'> { participantId
 export interface ProjectedBlock extends Omit<Block, 'content' | 'teacherNotes'> { content: BlockContent; teacherNotes?: string; resources?: { image?: string }; runtime?: BlockRuntime }
 export interface ProjectedStage extends Omit<Stage, 'content' | 'blocks'> { content: { title: string; notes?: string }; blocks: ProjectedBlock[] }
 export interface RuntimeState { id: string; status: 'prepared' | 'running' | 'paused' | 'finished'; serverNow: string; timer: { status: 'idle' | 'running' | 'paused' | 'expired'; endsAt: string | null; remainingSeconds: number }; message: string | null; wave: { id: string; expiresAt: string } | null }
-export interface TeacherState extends RuntimeState { id: string; revision: number; locale: string; currentStageId: string; document: { id: string; content: { title: string }; stages: ProjectedStage[] }; joinCode: string; joinUrl: string; publicStage: ProjectedStage; projectorUrl: string; participants: { id: string; name: string; connected: boolean; lastSeenAt: string | null }[]; answers: TeacherAnswer[]; blockStates: { blockId: string; status: BlockStatus; attemptNo: number }[] }
+export interface TeacherState extends RuntimeState { mode: 'lesson' | 'rehearsal'; id: string; revision: number; locale: string; currentStageId: string; document: { id: string; content: { title: string }; stages: ProjectedStage[] }; joinCode?: string; joinUrl?: string; publicStage: ProjectedStage; projectorUrl?: string; participants: { id: string; name: string; connected: boolean; lastSeenAt: string | null }[]; answers: TeacherAnswer[]; blockStates: { blockId: string; status: BlockStatus; attemptNo: number }[] }
 export interface PublicState extends RuntimeState { id: string; revision: number; locale: string; currentStageId: string; stage: ProjectedStage; ownAnswers?: OwnAnswer[] }
-export interface PageContext { lessonId?: string; sessionId?: string; projectorToken?: string }
+export interface PageContext { lessonId?: string; sessionId?: string; projectorToken?: string; resetToken?: string; email?: string; audience?: 'student' | 'projector' }
+export interface User { id: number; name: string; email: string; verified: boolean; uiLocale: string }
+export interface Account { user: User | null; guestClaimAvailable: boolean; quota: MediaQuota }
+export interface ClaimCounts { lessons: number; templates: number; mediaAssets: number; sessions: number }
+export interface GuestClaim { claim: { available: boolean; status: 'none' | 'pending' | 'claimed'; counts: ClaimCounts; bytes: number }; quota: { usedBytes: number; limitBytes: number; afterClaimBytes: number }; verificationRequired: boolean }
+export interface AuthoringVersion { id: string; status: 'draft' | 'released'; purpose: 'authoring'; createdAt: string; current: boolean }
+export interface HistorySummary { id: string; lessonId: string; lessonVersionId: string; title: string; locale: string; mode: 'lesson' | 'rehearsal'; status: RuntimeState['status']; revision: number; createdAt: string; startedAt: string | null; finishedAt: string | null; visitedStageIds: string[] | null; detailsAvailable: boolean; detailsExpiresAt: string | null; historyExpiresAt: string | null }
+export interface HistoryAggregate { stageId: string; blockId: string; type: BlockType; schemaVersion: number; submittedCount: number; gradedCount: number; correctCount: number; incorrectCount: number; options?: { optionId: string; count: number }[]; roles?: { roleId: string; count: number }[]; signals?: { readyCount: number; questionCount: number } }
+export interface HistoryDetail extends HistorySummary { aggregates: HistoryAggregate[]; teacherNotes: string; participants: TeacherState['participants']; answers: TeacherAnswer[] }
 export type RightsBasis = 'self_created' | 'permission' | 'public_domain' | 'licensed' | 'ai_generated';
 export interface Metadata { title: string; tags: string[]; author: string; source: string; rightsBasis: RightsBasis; usageRights: string }
 export interface Usage { lessonId?: string; lessonVersionId?: string; templateId?: string; templateVersionId?: string; title: string; status?: string; blockId?: string }

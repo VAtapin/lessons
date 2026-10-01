@@ -118,7 +118,34 @@ Health endpoint: `https://lessons.atapin.de/up` проверяет загруз�
 
 Для этапа 4 дополнительно пройти upload → выбор своей версии → save/reload → заготовка → две независимые вставки → runtime с private image. Проверить замену/архив/восстановление без потери старой версии. Owner URL `/media/owned/{assetId}/{versionId}` требует владельца; `/media/participation/{sessionId}/{assetId}/{versionId}` и `/media/projection/{token}/{assetId}/{versionId}` разрешают только references активного этапа соответствующего занятия. Прямой storage URL и чужие/future references не должны отдавать файл. API библиотеки и медиатеки описаны в [STAGE4_API.md](STAGE4_API.md).
 
-Подтверждённые решения следующих этапов: отправитель `lessons@atapin.de` через PHP; guest sessions и имена/подробные ответы — 30 дней, история аккаунта без них — 2 года, репетиции — 7 дней, технические события — 30 дней. Сейчас `.env.example` использует mail log; реальная отправка и автоматическая очистка ещё не реализованы и не проверены. Не включать их в deployment-проверку как готовые функции.
+## Аккаунт, почта и retention — этап 6A
+
+Этап 6A добавляет совместимые migrations account ownership и history/rehearsal metadata. Обновление выполняется через `bash scripts/deploy-plesk.sh --migrate`, с приватным SQL/media bundle до изменения schema. Не переносить гостевые ресурсы SQL-командой: подтверждённый пользователь выполняет explicit claim в аккаунте, с общим owner mutex, проверкой квоты и permanent receipt.
+
+Для PHP-почты на этом сервере подтверждены CLI/FPM `sendmail_path=/usr/sbin/sendmail -t -i` и executable Plesk wrapper `/usr/lib/plesk-9.0/postfix-sendmail-wrapper`. В приватном `.env` настроить:
+
+```dotenv
+MAIL_MAILER=sendmail
+MAIL_SENDMAIL_PATH="/usr/sbin/sendmail -t -i"
+MAIL_FROM_ADDRESS=lessons@atapin.de
+MAIL_FROM_NAME=lessons.atapin.de
+```
+
+После изменения config выполнить обычный deployment script, который пересобирает Laravel config cache. На другом Plesk сервере сначала проверить его действующий binary/CLI/FPM конфигурацию. Production auth notification не принимает log/array/failover как успешную реальную отправку; отказ регистрации оставляет созданный аккаунт и позволяет повторить email verification. При forgot-password ответ остаётся generic. Проверки notifications в тестах и наличие sendmail не подтверждают получение письма: реальная доставка требует отдельного согласованного получателя, без рассылки технических писем людям автоматически.
+
+Закрытые репетиции доступны только владельцу, без ordinary join/projector bearer access. История и media-проекции проверяют expiry до чтения, даже если cleanup не выполнялся. Сроки: finished guest lesson/details — 30 дней от finished_at, account history — 2 календарных года, finished rehearsal — 7 дней от created_at, receipts — 30 дней от created_at. Активные реальные занятия и finished legacy без достоверной finished_at защищены. Authored materials/media/templates и permanent claim receipts не очищаются.
+
+Безопасная проверка плана очистки:
+
+```bash
+cd /var/www/vhosts/lessons.atapin.de/httpdocs && \
+export PATH="/opt/plesk/php/8.5/bin:$PATH" && \
+php artisan lessons:retention --dry-run --batch=100
+```
+
+Команда выводит counts без имён, ответов, SQL или secrets. `--batch` ограничивает просмотр кандидатов; dry-run ничего не меняет. Write CLI `lessons:retention --batch=100` и queue job `ApplyRetention` реализованы, но schedule ещё не подключён и write cleanup на production в этапе 6A не выполняется. Перед автоматическим запуском проверить восстановление bundle и актуальные cutoffs, затем отдельно настроить Plesk task/очередь с явным PHP 8.5. Не запускать job через HTTP и не заменять существующий crontab. Очистка нескольких batches идемпотентна; после operational failure ранее завершённые batches остаются committed. После restore применить согласованные cutoffs до возвращения сайта online; старый backup не должен вновь открыть истёкшие подробности.
+
+Auth/claim, history и rehearsal API описаны в [STAGE6_API.md](STAGE6_API.md). Autosave/undo/partial translations относятся к отдельному контракту 6B и не считаются выполненными вместе с регистрацией.
 
 Commit/push и зелёная локальная проверка не означают успешный deployment. Статус production подтверждается отдельно после выполнения команд и HTTP-проверки.
 

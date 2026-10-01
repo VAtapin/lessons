@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Studio;
 
+use App\Application\History\RetentionPolicy;
 use App\Application\Shared\ApiProblem;
 use App\Application\Shared\GuestIdentity;
 use App\Application\Shared\MediaCatalogue;
@@ -18,7 +19,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 final class MediaFileController extends Controller
 {
-    public function __construct(private readonly MediaCatalogue $catalogue, private readonly GuestIdentity $identity, private readonly BlockRegistry $registry) {}
+    public function __construct(private readonly MediaCatalogue $catalogue, private readonly GuestIdentity $identity, private readonly BlockRegistry $registry, private readonly RetentionPolicy $retention) {}
 
     public function owned(Request $request, string $assetId, string $versionId): BinaryFileResponse
     {
@@ -28,6 +29,7 @@ final class MediaFileController extends Controller
     public function participation(Request $request, string $sessionId, string $assetId, string $versionId): BinaryFileResponse
     {
         $session = TeachingSession::query()->find($sessionId) ?? throw new ApiProblem('not_found', 404);
+        $this->retention->assertPublicReadable($session);
         $participantMap = $request->session()->get(RuntimeController::SESSION_PARTICIPANTS_KEY, []);
         $participant = is_array($participantMap) ? ($participantMap[$sessionId] ?? null) : null;
         if (! is_string($participant) || ! SessionParticipant::query()->whereKey($participant)->where('teaching_session_id', $sessionId)->exists()) {
@@ -41,9 +43,23 @@ final class MediaFileController extends Controller
     public function projection(string $token, string $assetId, string $versionId): BinaryFileResponse
     {
         $session = TeachingSession::query()->where('projector_token', $token)->first() ?? throw new ApiProblem('not_found', 404);
+        $this->retention->assertPublicReadable($session);
         $this->assertActiveReference($session, $assetId, $versionId);
 
         return $this->file($session->owner_key, $assetId, $versionId);
+    }
+
+    public function rehearsal(Request $request, string $sessionId, string $assetId, string $versionId): BinaryFileResponse
+    {
+        $owner = $this->identity->key($request);
+        $session = TeachingSession::query()->where('owner_key', $owner)->find($sessionId) ?? throw new ApiProblem('not_found', 404);
+        $this->retention->assertOwnerReadable($session);
+        if ($session->mode !== 'rehearsal') {
+            throw new ApiProblem('not_found', 404);
+        }
+        $this->assertActiveReference($session, $assetId, $versionId);
+
+        return $this->file($owner, $assetId, $versionId);
     }
 
     private function assertActiveReference(TeachingSession $session, string $assetId, string $versionId): void

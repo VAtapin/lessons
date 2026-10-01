@@ -225,14 +225,15 @@ final class RuntimeConcurrencyTest extends TestCase
             $workerIds = [(int) file_get_contents($this->directory.'/ready-0'), (int) file_get_contents($this->directory.'/ready-1')];
             $this->assertCount(3, array_unique([$parentId, ...$workerIds]), 'Parent and workers must use independent real connections.');
             $this->privateFile('go', 'start');
-            // Observe both live RuntimeService transactions blocked by our fixture row.
-            // Merely starting processes close together would not establish real overlap.
+            // Observe both live operations waiting in the fixture's lock chain.
+            // With the owner mutex, the first waits for our session row and the
+            // second can wait for the first worker's owner row. Both must overlap.
             $this->waitUntil(function () use ($workerIds, $parentId): bool {
                 $waiting = $this->database->select('SELECT DISTINCT requesting.trx_mysql_thread_id AS connection_id
                     FROM information_schema.INNODB_LOCK_WAITS waits
                     JOIN information_schema.INNODB_TRX requesting ON requesting.trx_id = waits.requesting_trx_id
                     JOIN information_schema.INNODB_TRX blocking ON blocking.trx_id = waits.blocking_trx_id
-                    WHERE blocking.trx_mysql_thread_id = ? AND requesting.trx_mysql_thread_id IN (?, ?)', [$parentId, ...$workerIds]);
+                    WHERE blocking.trx_mysql_thread_id IN (?, ?, ?) AND requesting.trx_mysql_thread_id IN (?, ?)', [$parentId, ...$workerIds, ...$workerIds]);
 
                 return count($waiting) === 2;
             }, 'Both RuntimeService operations must overlap in observed InnoDB lock waits.');

@@ -13,6 +13,15 @@ return [
         'max_dimension' => (int) env('LESSONS_MEDIA_MAX_DIMENSION', 8192),
     ],
 
+    'auth_limits' => [
+        'login' => ['minute' => 5],
+        'register' => ['hour' => 10],
+        'forgot' => ['hour' => 6],
+        'resend' => ['minute' => 1, 'hour' => 6],
+        'verify' => ['minute' => 6],
+        'reset' => ['minute' => 6],
+    ],
+
     'runtime' => [
         'activity_write_seconds' => 5,
         'connected_seconds' => 20,

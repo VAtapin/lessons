@@ -5,13 +5,13 @@ import { api, errorMessage, poll } from './api';
 import StageRenderer from './StageRenderer.vue';
 import RuntimeStatus from './RuntimeStatus.vue';
 import type { AnswerValue, Messages, PublicState } from './types';
-const props = defineProps<{ mode: 'student' | 'projector'; sessionId?: string; projectorToken?: string; messages: Messages }>();
+const props = defineProps<{ mode: 'student' | 'projector'; sessionId?: string; projectorToken?: string; rehearsal?: boolean; messages: Messages }>();
 const session = ref<PublicState>();
 const error = ref('');
 const connected = ref(false);
 const busy = ref(false);
 let generation = 0;
-const endpoint = props.mode === 'student' ? `/api/participation/${props.sessionId}` : `/api/projection/${props.projectorToken}`;
+const endpoint = props.rehearsal ? `/api/studio/rehearsals/${props.sessionId}/preview/${props.mode}` : props.mode === 'student' ? `/api/participation/${props.sessionId}` : `/api/projection/${props.projectorToken}`;
 poll(async signal => {
     const started = generation;
     try {
@@ -23,7 +23,7 @@ async function answer(blockId: string, value: AnswerValue) {
     if (!session.value || !connected.value || busy.value || props.mode !== 'student' || session.value.status !== 'running') return;
     busy.value = true; generation++; error.value = '';
     try {
-        session.value = (await api<{ session: PublicState }>(`${endpoint}/answers`, 'POST', { stageId: session.value.currentStageId, blockId, value })).session;
+        session.value = (await api<{ session: PublicState }>(props.rehearsal ? `/api/studio/rehearsals/${props.sessionId}/answers` : `${endpoint}/answers`, 'POST', { stageId: session.value.currentStageId, blockId, value })).session;
         connected.value = true;
     } catch (problem) { connected.value = false; error.value = errorMessage(problem, props.messages); }
     finally { busy.value = false; generation++; }
@@ -31,6 +31,7 @@ async function answer(blockId: string, value: AnswerValue) {
 </script>
 <template>
     <div :class="['public-session', mode]">
+        <p v-if="rehearsal" class="info-banner">{{ messages.rehearsal_preview_hint }}</p>
         <p class="eyebrow">{{ mode === 'student' ? messages.student_screen : messages.shared_screen }}</p>
         <p class="field-hint" role="status">{{ connected ? messages.connected : messages.reconnecting }}</p>
         <p v-if="error" role="alert" class="error-banner">{{ error }}</p>

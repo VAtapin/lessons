@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['owner_key', 'revision', 'current_version_id'])]
+#[Fillable(['owner_key', 'revision', 'current_version_id', 'favorite'])]
 #[Hidden(['owner_key'])]
 final class LessonMaterial extends Model
 {
@@ -19,7 +19,7 @@ final class LessonMaterial extends Model
 
     protected function casts(): array
     {
-        return ['revision' => 'integer'];
+        return ['revision' => 'integer', 'favorite' => 'boolean'];
     }
 
     public function currentVersion(): BelongsTo

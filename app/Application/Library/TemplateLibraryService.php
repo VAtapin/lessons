@@ -7,6 +7,7 @@ namespace App\Application\Library;
 use App\Application\Shared\ApiProblem;
 use App\Application\Shared\LibraryMetadata;
 use App\Application\Shared\MediaCatalogue;
+use App\Application\Shared\OwnerMutation;
 use App\Application\Studio\StudioService;
 use App\Domain\Lessons\BlockInstance;
 use App\Domain\Lessons\BlockRegistry;
@@ -16,7 +17,6 @@ use App\Domain\Lessons\ValidationException;
 use App\Models\BlockTemplateRecord;
 use App\Models\BlockTemplateVersion;
 use App\Models\LessonVersion;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 final readonly class TemplateLibraryService
@@ -53,7 +53,7 @@ final readonly class TemplateLibraryService
 
     public function createFromLesson(string $ownerKey, string $lessonId, int $expectedLessonRevision, string $blockId, array $metadata): BlockTemplateRecord
     {
-        return DB::transaction(function () use ($ownerKey, $lessonId, $expectedLessonRevision, $blockId, $metadata): BlockTemplateRecord {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $lessonId, $expectedLessonRevision, $blockId, $metadata): BlockTemplateRecord {
             $source = $this->studio->ownedBlockSnapshot($ownerKey, $lessonId, $expectedLessonRevision, $blockId);
             $metadata = $this->metadata->parse($metadata);
             $record = BlockTemplateRecord::create($this->recordMetadata($metadata) + ['owner_key' => $ownerKey, 'revision' => 1, 'archived' => false]);
@@ -67,7 +67,7 @@ final readonly class TemplateLibraryService
 
     public function update(string $ownerKey, string $id, int $expectedRevision, array $locales, string $defaultLocale, array $payload, array $metadata): BlockTemplateRecord
     {
-        return DB::transaction(function () use ($ownerKey, $id, $expectedRevision, $locales, $defaultLocale, $payload, $metadata): BlockTemplateRecord {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $id, $expectedRevision, $locales, $defaultLocale, $payload, $metadata): BlockTemplateRecord {
             $record = $this->lockOwned($ownerKey, $id, $expectedRevision);
             $metadata = $this->metadata->parse($metadata);
             $block = $this->validateBlock($ownerKey, $payload, $locales, $defaultLocale);
@@ -83,7 +83,7 @@ final readonly class TemplateLibraryService
 
     public function instantiate(string $ownerKey, string $id, string $versionId, array $locales): array
     {
-        return DB::transaction(function () use ($ownerKey, $id, $versionId, $locales): array {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $id, $versionId, $locales): array {
             $record = BlockTemplateRecord::query()->where('owner_key', $ownerKey)->lockForUpdate()->find($id)
                 ?? throw new ApiProblem('not_found', 404);
             $version = $record->versions()->find($versionId) ?? throw new ApiProblem('not_found', 404);
@@ -115,7 +115,7 @@ final readonly class TemplateLibraryService
 
     public function archive(string $ownerKey, string $id, int $expectedRevision, bool $archived): BlockTemplateRecord
     {
-        return DB::transaction(function () use ($ownerKey, $id, $expectedRevision, $archived): BlockTemplateRecord {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $id, $expectedRevision, $archived): BlockTemplateRecord {
             $record = $this->lockOwned($ownerKey, $id, $expectedRevision);
             if ($record->archived !== $archived) {
                 $record->archived = $archived;

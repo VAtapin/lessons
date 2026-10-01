@@ -7,11 +7,12 @@ namespace App\Application\Media;
 use App\Application\Shared\ApiProblem;
 use App\Application\Shared\LibraryMetadata;
 use App\Application\Shared\MediaCatalogue;
+use App\Application\Shared\OwnerMutation;
+use App\Application\Shared\OwnerQuota;
 use App\Models\MediaAsset;
 use App\Models\MediaOwnerQuota;
 use App\Models\MediaVersion;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Throwable;
@@ -68,7 +69,7 @@ final readonly class MediaLibraryService
         $image = $this->images->inspect($file);
         $createdKey = null;
         try {
-            return DB::transaction(function () use ($ownerKey, $file, $metadata, $image, &$createdKey): MediaAsset {
+            return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $file, $metadata, $image, &$createdKey): MediaAsset {
                 $quota = $this->reserve($ownerKey, $image['bytes']);
                 $asset = MediaAsset::query()->create($this->databaseMetadata($metadata) + ['owner_key' => $ownerKey, 'revision' => 1, 'archived' => false]);
                 $version = $this->storeVersion($asset, $file, $image, 1, $createdKey);
@@ -90,7 +91,7 @@ final readonly class MediaLibraryService
         $image = $this->images->inspect($file);
         $createdKey = null;
         try {
-            return DB::transaction(function () use ($ownerKey, $id, $expectedRevision, $file, $image, &$createdKey): MediaAsset {
+            return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $id, $expectedRevision, $file, $image, &$createdKey): MediaAsset {
                 $asset = $this->lockOwned($ownerKey, $id, $expectedRevision);
                 $quota = $this->reserve($ownerKey, $image['bytes']);
                 $versionNo = $asset->versions()->max('version_no') + 1;
@@ -110,7 +111,7 @@ final readonly class MediaLibraryService
 
     public function update(string $ownerKey, string $id, int $expectedRevision, array $metadata): MediaAsset
     {
-        return DB::transaction(function () use ($ownerKey, $id, $expectedRevision, $metadata): MediaAsset {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $id, $expectedRevision, $metadata): MediaAsset {
             $asset = $this->lockOwned($ownerKey, $id, $expectedRevision);
             $asset->fill($this->databaseMetadata($this->metadata->parse($metadata)));
             $asset->revision++;
@@ -122,7 +123,7 @@ final readonly class MediaLibraryService
 
     public function archive(string $ownerKey, string $id, int $expectedRevision, bool $archived): MediaAsset
     {
-        return DB::transaction(function () use ($ownerKey, $id, $expectedRevision, $archived): MediaAsset {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $id, $expectedRevision, $archived): MediaAsset {
             $asset = $this->lockOwned($ownerKey, $id, $expectedRevision);
             if ($asset->archived !== $archived) {
                 $asset->archived = $archived;
@@ -148,7 +149,7 @@ final readonly class MediaLibraryService
     {
         MediaOwnerQuota::query()->insertOrIgnore(['owner_key' => $ownerKey, 'used_bytes' => 0, 'created_at' => now(), 'updated_at' => now()]);
         $quota = MediaOwnerQuota::query()->lockForUpdate()->findOrFail($ownerKey);
-        if ($quota->used_bytes + $bytes > config('lessons.media.guest_quota_bytes')) {
+        if ($quota->used_bytes + $bytes > OwnerQuota::limit($ownerKey)) {
             throw new ApiProblem('quota_exceeded', 422);
         }
         $quota->used_bytes += $bytes;
@@ -196,7 +197,7 @@ final readonly class MediaLibraryService
     private function quota(string $ownerKey): array
     {
         return ['usedBytes' => MediaOwnerQuota::query()->find($ownerKey)?->used_bytes ?? 0,
-            'limitBytes' => config('lessons.media.guest_quota_bytes'), 'maxFileBytes' => config('lessons.media.max_file_bytes')];
+            'limitBytes' => OwnerQuota::limit($ownerKey), 'maxFileBytes' => config('lessons.media.max_file_bytes')];
     }
 
     private function databaseMetadata(array $metadata): array

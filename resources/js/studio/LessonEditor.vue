@@ -66,7 +66,8 @@ async function persist() {
     adopt(response.lesson);
     return true;
 }
-async function action(kind: 'save' | 'release' | 'start') {
+async function action(kind: 'save' | 'release' | 'start' | 'rehearsal') {
+    if (kind === 'rehearsal' && dirty.value) { error.value = props.messages.save_before_rehearsal; return; }
     busy.value = true; error.value = ''; notice.value = '';
     try {
         if (!await persist() || !lesson.value) return;
@@ -75,6 +76,7 @@ async function action(kind: 'save' | 'release' | 'start') {
             const response = await api<{ lesson: Lesson }>(`/api/studio/lessons/${props.lessonId}/release`, 'POST', { expectedRevision: lesson.value.revision });
             adopt(response.lesson); notice.value = props.messages.released_notice;
         }
+        if (kind === 'rehearsal') { const response = await api<{ session: TeacherState }>(`/api/studio/lessons/${props.lessonId}/rehearsals`, 'POST', { expectedRevision: lesson.value.revision, locale: contentLocale.value }); location.assign(`/${props.locale}/teach/${response.session.id}`); }
         if (kind === 'start') {
             const response = await api<{ session: TeacherState }>(`/api/studio/lessons/${props.lessonId}/sessions`, 'POST', { expectedRevision: lesson.value.revision, locale: contentLocale.value, prepare: true });
             window.location.assign(`/${props.locale}/teach/${response.session.id}`);
@@ -141,8 +143,9 @@ function duration(event: Event) {
                 </section>
             </div>
         </fieldset>
-        <div class="editor-toolbar"><span>{{ dirty ? messages.unsaved : messages.up_to_date }}</span><button type="button" @click="preview = !preview" :aria-expanded="preview">{{ messages.preview }}</button><button type="submit" class="primary" :disabled="busy || conflict">{{ busy ? messages.saving : messages.save }}</button><button type="button" :disabled="busy || conflict" @click="action('release')">{{ messages.release }}</button><button type="button" :disabled="busy || conflict" @click="action('start')">{{ messages.start_session }}</button></div>
+        <div class="editor-toolbar"><span>{{ dirty ? messages.unsaved : messages.up_to_date }}</span><button type="button" @click="preview = !preview" :aria-expanded="preview">{{ messages.preview }}</button><button type="submit" class="primary" :disabled="busy || conflict">{{ busy ? messages.saving : messages.save }}</button><button type="button" :disabled="busy || conflict" @click="action('release')">{{ messages.release }}</button><button type="button" :disabled="busy || conflict || dirty" @click="action('rehearsal')">{{ messages.rehearsal }}</button><button type="button" :disabled="busy || conflict" @click="action('start')">{{ messages.start_session }}</button></div>
     </form>
+    <p v-if="dirty" class="field-hint">{{ messages.save_before_rehearsal }}</p>
     <TemplatePicker v-if="pickerOpen && document" :locales="document.locales" :messages="messages" @insert="insertTemplate" @close="pickerOpen = false" />
     <form v-if="templateBlockId" class="studio-card save-template-form" @submit.prevent="saveTemplate"><div class="section-heading"><h2>{{ messages.save_to_library }}</h2><button type="button" :disabled="templateBusy" @click="templateBlockId = ''">{{ messages.close }}</button></div><fieldset :disabled="templateBusy" class="editor-fields"><MetadataFields v-model="templateMetadata" :messages="messages" /><button class="primary" :disabled="templateBusy || dirty">{{ messages.save_to_library }}</button></fieldset></form>
     <section v-if="preview && activeStage" class="studio-card preview-panel"><p class="eyebrow">{{ messages.preview }}</p><StageRenderer :stage="projectStage(activeStage, contentLocale, media)" :messages="messages" /></section>

@@ -91,7 +91,7 @@ final class RuntimeBlocks
     }
 
     /** Authored audience filtering runs before runtime fields and media URLs are added. */
-    public function project(Stage $stage, TeachingSession $session, Audience $audience, array $snapshot): array
+    public function project(Stage $stage, TeachingSession $session, Audience $audience, array $snapshot, bool $detailsAvailable = true): array
     {
         $view = $stage->project($audience, $session->locale);
         foreach ($stage->blocks as $index => $block) {
@@ -104,7 +104,7 @@ final class RuntimeBlocks
             if ($block->type === 'core.roles') {
                 $runtime['availability'] = $this->availability($session, $block);
             }
-            if ($block->type === 'core.free-response' && $audience === Audience::Projector) {
+            if ($block->type === 'core.free-response' && $audience === Audience::Projector && $detailsAvailable) {
                 $published = SessionAnswer::query()->where('teaching_session_id', $session->id)
                     ->where('block_id', $block->id)->where('moderation_status', 'approved')->where('published', true)
                     ->orderBy('id')->get()->map(fn (SessionAnswer $answer): array => ['text' => $answer->display_text])->all();

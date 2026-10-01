@@ -6,12 +6,12 @@ namespace App\Application\Studio;
 
 use App\Application\Shared\ApiProblem;
 use App\Application\Shared\MediaCatalogue;
+use App\Application\Shared\OwnerMutation;
 use App\Domain\Lessons\BlockRegistry;
 use App\Domain\Lessons\LessonDocument;
 use App\Domain\Lessons\ValidationException;
 use App\Models\LessonMaterial;
 use App\Models\LessonVersion;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 final readonly class StudioService
@@ -32,7 +32,7 @@ final readonly class StudioService
                 $document = $version->document;
 
                 return ['id' => $material->id, 'title' => $document['content'][$document['defaultLocale']]['title'],
-                    'revision' => $material->revision, 'status' => $version->status,
+                    'revision' => $material->revision, 'status' => $version->status, 'favorite' => (bool) $material->favorite,
                     'updatedAt' => $material->updated_at->toIso8601String()];
             })->all();
     }
@@ -41,7 +41,7 @@ final readonly class StudioService
     {
         $document = $this->validate($payload, $ownerKey);
 
-        return DB::transaction(function () use ($ownerKey, $document): LessonMaterial {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $document): LessonMaterial {
             $material = LessonMaterial::query()->create(['owner_key' => $ownerKey, 'revision' => 1]);
             $version = $this->newDraft($material, $document);
             $material->current_version_id = $version->id;
@@ -53,7 +53,7 @@ final readonly class StudioService
 
     public function save(string $ownerKey, string $lessonId, int $expectedRevision, array $payload): LessonMaterial
     {
-        return DB::transaction(function () use ($ownerKey, $lessonId, $expectedRevision, $payload): LessonMaterial {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $lessonId, $expectedRevision, $payload): LessonMaterial {
             $material = $this->lockOwned($ownerKey, $lessonId, $expectedRevision);
             $document = $this->validate($payload, $ownerKey);
             $version = $material->currentVersion;
@@ -76,7 +76,7 @@ final readonly class StudioService
 
     public function release(string $ownerKey, string $lessonId, int $expectedRevision): LessonVersion
     {
-        return DB::transaction(function () use ($ownerKey, $lessonId, $expectedRevision): LessonVersion {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $lessonId, $expectedRevision): LessonVersion {
             $material = $this->lockOwned($ownerKey, $lessonId, $expectedRevision);
             $version = $material->currentVersion;
             $this->validate($version->document, $ownerKey);
@@ -95,14 +95,14 @@ final readonly class StudioService
     {
         $version = $material->currentVersion;
 
-        return ['id' => $material->id, 'revision' => $material->revision, 'status' => $version->status,
+        return ['id' => $material->id, 'revision' => $material->revision, 'status' => $version->status, 'favorite' => (bool) $material->favorite,
             'versionId' => $version->id, 'document' => $version->document];
     }
 
     /** Copy a saved block under the same owner/revision lock used by editing. */
     public function ownedBlockSnapshot(string $ownerKey, string $lessonId, int $expectedRevision, string $blockId): array
     {
-        return DB::transaction(function () use ($ownerKey, $lessonId, $expectedRevision, $blockId): array {
+        return OwnerMutation::transaction([$ownerKey], function () use ($ownerKey, $lessonId, $expectedRevision, $blockId): array {
             $material = $this->lockOwned($ownerKey, $lessonId, $expectedRevision);
             $document = $this->validate($material->currentVersion->document, $ownerKey);
             foreach ($document->stages as $stage) {

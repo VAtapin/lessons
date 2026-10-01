@@ -404,3 +404,27 @@
 .moderation-form .action-row { margin-top: 12px; flex-wrap: wrap; }
 .teacher-panel .teacher-answer .plain-text { overflow-wrap: anywhere; }
 @media (max-width: 600px) { .editor-collection .option-edit { flex-wrap: wrap; } .editor-collection .option-edit label { flex: 1 1 150px; } .moderation-form .action-row button { flex: 1 1 120px; } .teacher-panel .participants .participant { padding-inline: 0; } }
+/* Stage 6A: account, history and read-only version views. */
+.auth-card { max-width: 540px; margin-inline: auto; }
+.auth-card button.primary, .account-layout form > button { margin-top: 20px; }
+.auth-links { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 22px; font: .9rem/1.5 system-ui, sans-serif; }
+.account-layout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.account-layout .studio-card > h2, .account-layout .studio-card > p { margin-bottom: 14px; }
+.verification-actions { display: grid; gap: 12px; margin-top: 16px; line-height: 1.6; }
+.claim-preview { display: grid; gap: 12px; margin-top: 18px; }
+.claim-preview dl, .history-overview dl { display: grid; gap: 10px; margin: 16px 0; }
+.claim-preview dl > div, .history-overview dl > div { display: flex; gap: 16px; justify-content: space-between; flex-wrap: wrap; }
+.claim-preview dd, .history-overview dd { margin: 0; overflow-wrap: anywhere; }
+.claim-preview .info-banner { margin-bottom: 0; }
+.history-filters { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+.history-filters label { flex: 1 1 180px; margin: 0; }
+.history-item { display: grid; gap: 16px; }
+.history-notes, .history-results, .history-participants { margin-top: 20px; }
+.history-notes > button { margin-top: 14px; }
+.history-aggregate { display: grid; gap: 8px; padding-block: 16px; border-bottom: 1px solid var(--border); }
+.history-participants details, .version-browser details { margin-top: 16px; }
+.history-participants summary, .version-browser summary { cursor: pointer; line-height: 1.6; }
+.version-browser { margin-top: 20px; }
+.version-browser .stage-renderer { margin-top: 18px; }
+.rehearsal-links { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+@media (max-width: 700px) { .account-layout { grid-template-columns: minmax(0, 1fr); } .auth-card { padding: 18px; } .history-overview dl > div { display: grid; gap: 4px; } .history-item .action-row > * { flex: 1 1 150px; } }
