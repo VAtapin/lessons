@@ -1,7 +1,7 @@
 import type { AnswerValue, Block, BlockContent, BlockType, Messages, OwnAnswer } from './types';
-export const blockTypes: BlockType[] = ['core.text', 'core.image', 'core.prompt', 'core.single-choice', 'core.multiple-choice', 'core.poll', 'core.free-response', 'core.sequence', 'core.matching', 'core.roles', 'core.signals'];
-export function blockLabel(type: BlockType, messages: Messages): string { return messages[type.replace('core.', '').replaceAll('-', '_')] ?? type; }
-export function isInteractive(type: BlockType): boolean { return !['core.text', 'core.image', 'core.prompt'].includes(type); }
+export const blockTypes: BlockType[] = ['core.text', 'core.image', 'core.prompt', 'core.single-choice', 'core.multiple-choice', 'core.poll', 'core.free-response', 'core.sequence', 'core.matching', 'core.roles', 'core.signals', 'core.presentation'];
+export function blockLabel(type: BlockType, messages: Messages): string { return messages[type === 'core.presentation' ? 'presentation_block' : type.replace('core.', '').replaceAll('-', '_')] ?? type; }
+export function isInteractive(type: BlockType): boolean { return !['core.text', 'core.image', 'core.prompt', 'core.presentation'].includes(type); }
 export function ownValue(answer?: OwnAnswer): AnswerValue { return answer?.value ?? (answer?.optionId ? { optionId: answer.optionId } : {}); }
 export function sameValue(first: AnswerValue, second: AnswerValue): boolean {
     const normalized = (value: AnswerValue) => value.optionIds ? { optionIds: [...value.optionIds].sort() } : value.pairs ? { pairs: [...value.pairs].sort((a, b) => a.leftId < b.leftId ? -1 : a.leftId > b.leftId ? 1 : 0).map(pair => ({ leftId: pair.leftId, rightId: pair.rightId })) } : value;

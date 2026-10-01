@@ -7,12 +7,12 @@ export function newBlock(type: BlockType, locales: string[], messages: Messages,
     const options = [{ optionId: first, text: messages.template_option_first }, { optionId: second, text: messages.template_option_second }];
     const items = [{ itemId: first, text: messages.template_option_first }, { itemId: second, text: messages.template_option_second }];
     const content = Object.fromEntries(locales.map(locale => [locale,
-        type === 'core.text' ? { title: '', text: messages.template_text, source: '' } : type === 'core.image' ? { alt: messages.template_alt, caption: '' } :
+        type === 'core.presentation' ? { text: messages.template_text, modes: [] } : type === 'core.text' ? { title: '', text: messages.template_text, source: '' } : type === 'core.image' ? { alt: messages.template_alt, caption: '' } :
         type === 'core.prompt' || type === 'core.signals' ? { text: messages.template_text } : type === 'core.roles' ? { text: messages.template_text, roles: [{ roleId: first, text: messages.template_option_first }, { roleId: second, text: messages.template_option_second }] } :
         type === 'core.free-response' ? { question: messages.template_question } : type === 'core.sequence' ? { question: messages.template_question, items: structuredClone(items) } :
         type === 'core.matching' ? { question: messages.template_question, left: structuredClone(items), right: [{ itemId: rightFirst, text: messages.template_option_first }, { itemId: rightSecond, text: messages.template_option_second }] } : { question: messages.template_question, options: structuredClone(options) }
     ]));
-    const config: Block['config'] = type === 'core.text' ? { presentation: 'paragraphs' } : type === 'core.image' ? { fit: 'contain' } : type === 'core.prompt' ? { kind: 'discussion', target: 'class' } :
+    const config: Block['config'] = type === 'core.presentation' ? { kind: 'reveal', reviewBlockId: null, sourceBlockIds: [], maxItems: 8 } : type === 'core.text' ? { presentation: 'paragraphs' } : type === 'core.image' ? { fit: 'contain' } : type === 'core.prompt' ? { kind: 'discussion', target: 'class' } :
         type === 'core.signals' ? {} : type === 'core.roles' ? { capacities: { [first]: 1, [second]: 1 } } : type === 'core.multiple-choice' ? { allowRepeat: false, minSelections: 1, maxSelections: 2 } : type === 'core.free-response' ? { allowRepeat: false, maxLength: 500 } : { allowRepeat: false };
     return { id: newId(), type, schemaVersion: type === 'core.text' ? 2 : 1, content, config,
         media: type === 'core.image' && media ? { image: { assetId: media.assetId, versionId: media.versionId } } : {}, solution: null, origin: null };

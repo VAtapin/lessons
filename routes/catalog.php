@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\DocumentationFileController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('lesson-files/{id}', DocumentationFileController::class)->where('id', '[a-z0-9-]{1,100}');
 
 Route::prefix('api/catalog')->group(function (): void {
     Route::get('/', [CatalogController::class, 'index']);

@@ -3,17 +3,20 @@ export interface Option { optionId: string; text: string }
 export interface Item { itemId: string; text: string }
 export interface Role { roleId: string; text: string }
 export interface AnswerValue { optionId?: string; optionIds?: string[]; text?: string; itemIds?: string[]; pairs?: { leftId: string; rightId: string }[]; roleId?: string | null; ready?: boolean; question?: boolean }
-export interface BlockContent { title?: string; source?: string; text?: string; alt?: string; caption?: string; question?: string; options?: Option[]; items?: Item[]; left?: Item[]; right?: Item[]; roles?: Role[] }
-export type BlockType = 'core.text' | 'core.image' | 'core.prompt' | 'core.single-choice' | 'core.multiple-choice' | 'core.poll' | 'core.free-response' | 'core.sequence' | 'core.matching' | 'core.roles' | 'core.signals';
+export interface BlockContent { title?: string; source?: string; text?: string; alt?: string; caption?: string; question?: string; options?: Option[]; items?: Item[]; left?: Item[]; right?: Item[]; roles?: Role[]; modes?: { modeId: string; text: string; label?: string }[] }
+export type BlockType = 'core.text' | 'core.image' | 'core.prompt' | 'core.single-choice' | 'core.multiple-choice' | 'core.poll' | 'core.free-response' | 'core.sequence' | 'core.matching' | 'core.roles' | 'core.signals' | 'core.presentation';
 export interface Block {
     id: string; type: BlockType; schemaVersion: number; content: Record<string, BlockContent>;
-    config: { format?: string; fit?: string; allowRepeat?: boolean; presentation?: string; kind?: string; target?: string; minSelections?: number; maxSelections?: number; maxLength?: number; capacities?: Record<string, number> };
+    config: { format?: string; fit?: string; allowRepeat?: boolean; presentation?: string; kind?: string; target?: string; minSelections?: number; maxSelections?: number; maxLength?: number; capacities?: Record<string, number>; reviewBlockId?: string | null; sourceBlockIds?: string[]; maxItems?: number };
     media: { image?: { assetId: string; versionId: string } };
     solution?: AnswerValue | null; teacherNotes?: Record<string, string>;
     origin?: { templateId: string; versionId: string } | null;
 }
-export interface Stage { id: string; content: Record<string, { title: string; notes?: string }>; config: { layout?: string; durationSeconds?: number }; blocks: Block[] }
-export interface LessonDocument { id: string; schemaVersion: number; defaultLocale: string; locales: string[]; content: Record<string, { title: string }>; stages: Stage[] }
+export interface Stage { id: string; content: Record<string, { title: string; notes?: string }>; config: { layout?: string; durationSeconds?: number; openTasks?: boolean }; blocks: Block[] }
+export interface DocumentationFile { fileId: string; kind: 'plan' | 'presentation'; locale: string; url?: string; bytes?: number }
+export interface TeacherDocumentation { schemaVersion: 1; content: Record<string, { plan: string }>; files: DocumentationFile[]; video?: { id: string; locale: string } }
+export interface ProjectedDocumentation { plan: string | null; files: DocumentationFile[]; video: { id: string; locale: string } | null }
+export interface LessonDocument { id: string; schemaVersion: number; defaultLocale: string; locales: string[]; content: Record<string, { title: string }>; stages: Stage[]; documentation?: TeacherDocumentation }
 export interface Lesson { id: string; revision: number; status: 'draft' | 'released'; versionId: string; document: LessonDocument }
 export interface EditorIssue { code: string; path: string; locale?: string; stageId?: string; blockId?: string }
 export interface Readiness { defaultLocale: string; readyLocales: string[]; locales: { locale: string; status: 'draft' | 'partial' | 'ready'; issues: EditorIssue[] }[] }
@@ -23,14 +26,14 @@ export interface SaveResponse { lesson: EditorLesson; acknowledgedSaveId: string
 export interface LessonSummary { id: string; title: string; revision: number; status: 'draft' | 'released'; updatedAt: string; favorite?: boolean }
 export interface Media { assetId: string; versionId: string; url: string; labelKey?: string; title?: string; versionNo?: number; mime?: string; bytes?: number; width?: number; height?: number; archived?: boolean }
 export type BlockStatus = 'prepared' | 'open' | 'closed' | 'revealed';
-export interface BlockRuntime { status: BlockStatus; attemptNo: number; availability?: { roleId: string; used: number; capacity: number }[]; results?: AnswerValue & { counts?: { optionId: string; count: number }[]; totalAnswers?: number; published?: { text: string }[] } }
-export interface OwnAnswer { id: number; revision: number; blockId: string; attemptNo: number; optionId?: string; value: AnswerValue; status: string; grade: boolean | null; acknowledged?: boolean }
+export interface BlockRuntime { status: BlockStatus; attemptNo: number; availability?: { roleId: string; used: number; capacity: number }[]; presentation?: { revealedRoleIds?: string[]; itemIds?: string[]; optionId?: string; feedback?: 'incorrect' | 'correct' | 'complete'; visible?: boolean; modeId?: string }; board?: { answerId: number; text: string; discussed: boolean }[]; results?: AnswerValue & { counts?: { optionId: string; count: number }[]; totalAnswers?: number; published?: { text: string }[] } }
+export interface OwnAnswer { id: number; revision: number; blockId: string; attemptNo: number; optionId?: string; value: AnswerValue; status: string; grade: boolean | null; acknowledged?: boolean; privateReply?: string }
 export interface TeacherAnswer extends Omit<OwnAnswer, 'status'> { participantId: string; moderation: { status: 'pending' | 'approved' | 'rejected'; displayText: string | null; published: boolean } | null; acknowledged: boolean }
 export interface ProjectedBlock extends Omit<Block, 'content' | 'teacherNotes'> { content: BlockContent; teacherNotes?: string; resources?: { image?: string }; runtime?: BlockRuntime }
 export interface ProjectedStage extends Omit<Stage, 'content' | 'blocks'> { content: { title: string; notes?: string }; blocks: ProjectedBlock[] }
 export interface RuntimeState { id: string; status: 'prepared' | 'running' | 'paused' | 'finished'; serverNow: string; timer: { status: 'idle' | 'running' | 'paused' | 'expired'; endsAt: string | null; remainingSeconds: number }; message: string | null; wave: { id: string; expiresAt: string } | null }
-export interface TeacherState extends RuntimeState { mode: 'lesson' | 'rehearsal'; id: string; revision: number; locale: string; currentStageId: string; document: { id: string; content: { title: string }; stages: ProjectedStage[] }; joinCode?: string; joinUrl?: string; publicStage: ProjectedStage; projectorUrl?: string; participants: { id: string; name: string; connected: boolean; lastSeenAt: string | null }[]; answers: TeacherAnswer[]; blockStates: { blockId: string; status: BlockStatus; attemptNo: number }[] }
-export interface PublicState extends RuntimeState { id: string; revision: number; locale: string; currentStageId: string; stage: ProjectedStage; ownAnswers?: OwnAnswer[] }
+export interface TeacherState extends RuntimeState { mode: 'lesson' | 'rehearsal'; id: string; revision: number; locale: string; currentStageId: string; document: { id: string; content: { title: string }; stages: ProjectedStage[]; documentation?: ProjectedDocumentation }; joinCode?: string; joinUrl?: string; publicStage: ProjectedStage; projectorUrl?: string; participants: { id: string; name: string; connected: boolean; lastSeenAt: string | null }[]; answers: TeacherAnswer[]; blockStates: { blockId: string; status: BlockStatus; attemptNo: number }[] }
+export interface PublicState extends RuntimeState { id: string; revision: number; locale: string; currentStageId: string; stage: ProjectedStage; ownAnswers?: OwnAnswer[]; kindnessPoints?: number }
 export interface PageContext { lessonId?: string; sessionId?: string; projectorToken?: string; resetToken?: string; email?: string; audience?: 'student' | 'projector'; teacherScope?: 'grant' }
 export type TeacherCapability = 'present' | 'moderate' | 'finish' | 'manageCollaboration';
 export interface TeacherActorState { kind: 'owner' | 'grant'; isPresenter: boolean; capabilities: TeacherCapability[]; expiresAt?: string }

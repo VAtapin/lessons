@@ -89,7 +89,7 @@ final class TeacherAccess
         $capabilities = $this->metadata($session, $actor)['actor']['capabilities'];
         $required = match (true) {
             $action === 'finish' => 'finish',
-            in_array($action, ['answer.moderate', 'answer.publish', 'answer.unpublish', 'role.assign', 'signal.ack'], true) => 'moderate',
+            in_array($action, ['answer.moderate', 'answer.publish', 'answer.unpublish', 'answer.reply', 'role.assign', 'signal.ack'], true) => 'moderate',
             default => 'present',
         };
         if (! in_array($required, $capabilities, true)) {

@@ -48,14 +48,24 @@ final class RuntimeAnswers
             }
         }
         $previous = $answer !== null ? $this->value($answer) : null;
+        if ($block->type === 'core.signals' && ($previous['question'] ?? false) && ! $answer->acknowledged && ! $value['question']) {
+            throw new ApiProblem('question_pending', 409);
+        }
         $answer ??= new SessionAnswer(['teaching_session_id' => $session->id, 'session_participant_id' => $participant->id, 'block_id' => $block->id, 'revision' => 0]);
         $answer->revision++;
         $answer->value = $value;
+        $point = match ($block->type) {
+            'core.signals' => (int) $value['ready'], 'core.roles' => (int) ($value['roleId'] !== null),
+            'core.single-choice', 'core.multiple-choice', 'core.matching' => (int) ($this->blocks->interactive($block)->grade($block, $value) === true),
+            default => 1,
+        };
+        $answer->kindness_points = max((int) $answer->kindness_points, $point);
         $answer->option_id = $block->type === 'core.single-choice' ? $value['optionId'] : null;
         if ($block->type === 'core.free-response') {
             $answer->moderation_status = 'pending';
             $answer->display_text = null;
             $answer->published = false;
+            $answer->discussed = false;
         }
         if ($block->type === 'core.signals' && (! $value['question'] || ! ($previous['question'] ?? false))) {
             $answer->acknowledged = false;
@@ -74,6 +84,9 @@ final class RuntimeAnswers
                     'grade' => $this->blocks->interactive($block)->grade($block, $this->value($answer)),
                     'moderation' => $block->type === 'core.free-response' ? ['status' => $answer->moderation_status, 'displayText' => $answer->display_text, 'published' => $answer->published] : null,
                     'acknowledged' => $block->type === 'core.signals' && $answer->acknowledged];
+                if ($answer->private_reply !== null) {
+                    $dto['privateReply'] = $answer->private_reply;
+                }
 
                 return $dto;
             })->all();
@@ -90,6 +103,9 @@ final class RuntimeAnswers
                 if ($block->type === 'core.signals') {
                     $dto['acknowledged'] = $answer->acknowledged;
                 }
+                if ($answer->private_reply !== null) {
+                    $dto['privateReply'] = $answer->private_reply;
+                }
 
                 return $dto;
             })->all();
@@ -103,5 +119,18 @@ final class RuntimeAnswers
         }
 
         return $dto;
+    }
+
+    public function kindnessPoints(TeachingSession $session, LessonDocument $document, SessionParticipant $participant, array $snapshot): int
+    {
+        return SessionAnswer::query()->where('teaching_session_id', $session->id)->where('session_participant_id', $participant->id)->get()
+            ->sum(function (SessionAnswer $answer) use ($document, $snapshot): int {
+                $block = $this->blocks->find($document, $answer->block_id);
+                if ($block->solution !== null && $block->type !== 'core.sequence' && $this->blocks->readState($block, $snapshot)['status'] !== 'revealed') {
+                    return 0;
+                }
+
+                return (int) $answer->kindness_points;
+            });
     }
 }

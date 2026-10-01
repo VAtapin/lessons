@@ -76,6 +76,31 @@ test('new language persists blank actual strings with all structural IDs and can
     assert.equal(operations.pointerSegment('x~/y'), 'x~0~1y');
 });
 
+test('copied stage rewires internal review and board sources while retaining intentional external links', () => {
+    const source = document().stages[0];
+    source.blocks.push({ id: 'reveal', type: 'core.presentation', schemaVersion: 1, media: {}, content: { ru: { text: 'Explanation', modes: [] } }, config: { kind: 'reveal', reviewBlockId: 'block-one', sourceBlockIds: [], maxItems: 8 } });
+    source.blocks.push({ id: 'board', type: 'core.presentation', schemaVersion: 1, media: {}, content: { ru: { text: 'Discussion', modes: [] } }, config: { kind: 'response-board', reviewBlockId: null, sourceBlockIds: ['block-one', 'external-stage-response'], maxItems: 8 } });
+    const before = structuredClone(source);
+    const copy = operations.copyStage(source);
+    assert.equal(copy.blocks[1].config.reviewBlockId, copy.blocks[0].id);
+    assert.deepEqual(copy.blocks[2].config.sourceBlockIds, [copy.blocks[0].id, 'external-stage-response']);
+    copy.blocks[2].config.sourceBlockIds.push('new-source');
+    copy.blocks[1].content.ru.text = 'New explanation';
+    assert.deepEqual(source, before);
+});
+
+test('adding and blanking translations preserves discussion identities while clearing labels and questions', () => {
+    const doc = document();
+    const block = { id: 'discussion', type: 'core.presentation', schemaVersion: 1, media: {}, content: { ru: { text: 'Introduction', modes: [{ modeId: 'priest-mode', label: 'Priest', text: 'What could he do?' }] } }, config: { kind: 'discussion', reviewBlockId: null, sourceBlockIds: [], maxItems: 8 } };
+    doc.stages[0].blocks.push(block);
+    assert.equal(operations.addContentLocale(doc, 'de', 'ru'), true);
+    assert.deepEqual(block.content.de.modes, [{ modeId: 'priest-mode', label: '', text: '' }]);
+    block.content.de.modes[0].label = 'Priester';
+    operations.blankOtherTranslations(block, 'ru');
+    assert.deepEqual(block.content.de.modes, [{ modeId: 'priest-mode', label: '', text: '' }]);
+    assert.equal(block.content.ru.modes[0].label, 'Priest');
+});
+
 test('actual draft composable waits for IME and 800ms, queues current input after ack, and stops on identity change', async t => {
     const vueUrl = import.meta.resolve('vue');
     const vue = await import(vueUrl);

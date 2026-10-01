@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Runtime;
 
+use App\Application\Catalog\DocumentationService;
 use App\Application\Collaboration\CollaborationConflict;
 use App\Application\Collaboration\TeacherAccess;
 use App\Application\Collaboration\TeacherActor;
@@ -24,7 +25,7 @@ use Carbon\CarbonImmutable;
 
 final class RuntimeService
 {
-    public function __construct(private StudioService $studio, private BlockRegistry $registry, private RuntimeCommands $commands, private SessionTimer $timer, private RuntimeMediaProjection $mediaProjection, private RuntimeBlocks $blocks, private RuntimeAnswers $answers, private RetentionPolicy $retention, private SessionAggregates $aggregates, private TeacherAccess $teacherAccess, private TeacherReceipts $teacherReceipts) {}
+    public function __construct(private StudioService $studio, private BlockRegistry $registry, private RuntimeCommands $commands, private SessionTimer $timer, private RuntimeMediaProjection $mediaProjection, private RuntimeBlocks $blocks, private RuntimeAnswers $answers, private RetentionPolicy $retention, private SessionAggregates $aggregates, private TeacherAccess $teacherAccess, private TeacherReceipts $teacherReceipts, private DocumentationService $documentation) {}
 
     public function start(string $ownerKey, string $lessonId, int $expectedRevision, ?string $locale, bool $prepare = false): array
     {
@@ -329,6 +330,10 @@ final class RuntimeService
         $document = $this->document($session);
         $blockSnapshot = $this->blocks->snapshot($session);
         $teacherDocument = $document->project(Audience::Teacher, $session->locale);
+        $documentation = $this->documentation->forVersion($session->version, $document);
+        if ($documentation !== null) {
+            $teacherDocument['documentation'] = $documentation->project($session->locale);
+        }
         $teacherDocument['stages'] = array_map(
             fn (array $stage): array => $this->mediaProjection->stage($stage, $session, Audience::Teacher, $teacherScoped),
             $teacherDocument['stages'],
@@ -370,6 +375,7 @@ final class RuntimeService
         ];
         if ($participant !== null) {
             $state['ownAnswers'] = $this->answers->own($session, $document, $participant, $blockSnapshot);
+            $state['kindnessPoints'] = $this->answers->kindnessPoints($session, $document, $participant, $blockSnapshot);
         }
 
         return $state;

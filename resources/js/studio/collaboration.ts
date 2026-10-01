@@ -5,7 +5,7 @@ const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 export function requiredCapability(action: string): TeacherCapability {
     if (action === 'finish') return 'finish';
     if (action.startsWith('invite.') || action.startsWith('grant.') || action.startsWith('presenter.')) return 'manageCollaboration';
-    return ['answer.moderate', 'answer.publish', 'answer.unpublish', 'role.assign', 'signal.ack'].includes(action) ? 'moderate' : 'present';
+    return ['answer.moderate', 'answer.publish', 'answer.unpublish', 'answer.reply', 'role.assign', 'signal.ack'].includes(action) ? 'moderate' : 'present';
 }
 export function canCommand(actor: TeacherActorState | undefined, action: string): boolean { return !!actor?.capabilities.includes(requiredCapability(action)); }
 export function captureTeacherCommand(actor: TeacherActorState, revision: number, epoch: number, action: string, payload: Record<string, unknown> = {}): TeacherPending {

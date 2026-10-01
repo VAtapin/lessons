@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class SessionBlockState extends Model
 {
-    protected $fillable = ['teaching_session_id', 'block_id', 'status', 'attempt_no'];
+    protected $fillable = ['teaching_session_id', 'block_id', 'status', 'attempt_no', 'presentation'];
 
     protected function casts(): array
     {
-        return ['attempt_no' => 'integer'];
+        return ['attempt_no' => 'integer', 'presentation' => 'array'];
     }
 }

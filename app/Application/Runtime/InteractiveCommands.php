@@ -17,7 +17,7 @@ final class InteractiveCommands
 
     public function supports(string $action): bool
     {
-        return in_array($action, ['block.open', 'block.close', 'block.reveal', 'answer.moderate', 'answer.publish', 'answer.unpublish', 'role.assign', 'signal.ack'], true);
+        return in_array($action, ['block.open', 'block.close', 'block.reveal', 'block.review', 'answer.moderate', 'answer.publish', 'answer.unpublish', 'answer.reply', 'role.assign', 'signal.ack'], true);
     }
 
     /** Called within the command transaction with the TeachingSession locked. */
@@ -27,9 +27,10 @@ final class InteractiveCommands
             throw new ApiProblem('invalid_state', 409);
         }
         $required = match ($action) {
-            'block.open', 'block.close', 'block.reveal' => ['blockId'],
+            'block.open', 'block.close', 'block.reveal', 'block.review' => ['blockId'],
             'answer.moderate' => ['answerId', 'expectedAnswerRevision', 'status'],
             'answer.publish', 'answer.unpublish' => ['answerId', 'expectedAnswerRevision'],
+            'answer.reply' => ['answerId', 'expectedAnswerRevision', 'text'],
             'role.assign' => ['blockId', 'participantId', 'roleId'],
             'signal.ack' => ['blockId', 'participantId'],
             default => throw new ApiProblem('invalid_action', 422),
@@ -89,11 +90,24 @@ final class InteractiveCommands
         $answer = SessionAnswer::query()->whereKey($payload['answerId'])->where('teaching_session_id', $session->id)->first()
             ?? throw new ApiProblem('not_found', 404);
         $block = $this->blocks->find($document, $answer->block_id);
-        if ($block->type !== 'core.free-response') {
+        if ($action !== 'answer.reply' && $block->type !== 'core.free-response') {
             throw new ApiProblem('invalid_action', 422);
         }
         if ($answer->revision !== $payload['expectedAnswerRevision']) {
             throw new ApiProblem('answer_revision_conflict', 409);
+        }
+        if ($action === 'answer.reply') {
+            if (! is_string($payload['text']) || ! mb_check_encoding($payload['text'], 'UTF-8') || trim($payload['text']) === '' || mb_strlen($payload['text']) > 1000) {
+                throw new ApiProblem('invalid_action', 422);
+            }
+            $answer->private_reply = $payload['text'];
+            if ($block->type === 'core.signals' && ($answer->value['question'] ?? false)) {
+                $answer->acknowledged = true;
+            }
+            $answer->revision++;
+            $answer->save();
+
+            return;
         }
         if ($action === 'answer.moderate') {
             if (! in_array($payload['status'], ['approved', 'rejected'], true)

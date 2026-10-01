@@ -47,21 +47,28 @@ final class RuntimeBlocks
 
     public function state(TeachingSession $session, BlockInstance $block): array
     {
-        $status = SessionBlockState::query()->where('teaching_session_id', $session->id)->where('block_id', $block->id)->value('status')
-            ?? $this->interactive($block)->initialState();
+        $row = SessionBlockState::query()->where('teaching_session_id', $session->id)->where('block_id', $block->id)->first();
 
-        return ['blockId' => $block->id, 'status' => $status, 'attemptNo' => 1];
+        return $this->readState($block, $row === null ? [] : [$block->id => ['status' => $row->status, 'presentation' => $row->presentation]]);
     }
 
     /** A fresh per-response read snapshot; mutations use state() under the session lock. */
     public function snapshot(TeachingSession $session): array
     {
-        return SessionBlockState::query()->where('teaching_session_id', $session->id)->pluck('status', 'block_id')->all();
+        return SessionBlockState::query()->where('teaching_session_id', $session->id)->get()->mapWithKeys(
+            fn (SessionBlockState $row) => [$row->block_id => ['status' => $row->status, 'presentation' => $row->presentation]],
+        )->all();
     }
 
     public function readState(BlockInstance $block, array $snapshot): array
     {
-        return ['blockId' => $block->id, 'status' => $snapshot[$block->id] ?? $this->interactive($block)->initialState(), 'attemptNo' => 1];
+        $stored = $snapshot[$block->id] ?? null;
+        $state = ['blockId' => $block->id, 'status' => $stored['status'] ?? $this->interactive($block)->initialState(), 'attemptNo' => 1];
+        if (! empty($stored['presentation'])) {
+            $state['presentation'] = $stored['presentation'];
+        }
+
+        return $state;
     }
 
     public function allStates(LessonDocument $document, array $snapshot): array
@@ -85,9 +92,31 @@ final class RuntimeBlocks
             $action === 'block.open' && in_array($current, ['prepared', 'closed'], true) => 'open',
             $action === 'block.close' && $current === 'open' => 'closed',
             $action === 'block.reveal' && $current === 'closed' => 'revealed',
+            $action === 'block.review' && in_array($current, ['open', 'closed'], true) => 'revealed',
             default => throw new ApiProblem('invalid_state', 409),
         };
         SessionBlockState::updateOrCreate(['teaching_session_id' => $session->id, 'block_id' => $block->id], ['status' => $next, 'attempt_no' => 1]);
+    }
+
+    public function savePresentation(TeachingSession $session, BlockInstance $block, array $presentation): void
+    {
+        SessionBlockState::updateOrCreate(['teaching_session_id' => $session->id, 'block_id' => $block->id],
+            ['status' => $this->state($session, $block)['status'], 'attempt_no' => 1, 'presentation' => $presentation]);
+    }
+
+    public function openTasks(TeachingSession $session, LessonDocument $document): void
+    {
+        foreach ($document->stages as $stage) {
+            if ($stage->id !== $session->current_stage_id || ! ($stage->config['openTasks'] ?? false)) {
+                continue;
+            }
+            foreach ($stage->blocks as $block) {
+                if ($this->registry->resolve($block->type, $block->schemaVersion) instanceof InteractiveBlockType
+                    && $this->state($session, $block)['status'] === 'prepared') {
+                    $this->transition($session, $block, 'block.open');
+                }
+            }
+        }
     }
 
     /** Authored audience filtering runs before runtime fields and media URLs are added. */
@@ -101,6 +130,21 @@ final class RuntimeBlocks
             }
             $state = $this->readState($block, $snapshot);
             $runtime = ['status' => $state['status'], 'attemptNo' => 1];
+            if (isset($state['presentation'])) {
+                $runtime['presentation'] = $state['presentation'];
+            }
+            if ($block->type === 'core.presentation') {
+                $presentation = $state['presentation'] ?? [];
+                if ($block->config['kind'] === 'reveal' && ! ($presentation['visible'] ?? false)) {
+                    $view['blocks'][$index]['content']['text'] = '';
+                }
+                if ($block->config['kind'] === 'response-board' && $detailsAvailable) {
+                    $runtime['board'] = SessionAnswer::query()->where('teaching_session_id', $session->id)
+                        ->whereIn('block_id', $block->config['sourceBlockIds'])->where('moderation_status', 'approved')->where('published', true)
+                        ->orderByDesc('id')->get()->unique('display_text')->take($block->config['maxItems'])
+                        ->map(fn (SessionAnswer $answer): array => ['answerId' => $answer->id, 'text' => $answer->display_text, 'discussed' => (bool) $answer->discussed])->values()->all();
+                }
+            }
             if ($block->type === 'core.roles') {
                 $runtime['availability'] = $this->availability($session, $block);
             }

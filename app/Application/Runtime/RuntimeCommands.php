@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 final class RuntimeCommands
 {
-    public function __construct(private SessionTimer $timer, private InteractiveCommands $interactive) {}
+    public function __construct(private SessionTimer $timer, private InteractiveCommands $interactive, private PresentationCommands $presentation, private RuntimeBlocks $blocks) {}
 
     public function fingerprint(int $revision, string $action, array $payload, array $extraFields = []): string
     {
@@ -21,6 +21,14 @@ final class RuntimeCommands
 
     public function apply(TeachingSession $session, LessonDocument $document, string $action, array $payload, CarbonImmutable $now): void
     {
+        if ($this->presentation->supports($action)) {
+            if ($session->status === 'finished') {
+                throw new ApiProblem('invalid_state', 409);
+            }
+            $this->presentation->apply($session, $document, $action, $payload);
+
+            return;
+        }
         if ($this->interactive->supports($action)) {
             $this->interactive->apply($session, $document, $action, $payload);
 
@@ -35,6 +43,7 @@ final class RuntimeCommands
             case 'begin':
                 $this->requireStatus($session, 'prepared');
                 $session->status = 'running';
+                $this->blocks->openTasks($session, $document);
                 break;
             case 'pause':
                 $this->requireStatus($session, 'running');
@@ -66,6 +75,7 @@ final class RuntimeCommands
                     throw new ApiProblem('invalid_action', 422);
                 }
                 $session->current_stage_id = $payload['stageId'];
+                $this->blocks->openTasks($session, $document);
                 break;
             case 'timer.start':
                 $this->requireStatus($session, 'running');

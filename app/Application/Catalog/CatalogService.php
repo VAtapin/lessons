@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 final readonly class CatalogService
 {
-    public function __construct(private BlockRegistry $registry, private MediaCatalogue $media, private StudioService $studio, private RuntimeService $runtime) {}
+    public function __construct(private BlockRegistry $registry, private MediaCatalogue $media, private StudioService $studio, private RuntimeService $runtime, private DocumentationService $documentation, private DocumentationFiles $documentationFiles) {}
 
     /** Approval is an explicit trusted administrative operation, never part of personal release. */
     public function approve(LessonVersion $version, array $metadata, string $reviewer, string $slug, ?string $sourceRevision = null, ?string $sourceHash = null): CatalogEntry
@@ -112,6 +112,8 @@ final readonly class CatalogService
         $card = $this->card($entry, $locale, $document);
         $card['stages'] = array_map(fn ($stage) => ['title' => $stage->content[$locale]['title'], 'durationSeconds' => $stage->config['durationSeconds'] ?? null], $document->stages);
         $card['details'] = $entry->metadata['details'][$locale] ?? null;
+        $documentation = $this->documentation->forVersion($entry->version, $document);
+        $card['documentation'] = $documentation === null ? null : $this->documentationFiles->present($documentation, $locale);
 
         $preview = $document->project(Audience::Projector, $locale);
         foreach ($preview['stages'] as &$stage) {
@@ -131,8 +133,12 @@ final readonly class CatalogService
     public function use(string $slug, string $locale, string $owner, bool $start = false): array
     {
         return OwnerMutation::transaction([$owner], function () use ($slug, $locale, $owner, $start): array {
-            [, $document] = $this->find($slug, $locale, lock: true);
+            [$entry, $document] = $this->find($slug, $locale, lock: true);
             $copy = $document->toArray();
+            $documentation = $this->documentation->forVersion($entry->version, $document);
+            if ($documentation !== null) {
+                $copy['documentation'] = $documentation->toArray();
+            }
             $copy['defaultLocale'] = $locale;
             $material = $this->studio->create($owner, $copy);
             $result = [];
@@ -181,6 +187,7 @@ final readonly class CatalogService
         $document = LessonDocument::fromArray($version->document, $this->registry);
         // With no owner, only explicitly reusable builtins resolve. A private release cannot expose private files.
         $this->media->assertDocument($document);
+        $this->documentationFiles->assertDocumentation($document->documentation);
 
         return $document;
     }

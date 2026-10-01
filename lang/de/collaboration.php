@@ -39,6 +39,7 @@ return [
     'collab_accept' => 'Einladung annehmen',
     'collab_missing_token' => 'Diese Seite enthält keinen Einladungsschlüssel. Öffnen Sie den ursprünglichen Link des Unterrichtseigentümers.',
     'collab_access_lost' => 'Der Zugang zum Unterricht ist beendet. Antworten, Notizen und Steuerung sind nicht mehr zugänglich.',
+    'collab_access_ended' => 'Zugang zum Unterricht beendet',
     'collab_authority_changed' => 'Die Unterrichtsleitung hat sich geändert. Der ausstehende Befehl gehört zur vorherigen Leitung und wird nicht erneut gesendet.',
     'collab_discard_pending' => 'Vorherigen Befehl entfernen',
     'collab_link_replayed' => 'Die Einladung wurde erstellt, der einmalige Link aber bereits ausgegeben. Widerrufen Sie die Einladung und erstellen Sie eine neue, wenn der Link verloren ging.',

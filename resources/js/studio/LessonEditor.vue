@@ -13,6 +13,7 @@ import TemplatePicker from './TemplatePicker.vue';
 import CommonLibrary from './CommonLibrary.vue';
 import CatalogSubmissions from './CatalogSubmissions.vue';
 import MetadataFields from './MetadataFields.vue';
+import DocumentationEditor from './DocumentationEditor.vue';
 import { emptyMetadata } from './library';
 import type { Block, BlockType, EditorIssue, EditorLesson, Media, MediaResponse, Messages, TeacherState } from './types';
 const props = defineProps<{ lessonId: string; locale: string; messages: Messages }>();
@@ -140,6 +141,7 @@ function duration(event: Event) {
         <fieldset :disabled="busy || save.status === 'blocked'" class="editor-fields">
             <div class="studio-card document-settings"><label>{{ messages.material_title }}<input v-model="document.content[contentLocale]!.title" :data-editor-path="'/content/' + pointerSegment(contentLocale) + '/title'" /></label><label>{{ messages.content_language }}<select v-model="contentLocale"><option v-for="language in document.locales" :key="language">{{ language }}</option></select></label><label>{{ messages.default_language }}<select v-model="document.defaultLocale"><option v-for="language in document.locales" :key="language">{{ language }}</option></select></label></div>
             <EditorLanguages :document="document" :selected="contentLocale" :readiness="lesson.readiness" :stale="dirty" :messages="messages" @select="contentLocale = $event" @add="addLocale" @remove="removeLocale" @focus="focusIssue" />
+            <DocumentationEditor :document="document" :locale="contentLocale" :messages="messages" />
             <div class="editor-layout">
                 <aside class="studio-card stage-list"><h2>{{ messages.stages }}</h2><button v-for="(stage, index) in document.stages" :key="stage.id" type="button" :class="['stage-select', { active: stage.id === activeStageId }]" :aria-current="stage.id === activeStageId ? 'step' : undefined" @click="activeStageId = stage.id"><span>{{ index + 1 }}</span>{{ stage.content[contentLocale]!.title }}</button><button type="button" @click="addStage">＋ {{ messages.add_stage }}</button></aside>
                 <section v-if="activeStage" class="editor-stage">

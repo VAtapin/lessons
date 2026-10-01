@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import QRCode from 'qrcode';
 import { api, ApiError, errorMessage, poll } from './api';
 import { connectedControl, acceptProjection, matchesControlMessage, controlReturnConfirmed } from './runtime';
@@ -8,12 +8,14 @@ import CollaborationPanel from './CollaborationPanel.vue';
 import '../../css/collaboration.css';
 import TeacherBlockTools from './TeacherBlockTools.vue';
 import TeacherAnswers from './TeacherAnswers.vue';
+import LessonDocumentation from './LessonDocumentation.vue';
 import { isInteractive, valueText } from './interactive';
 import StageRenderer from './StageRenderer.vue';
 import RuntimeStatus from './RuntimeStatus.vue';
 import RuntimeTimer from './RuntimeTimer.vue';
 import StudioIcon from './StudioIcon.vue';
 import { activeStageAnswers, countAnsweredParticipants } from './conducting';
+import { keyboardStageIndex } from './conducting-keyboard';
 import type { ProjectedStage } from './types';
 import type { CollaborationState, Messages, TeacherActorResponse, TeacherActorState, TeacherState } from './types';
 const props = defineProps<{ sessionId: string; locale: string; messages: Messages; compact?: boolean; teacherScope?: 'grant' }>();
@@ -39,11 +41,32 @@ watch(pending, value => {
     try { if (value) sessionStorage.setItem(pendingKey, JSON.stringify(value)); else sessionStorage.removeItem(pendingKey); }
     catch { /* Retry remains available for this page. */ }
 }, { flush: 'sync' });
-const stagesOpen = ref(!props.compact);
+const panelOpen = ref<'stages' | 'tools' | 'answers' | 'notes' | 'finish' | null>(null);
+let panelOpener: HTMLElement | undefined;
+async function openPanel(panel: typeof panelOpen.value, event: Event) { panelOpener = event.currentTarget as HTMLElement; panelOpen.value = panel; await nextTick(); document.getElementById('focus-panel-close')?.focus(); }
+async function closePanel() { panelOpen.value = null; await nextTick(); if (panelOpener?.isConnected) panelOpener.focus(); else document.querySelector<HTMLElement>('.focus-control-toggle, .focus-current')?.focus(); }
+function trapPanel(event: KeyboardEvent) {
+    if (event.key === 'Escape') { event.preventDefault(); void closePanel(); return; }
+    if (event.key !== 'Tab') return;
+    const nodes = Array.from((event.currentTarget as HTMLElement).querySelectorAll<HTMLElement>('a[href],button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),summary,[tabindex="0"]')).filter(node => node.getClientRects().length);
+    const first = nodes[0], last = nodes.at(-1);
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+}
 const seconds = ref(60);
 const message = ref('');
 const qr = ref('');
 const detached = ref(false);
+const fullscreenAvailable = document.fullscreenEnabled;
+const fullScreen = ref(!!document.fullscreenElement);
+function fullscreenChanged() { fullScreen.value = !!document.fullscreenElement; }
+document.addEventListener('fullscreenchange', fullscreenChanged);
+onBeforeUnmount(() => document.removeEventListener('fullscreenchange', fullscreenChanged));
+async function toggleFullscreen() {
+    try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.querySelector<HTMLElement>('.conducting-app')?.requestFullscreen(); }
+    catch { error.value = props.messages.error_fullscreen; }
+}
+watch(detached, value => { if (value) panelOpen.value = null; });
 const detachError = ref(false);
 const instance = new URLSearchParams(location.search).get('instance');
 let channel: BroadcastChannel | undefined;
@@ -153,6 +176,15 @@ async function retry() {
     } finally { busy.value = false; generation++; }
 }
 function navigate(stageId: string) { if (stageId !== session.value?.currentStageId) void send('stage', { stageId }); }
+function keyboardNavigate(event: KeyboardEvent) {
+    const target = event.target instanceof HTMLElement ? event.target : undefined;
+    const blocked = presentDisabled.value || detached.value || panelOpen.value !== null || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.repeat || !!target?.closest('input,textarea,select,[contenteditable="true"],[role="textbox"]');
+    const next = keyboardStageIndex(event.key, index.value, session.value?.document.stages.length ?? 0, blocked);
+    if (next === undefined) return;
+    event.preventDefault(); navigate(session.value!.document.stages[next]!.id);
+}
+window.addEventListener('keydown', keyboardNavigate);
+onBeforeUnmount(() => window.removeEventListener('keydown', keyboardNavigate));
 function detach(asTab = false) {
     detachError.value = false;
     if (!channel) { detachError.value = true; return; }
@@ -185,42 +217,35 @@ function closeReturnedControl() {
 function finish() { confirmFinish.value = true; }
 </script>
 <template>
-    <div :class="['teacher-panel', { 'compact-control': compact }]">
-        <div class="page-heading conducting-heading">
-            <div class="conducting-title"><div class="conducting-title-row"><h1>{{ messages.teacher_panel }}</h1><span v-if="session" :class="['status-pill', 'session-state', session.status]" role="status"><span class="state-dot" aria-hidden="true"></span>{{ messages['session_' + session.status] }}</span></div><p class="lesson-subtitle">{{ session?.document.content.title ?? messages.loading }}</p></div>
-            <div class="heading-actions">
-                <button v-if="!detached && actor?.capabilities.includes('manageCollaboration') && session?.mode === 'lesson'" :disabled="manageDisabled || session.status === 'finished'" @click="collaborationOpen = !collaborationOpen"><StudioIcon name="account" />{{ messages.collab_invite }}</button>
-                <button v-if="session?.status === 'prepared'" class="primary" :disabled="presentDisabled" @click="send('begin')">{{ messages.begin_session }}</button>
-                <a v-if="session && session.mode !== 'rehearsal'" class="button-link projector-link" :href="projectorUrl" target="_blank" rel="noopener"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="13" rx="1" /><path d="M12 17v4m-4 0h8" /></svg>{{ messages.open_projector }} ↗</a>
-            </div>
-        </div>
-        <p v-if="error" role="alert" class="error-banner">{{ error }}</p>
-        <p v-if="accessLost" role="alert" class="error-banner">{{ messages.collab_access_lost }}</p>
-        <p v-if="invitationReplayed" role="status" class="info-banner">{{ messages.collab_link_replayed }}</p>
-        <div v-if="pending" class="info-banner" role="status">{{ pendingStale ? messages.collab_authority_changed : messages.command_pending }} <button v-if="pendingStale" :disabled="busy" @click="pending = undefined">{{ messages.collab_discard_pending }}</button><button v-else :disabled="busy" @click="retry">{{ messages.retry_command }}</button></div>
-        <p v-if="!session && !accessLost" role="status">{{ messages.loading }}</p>
-        <template v-if="session && stage">
-            <RuntimeStatus :state="session" :messages="messages" hide-timer hide-status />
-            <div class="join-strip studio-card conducting-strip">
-                <div v-if="session.mode !== 'rehearsal'" class="join-details"><span class="participant-total"><svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="7" r="3" /><path d="M3 20v-3a6 6 0 0 1 12 0v3M16 4a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5v2" /></svg>{{ messages.participants }} <strong>{{ session.participants.length }}</strong></span><div class="join-code-group"><small>{{ messages.join_code }}</small><strong class="join-code">{{ session.joinCode }}</strong></div><details class="qr-details"><summary>{{ messages.show_qr }}</summary><div class="qr-popover"><img v-if="qr" :src="qr" :alt="messages.qr_alt" width="160" height="160" /><a :href="joinUrl" target="_blank" rel="noopener">{{ messages.student_join }} ↗</a></div></details></div>
-                <div v-if="session.mode === 'rehearsal'" class="rehearsal-links"><span class="status-pill">{{ messages.rehearsal }}</span><a class="button-link" :href="`/${locale}/rehearsal/${session.id}/student`" target="_blank" rel="noopener">{{ messages.student_screen }} ↗</a><a class="button-link" :href="`/${locale}/rehearsal/${session.id}/projector`" target="_blank" rel="noopener">{{ messages.shared_screen }} ↗</a></div><div class="control-placement"><span :class="['connection-indicator', { offline: !connected }]" role="status"><span class="state-dot" aria-hidden="true"></span>{{ connected ? messages.connected : messages.reconnecting }}</span><template v-if="compact || detached"><button @click="restore">{{ messages.return_control }}</button></template><details v-else class="detach-options"><summary>{{ messages.control_placement }}</summary><div class="detach-choices"><button @click="detach()">{{ messages.detach_window }} ↗</button><button @click="detach(true)">{{ messages.detach_tab }} ↗</button></div></details></div>
-            </div>
-            <p v-if="detached" class="info-banner" role="status">{{ messages.control_detached }}</p>
+    <div :class="['teacher-panel', 'conducting-app', { 'compact-control': compact, 'focus-detached': detached }]">
+        <div v-if="error || accessLost || (pending && !busy) || invitationReplayed || detachError" class="focus-notifications">
+            <p v-if="error && !accessLost" role="alert" class="error-banner">{{ error }}</p>
+            <p v-if="accessLost" role="alert" class="error-banner">{{ messages.collab_access_lost }}</p>
+            <p v-if="invitationReplayed" role="status" class="info-banner">{{ messages.collab_link_replayed }}</p>
+            <div v-if="pending && !busy" class="info-banner" role="status">{{ pendingStale ? messages.collab_authority_changed : messages.command_pending }} <button v-if="pendingStale" :disabled="busy" @click="pending = undefined">{{ messages.collab_discard_pending }}</button><button v-else :disabled="busy" @click="retry">{{ messages.retry_command }}</button></div>
             <p v-if="detachError" class="info-banner" role="status">{{ messages.detach_failed }} <button @click="detach(true)">{{ messages.detach_tab }}</button></p>
-            <div :class="['teacher-layout', { 'stages-collapsed': !stagesOpen, detached, compact }]">
-                <aside v-if="!detached" class="studio-card stage-list conducting-stages">
-                    <div class="section-heading"><h2>{{ messages.stages }}</h2><button class="stage-collapse" :aria-label="stagesOpen ? messages.hide_stages : messages.show_stages" :aria-expanded="stagesOpen" aria-controls="conducting-stages" @click="stagesOpen = !stagesOpen">{{ stagesOpen ? '−' : '+' }}</button></div><p class="stage-progress">{{ index + 1 }} / {{ session.document.stages.length }}</p>
-                    <div v-if="stagesOpen" id="conducting-stages"><button v-for="(item, number) in session.document.stages" :key="item.id" :disabled="presentDisabled" :class="['stage-select', { active: item.id === session.currentStageId }]" :aria-current="item.id === session.currentStageId ? 'step' : undefined" @click="navigate(item.id)"><span class="stage-number">{{ number + 1 }}</span><img v-if="stageImage(item)" :src="stageImage(item)" alt="" class="stage-thumbnail" /><span v-else class="stage-type-symbol" aria-hidden="true"><StudioIcon :name="stageSymbol(item)" /></span><strong>{{ item.content.title }}</strong></button></div>
-                </aside>
-                <div class="teacher-main">
-                    <div v-if="!compact" class="studio-card screen-preview">
-                        <div class="section-heading preview-heading"><h2>{{ messages.shared_screen }}</h2><span v-if="stage.blocks.some(block => isInteractive(block.type))" class="answer-count">{{ messages.answered }} {{ answeredParticipants }} / {{ session.participants.length }}</span></div>
-                        <div class="preview-content" tabindex="0" role="region" :aria-label="messages.shared_screen"><StageRenderer :stage="session.publicStage" :messages="messages" /></div>
-                        <div v-if="!detached" class="navigation-controls"><button :disabled="presentDisabled || index === 0" @click="navigate(session.document.stages[index - 1]!.id)">← {{ messages.previous }}</button><button class="primary" :disabled="presentDisabled || index === session.document.stages.length - 1" @click="navigate(session.document.stages[index + 1]!.id)">{{ messages.next }} →</button><a class="button-link answers-link" href="#conducting-answers">{{ messages.student_answers }} ↓</a></div>
-                    </div>
-                    <div v-if="compact" class="studio-card navigation-controls"><button :disabled="presentDisabled || index === 0" @click="navigate(session.document.stages[index - 1]!.id)">← {{ messages.previous }}</button><span>{{ index + 1 }} / {{ session.document.stages.length }}</span><button class="primary" :disabled="presentDisabled || index === session.document.stages.length - 1" @click="navigate(session.document.stages[index + 1]!.id)">{{ messages.next }} →</button></div>
-                </div>
-                <aside v-if="!detached" class="teacher-tools">
+        </div>
+        <template v-if="session && stage">
+            <main v-if="!compact" class="conducting-canvas" :inert="panelOpen !== null ? true : undefined" :aria-label="messages.shared_screen">
+                <RuntimeStatus :state="session" :messages="messages" hide-timer hide-status />
+                <StageRenderer :key="stage.id" :stage="session.publicStage" :messages="messages" :presenter="!detached" :busy="presentDisabled" focus @command="send" />
+            </main>
+            <button v-if="panelOpen" class="focus-backdrop" tabindex="-1" :aria-label="messages.focus_close_panel" @click="closePanel"></button>
+            <aside v-if="panelOpen === 'stages'" class="focus-drawer focus-stages" role="dialog" aria-modal="true" :aria-label="messages.stages" @keydown="trapPanel">
+                <div class="focus-panel-heading"><h2>{{ messages.stages }}</h2><button id="focus-panel-close" :aria-label="messages.focus_close_panel" @click="closePanel"><StudioIcon name="close" /></button></div>
+                <p class="stage-progress">{{ index + 1 }} / {{ session.document.stages.length }}</p>
+                <div id="conducting-stages"><button v-for="(item, number) in session.document.stages" :key="item.id" :disabled="presentDisabled" :class="['stage-select', { active: item.id === session.currentStageId }]" :aria-current="item.id === session.currentStageId ? 'step' : undefined" @click="navigate(item.id); closePanel()"><span class="stage-number">{{ number + 1 }}</span><img v-if="stageImage(item)" :src="stageImage(item)" alt="" class="stage-thumbnail" /><span v-else class="stage-type-symbol" aria-hidden="true"><StudioIcon :name="stageSymbol(item)" /></span><strong>{{ item.content.title }}</strong></button></div>
+            </aside>
+            <aside v-if="!detached && (compact || panelOpen === 'tools')" :class="['focus-tools', compact ? 'focus-control-body' : 'focus-drawer']" :role="compact ? undefined : 'dialog'" :aria-modal="compact ? undefined : true" :aria-label="messages.teacher_panel" :inert="compact && panelOpen !== null ? true : undefined" @keydown="!compact && trapPanel($event)">
+                <div v-if="!compact" class="focus-panel-heading"><h2>{{ messages.teacher_panel }}</h2><button id="focus-panel-close" :aria-label="messages.focus_close_panel" @click="closePanel"><StudioIcon name="close" /></button></div>
+                <div class="focus-session-summary"><span :class="['status-pill', 'session-state', session.status]">{{ messages['session_' + session.status] }}</span><span :class="['connection-indicator', { offline: !connected }]" role="status"><span class="state-dot" aria-hidden="true"></span>{{ connected ? messages.connected : messages.reconnecting }}</span></div>
+                <section class="focus-join">
+                    <div class="focus-class-count"><span>{{ messages.participants }} <strong>{{ session.participants.length }}</strong></span><span>{{ messages.answered }} <strong>{{ answeredParticipants }}</strong></span></div>
+                    <details v-if="session.mode !== 'rehearsal'"><summary>{{ messages.join_code }} <strong class="join-code">{{ session.joinCode }}</strong> · {{ messages.show_qr }}</summary><img v-if="qr" :src="qr" :alt="messages.qr_alt" width="160" height="160" /><a :href="joinUrl" target="_blank" rel="noopener">{{ messages.student_join }} ↗</a></details>
+                    <div v-else class="rehearsal-links"><span class="status-pill">{{ messages.rehearsal }}</span><a :href="`/${locale}/rehearsal/${session.id}/student`" target="_blank" rel="noopener">{{ messages.student_screen }} ↗</a><a :href="`/${locale}/rehearsal/${session.id}/projector`" target="_blank" rel="noopener">{{ messages.shared_screen }} ↗</a></div>
+                    <a v-if="session.mode !== 'rehearsal'" :href="projectorUrl" target="_blank" rel="noopener">{{ messages.open_projector }} ↗</a>
+                </section>
+
 
                     <section class="studio-card conducting-controls"><h2>{{ messages.timer }}</h2><RuntimeTimer :state="session" :messages="messages" prominent />
                         <div class="timer-buttons"><button v-if="session.timer.status === 'running'" class="round-button primary" :aria-label="messages.pause_timer" :title="messages.pause_timer" :disabled="presentDisabled" @click="send('timer.pause')"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg></button><button v-if="session.timer.status === 'paused'" class="round-button primary" :aria-label="messages.resume_timer" :title="messages.resume_timer" :disabled="presentDisabled || session.status !== 'running'" @click="send('timer.resume')"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="m8 5 11 7-11 7z" /></svg></button><button v-if="session.timer.status !== 'idle'" class="round-button" :aria-label="messages.clear_timer" :title="messages.clear_timer" :disabled="presentDisabled" @click="send('timer.clear')"><svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m7 7 10 10m0-10L7 17" /></svg></button></div>
@@ -233,12 +258,29 @@ function finish() { confirmFinish.value = true; }
                         <button v-if="actor?.capabilities.includes('finish') && session.status !== 'finished' && !confirmFinish" class="finish-link" :disabled="disabled" @click="finish">{{ messages.finish_session }}</button><div v-if="actor?.capabilities.includes('finish') && confirmFinish && session.status !== 'finished'" role="alert" class="info-banner finish-confirmation"><p>{{ messages.finish_confirm }}</p><div class="action-row"><button class="primary" :disabled="disabled" @click="confirmFinish = false; send('finish')">{{ messages.finish_yes }}</button><button @click="confirmFinish = false">{{ messages.cancel }}</button></div></div>
                     </section>
                     <CollaborationPanel v-if="session.mode === 'lesson' && actor && collaboration" :session-id="sessionId" :locale="locale" :messages="messages" :actor="actor" :collaboration="collaboration" :status="session.status" :server-now="session.serverNow" :disabled="manageDisabled" :invitation="invitation" :expanded="collaborationOpen" @command="send" />
-                </aside>
-                <div v-if="!detached" class="teacher-bottom">
-                    <TeacherAnswers :session="session" :stage="stage" :answers="stageAnswers" :messages="messages" :disabled="moderationDisabled" @command="send" />
-                    <div class="teacher-private"><details v-for="block in stage.blocks.filter(block => block.teacherNotes)" :key="block.id" class="studio-card teacher-notes"><summary>{{ messages.block_notes }} · {{ block.content.title ?? block.content.question ?? messages.text }}</summary><p class="plain-text">{{ block.teacherNotes }}</p></details><details v-if="stage.content.notes" class="studio-card teacher-notes" :open="!compact"><summary>{{ messages.notes }}</summary><p class="plain-text">{{ stage.content.notes }}</p></details><details v-if="solutions.length" class="studio-card teacher-solutions"><summary>{{ messages.correct_answers }}</summary><dl><div v-for="solution in solutions" :key="solution.blockId"><dt>{{ solution.question }}</dt><dd>{{ solution.answer }}</dd></div></dl></details></div>
-                </div>
-            </div>
+
+                <div class="focus-tools-links"><button @click="openPanel('answers', $event)">{{ messages.student_answers }} · {{ stageAnswers.length }}</button><button @click="openPanel('notes', $event)">{{ messages.notes }}</button><button @click="openPanel('stages', $event)">{{ messages.stages }}</button></div>
+            </aside>
+            <aside v-if="panelOpen === 'finish'" class="focus-drawer focus-detail" role="dialog" aria-modal="true" :aria-label="messages.finish_session" @keydown="trapPanel"><div class="focus-panel-heading"><h2>{{ messages.finish_session }}</h2><button id="focus-panel-close" :aria-label="messages.focus_close_panel" @click="confirmFinish = false; closePanel()"><StudioIcon name="close" /></button></div><p>{{ messages.finish_confirm }}</p><div class="action-row"><button class="primary" :disabled="disabled || !actor?.capabilities.includes('finish')" @click="confirmFinish = false; closePanel(); send('finish')">{{ messages.finish_yes }}</button><button @click="confirmFinish = false; closePanel()">{{ messages.cancel }}</button></div></aside><aside v-if="panelOpen === 'answers' || panelOpen === 'notes'" class="focus-drawer focus-detail" role="dialog" aria-modal="true" :aria-label="panelOpen === 'answers' ? messages.student_answers : messages.notes" @keydown="trapPanel">
+                <div class="focus-panel-heading"><h2>{{ panelOpen === 'answers' ? messages.student_answers : messages.notes }}</h2><button id="focus-panel-close" :aria-label="messages.focus_close_panel" @click="closePanel"><StudioIcon name="close" /></button></div>
+                <TeacherAnswers v-if="panelOpen === 'answers'" :session="session" :stage="stage" :answers="stageAnswers" :messages="messages" :disabled="moderationDisabled" @command="send" />
+                <div v-else class="teacher-private"><LessonDocumentation v-if="session.document.documentation" :documentation="session.document.documentation" :messages="messages" /><details v-for="block in stage.blocks.filter(block => block.teacherNotes)" :key="block.id" class="studio-card teacher-notes" open><summary>{{ messages.block_notes }} · {{ block.content.title ?? block.content.question ?? messages.text }}</summary><p class="plain-text">{{ block.teacherNotes }}</p></details><details v-if="stage.content.notes" class="studio-card teacher-notes" open><summary>{{ messages.notes }}</summary><p class="plain-text">{{ stage.content.notes }}</p></details><details v-if="solutions.length" class="studio-card teacher-solutions"><summary>{{ messages.correct_answers }}</summary><dl><div v-for="solution in solutions" :key="solution.blockId"><dt>{{ solution.question }}</dt><dd>{{ solution.answer }}</dd></div></dl></details></div>
+            </aside>
+            <nav class="focus-dock" :aria-label="messages.teacher_panel" :inert="panelOpen !== null ? true : undefined">
+                <a class="focus-return" :href="`/${locale}/${scope === 'grant' ? 'catalog' : 'studio?view=overview'}`" :title="messages.focus_return" :aria-label="messages.focus_return">↖</a>
+                <template v-if="!detached">
+                    <button class="focus-previous" :disabled="presentDisabled || index === 0" :aria-label="messages.previous" :title="messages.previous" @click="navigate(session.document.stages[index - 1]!.id)">←</button>
+                    <button class="focus-current" :aria-label="messages.stages" aria-haspopup="dialog" @click="openPanel('stages', $event)"><span>{{ index + 1 }} / {{ session.document.stages.length }}</span><strong>{{ stage.content.title }}</strong></button>
+                    <button v-if="index < session.document.stages.length - 1" class="primary focus-next" :disabled="presentDisabled" :aria-label="messages.next" :title="messages.next" @click="navigate(session.document.stages[index + 1]!.id)">→</button><button v-else-if="actor?.capabilities.includes('finish') && session.status !== 'finished'" class="primary focus-next" :disabled="disabled" @click="finish(); openPanel('finish', $event)">{{ messages.finish_session }}</button>
+                    <button v-if="session.status === 'prepared'" class="primary focus-begin" :disabled="presentDisabled" @click="send('begin')">{{ messages.begin_session }}</button>
+                    <RuntimeTimer v-if="session.timer.status !== 'idle'" :state="session" :messages="messages" />
+                    <button v-if="!compact" class="focus-control-toggle" :aria-label="messages.teacher_panel" :title="messages.teacher_panel" aria-haspopup="dialog" @click="openPanel('tools', $event)"><StudioIcon name="menu" /><span>{{ messages.focus_controls }}</span></button>
+                    <button v-else class="focus-answers-toggle" :aria-label="messages.student_answers" :title="messages.student_answers" aria-haspopup="dialog" @click="openPanel('answers', $event)"><StudioIcon name="question" /><span>{{ stageAnswers.length }}</span></button>
+                </template>
+                <span v-else class="focus-detached-stage">{{ index + 1 }} / {{ session.document.stages.length }} · {{ stage.content.title }}</span>
+                <div class="focus-window-actions"><button v-if="!compact && fullscreenAvailable" :aria-label="messages.focus_fullscreen" :title="messages.focus_fullscreen" :aria-pressed="fullScreen" @click="toggleFullscreen">⛶</button><button v-if="compact || detached" :title="messages.return_control" @click="restore"><StudioIcon name="screen" /><span>{{ messages.return_control }}</span></button><template v-else><button class="focus-detach-window" :title="messages.detach_window" @click="detach()"><StudioIcon name="screen" /><span>{{ messages.focus_window }}</span></button><button class="focus-detach-tab" :aria-label="messages.detach_tab" :title="messages.detach_tab" @click="detach(true)">↗</button></template></div>
+            </nav>
         </template>
+        <div v-else class="focus-waiting"><p role="status">{{ accessLost ? messages.collab_access_ended : messages.loading }}</p><a :href="`/${locale}/catalog`">{{ messages.focus_return }}</a></div>
     </div>
 </template>

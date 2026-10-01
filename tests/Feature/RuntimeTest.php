@@ -57,7 +57,8 @@ final class RuntimeTest extends TestCase
         $student = $this->getJson('/api/participation/'.$session['id'])->assertOk()->json('session');
         $projector = $this->getJson('/api/projection/'.$this->token($session))->assertOk()->json('session');
 
-        $this->assertSame(['id', 'revision', 'locale', 'currentStageId', 'mode', 'status', 'serverNow', 'timer', 'message', 'wave', 'stage', 'ownAnswers'], array_keys($student));
+        $this->assertSame(['id', 'revision', 'locale', 'currentStageId', 'mode', 'status', 'serverNow', 'timer', 'message', 'wave', 'stage', 'ownAnswers', 'kindnessPoints'], array_keys($student));
+        $this->assertSame(0, $student['kindnessPoints']);
         $this->assertSame(['id', 'revision', 'locale', 'currentStageId', 'mode', 'status', 'serverNow', 'timer', 'message', 'wave', 'stage'], array_keys($projector));
         $this->assertSame('stage-1', $student['stage']['id']);
         $this->assertSame([], $student['ownAnswers']);

@@ -14,12 +14,13 @@ final readonly class LessonDocument
         public array $locales,
         public array $content,
         public array $stages,
+        public ?TeacherDocumentation $documentation,
     ) {}
 
     public static function fromArray(array $data, BlockRegistry $registry): self
     {
         $data = Shape::copy($data);
-        Shape::object($data, ['id', 'schemaVersion', 'defaultLocale', 'locales', 'content', 'stages'], [], 'document');
+        Shape::object($data, ['id', 'schemaVersion', 'defaultLocale', 'locales', 'content', 'stages'], ['documentation'], 'document');
         $id = Shape::id($data['id'], 'document.id');
         $version = Shape::version($data['schemaVersion'], 'document.schemaVersion');
         $locales = Shape::locales($data['locales']);
@@ -58,7 +59,37 @@ final readonly class LessonDocument
             $stages[] = $stage;
         }
 
-        return new self($id, $version, $data['defaultLocale'], $locales, $content, $stages);
+        $byId = [];
+        foreach ($stages as $stage) {
+            foreach ($stage->blocks as $block) {
+                $byId[$block->id] = $block;
+            }
+        }
+        foreach ($stages as $stage) {
+            foreach ($stage->blocks as $block) {
+                if ($block->type !== 'core.presentation') {
+                    continue;
+                }
+                foreach ($block->config['sourceBlockIds'] as $sourceId) {
+                    if (($byId[$sourceId]->type ?? null) !== 'core.free-response') {
+                        throw new ValidationException('Response boards require existing free-response sources.');
+                    }
+                }
+                $reviewId = $block->config['reviewBlockId'];
+                if ($reviewId !== null && (! in_array($reviewId, array_column($stage->blocks, 'id'), true)
+                    || ($byId[$reviewId]->solution ?? null) === null)) {
+                    throw new ValidationException('Reveal review references must point to a solved task on this stage.');
+                }
+            }
+        }
+
+        $documentation = isset($data['documentation']) && is_array($data['documentation'])
+            ? TeacherDocumentation::fromArray($data['documentation'], $locales) : null;
+        if (array_key_exists('documentation', $data) && $documentation === null) {
+            throw new ValidationException('document.documentation must be an object.');
+        }
+
+        return new self($id, $version, $data['defaultLocale'], $locales, $content, $stages, $documentation);
     }
 
     /** Full storage representation; never send directly to a projector/student. */
@@ -67,7 +98,8 @@ final readonly class LessonDocument
         return ['id' => $this->id, 'schemaVersion' => $this->schemaVersion,
             'defaultLocale' => $this->defaultLocale, 'locales' => $this->locales,
             'content' => $this->content,
-            'stages' => array_map(fn (Stage $stage) => $stage->toArray(), $this->stages)];
+            'stages' => array_map(fn (Stage $stage) => $stage->toArray(), $this->stages),
+            ...($this->documentation !== null ? ['documentation' => $this->documentation->toArray()] : [])];
     }
 
     public function project(Audience $audience, string $locale): array
@@ -78,6 +110,8 @@ final readonly class LessonDocument
 
         return ['id' => $this->id, 'schemaVersion' => $this->schemaVersion,
             'locale' => $locale, 'content' => $this->content[$locale],
-            'stages' => array_map(fn (Stage $stage) => $stage->project($audience, $locale), $this->stages)];
+            'stages' => array_map(fn (Stage $stage) => $stage->project($audience, $locale), $this->stages),
+            ...($audience === Audience::Teacher && $this->documentation !== null
+                ? ['documentation' => $this->documentation->project($locale)] : [])];
     }
 }

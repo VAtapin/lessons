@@ -9,8 +9,8 @@ const owner = { kind: 'owner', isPresenter: true, capabilities: ['present', 'mod
 const grant = { kind: 'grant', expiresAt: '2026-10-01T20:00:00Z', isPresenter: false, capabilities: ['moderate'] };
 
 test('a moderator can handle answers, roles and signals while presentation and owner governance stay separate', () => {
-    for (const action of ['answer.moderate', 'answer.publish', 'answer.unpublish', 'role.assign', 'signal.ack']) assert.equal(canCommand(grant, action), true);
-    for (const action of ['stage', 'timer.start', 'wave', 'block.open', 'finish', 'invite.create', 'grant.revoke', 'presenter.reclaim']) assert.equal(canCommand(grant, action), false);
+    for (const action of ['answer.moderate', 'answer.publish', 'answer.unpublish', 'answer.reply', 'role.assign', 'signal.ack']) assert.equal(canCommand(grant, action), true);
+    for (const action of ['stage', 'timer.start', 'wave', 'block.open', 'block.review', 'role.reveal.next', 'sequence.select', 'choice.select', 'presentation.toggle', 'board.toggle', 'finish', 'invite.create', 'grant.revoke', 'presenter.reclaim']) assert.equal(canCommand(grant, action), false);
     const presenter = { ...grant, isPresenter: true, capabilities: ['present', 'moderate'] };
     assert.equal(canCommand(presenter, 'stage'), true);
     assert.equal(canCommand(presenter, 'finish'), false);
@@ -19,6 +19,19 @@ test('a moderator can handle answers, roles and signals while presentation and o
     assert.equal(canCommand(ownerModerating, 'presenter.reclaim'), true);
     assert.equal(canCommand(ownerModerating, 'stage'), false);
     assert.equal(canCommand(undefined, 'wave'), false);
+});
+
+test('shared lesson interactions capture the actual block and immutable authority for retry', () => {
+    for (const [action, payload] of [['role.reveal.next', { blockId: 'roles' }], ['sequence.select', { blockId: 'path', itemId: 'saw' }], ['block.review', { blockId: 'vote' }]]) {
+        const pending = captureTeacherCommand(owner, 15, 7, action, payload);
+        const before = structuredClone(pending);
+        payload.blockId = 'different';
+        assert.deepEqual(pending, before);
+        assert.deepEqual(recoverTeacherCommand(JSON.stringify(pending), owner, 7), before);
+        assert.equal(recoverTeacherCommand(JSON.stringify(pending), owner, 8), undefined);
+        assert.equal(canCommand({ ...owner, capabilities: ['present'] }, action), true);
+    }
+    assert.equal(canCommand({ ...owner, capabilities: ['present'] }, 'answer.reply'), false);
 });
 
 test('uncertain commands retain their UUID, actor, revision, epoch and nested payload across authority changes', () => {

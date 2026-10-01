@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Studio;
 
+use App\Application\Catalog\DocumentationFiles;
 use App\Application\Shared\ApiProblem;
 use App\Application\Shared\MediaCatalogue;
 use App\Application\Shared\OwnerMutation;
@@ -19,7 +20,7 @@ use Illuminate\Support\Str;
 
 final readonly class StudioService
 {
-    public function __construct(private BlockRegistry $registry, private MediaCatalogue $media, private CurrentDraftResolver $drafts) {}
+    public function __construct(private BlockRegistry $registry, private MediaCatalogue $media, private CurrentDraftResolver $drafts, private DocumentationFiles $documentationFiles) {}
 
     public function findOwned(string $ownerKey, string $lessonId): LessonMaterial
     {
@@ -199,6 +200,7 @@ final readonly class StudioService
             throw new ApiProblem('invalid_document', 422);
         }
         $this->media->assertDocument($document, $ownerKey);
+        $this->documentationFiles->assertDocumentation($document->documentation);
 
         return $document;
     }

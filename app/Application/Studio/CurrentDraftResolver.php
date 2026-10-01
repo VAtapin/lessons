@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Studio;
 
+use App\Application\Catalog\DocumentationFiles;
 use App\Application\Shared\ApiProblem;
 use App\Application\Shared\MediaCatalogue;
 use App\Domain\Lessons\Audience;
@@ -11,11 +12,12 @@ use App\Domain\Lessons\BlockRegistry;
 use App\Domain\Lessons\EditorDraft;
 use App\Domain\Lessons\EditorDraftException;
 use App\Domain\Lessons\LessonDocument;
+use App\Domain\Lessons\TeacherDocumentation;
 use App\Models\LessonVersion;
 
 final readonly class CurrentDraftResolver
 {
-    public function __construct(private BlockRegistry $registry, private MediaCatalogue $media) {}
+    public function __construct(private BlockRegistry $registry, private MediaCatalogue $media, private DocumentationFiles $documentationFiles) {}
 
     public function working(LessonVersion $version): EditorDraft
     {
@@ -31,6 +33,10 @@ final readonly class CurrentDraftResolver
         }
         if ($owner !== null) {
             $this->assertMedia($draft, $owner);
+            $data = $draft->toArray();
+            if (isset($data['documentation'])) {
+                $this->documentationFiles->assertDocumentation(TeacherDocumentation::fromArray($data['documentation'], $data['locales']));
+            }
         }
 
         return $draft;

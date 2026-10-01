@@ -18,7 +18,7 @@ final readonly class EditorDraft
     {
         $copy = self::validate([], fn () => Shape::copy($data));
         self::validate([], fn () => Shape::object($copy,
-            ['id', 'schemaVersion', 'defaultLocale', 'locales', 'content', 'stages'], [], 'document'));
+            ['id', 'schemaVersion', 'defaultLocale', 'locales', 'content', 'stages'], ['documentation'], 'document'));
         $locales = self::validate(['locales'], fn () => Shape::locales($copy['locales']));
         $leaves = [];
         $title = [['path' => ['title'], 'required' => true, 'blankMode' => 'trim']];
@@ -97,6 +97,9 @@ final readonly class EditorDraft
         $data = $this->data;
         $data['locales'] = $locales;
         $data['content'] = self::translations($data['content'], $locales);
+        if (isset($data['documentation'])) {
+            $data['documentation'] = TeacherDocumentation::fromArray($data['documentation'], $this->data['locales'])->forLocales($locales);
+        }
         foreach ($data['stages'] as &$stage) {
             $stage['content'] = self::translations($stage['content'], $locales);
             foreach ($stage['blocks'] as &$block) {

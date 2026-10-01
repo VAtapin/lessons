@@ -30,7 +30,10 @@ final readonly class Stage
         }
 
         $config = array_key_exists('config', $data) ? $data['config'] : [];
-        Shape::object($config, [], ['layout', 'durationSeconds'], 'stage.config');
+        Shape::object($config, [], ['layout', 'durationSeconds', 'openTasks'], 'stage.config');
+        if (array_key_exists('openTasks', $config)) {
+            Shape::boolean($config['openTasks'], 'stage.config.openTasks');
+        }
         $config += ['layout' => 'vertical'];
         if (! in_array($config['layout'], ['vertical', 'two-columns', 'material-above-task'], true)) {
             throw new ValidationException('The stage layout is unsupported.');

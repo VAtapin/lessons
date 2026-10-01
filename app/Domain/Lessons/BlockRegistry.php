@@ -9,6 +9,7 @@ use App\Domain\Lessons\Types\ImageBlock;
 use App\Domain\Lessons\Types\MatchingBlock;
 use App\Domain\Lessons\Types\MultipleChoiceBlock;
 use App\Domain\Lessons\Types\PollBlock;
+use App\Domain\Lessons\Types\PresentationBlock;
 use App\Domain\Lessons\Types\PromptBlock;
 use App\Domain\Lessons\Types\RolesBlock;
 use App\Domain\Lessons\Types\SequenceBlock;
@@ -37,6 +38,7 @@ final class BlockRegistry
         $registry->register(new MatchingBlock);
         $registry->register(new RolesBlock);
         $registry->register(new SignalsBlock);
+        $registry->register(new PresentationBlock);
 
         return $registry;
     }
