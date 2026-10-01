@@ -88,6 +88,7 @@ const presentDisabled = computed(() => disabled.value || !actor.value?.capabilit
 const moderationDisabled = computed(() => disabled.value || !actor.value?.capabilities.includes('moderate'));
 const manageDisabled = computed(() => busy.value || !!pending.value || !connected.value || accessLost.value || !actor.value?.capabilities.includes('manageCollaboration'));
 const pendingStale = computed(() => !!pending.value && !sameTeacherAuthority(pending.value, actor.value, collaboration.value?.controlEpoch ?? -1));
+const detachDisabled = computed(() => busy.value || !!pending.value);
 const solutions = computed(() => stage.value?.blocks.flatMap(block => {
     if (!block.solution) return [];
     return [{ blockId: block.id, question: block.content.question, answer: valueText(block.content, block.solution, props.messages) }];
@@ -186,6 +187,7 @@ function keyboardNavigate(event: KeyboardEvent) {
 window.addEventListener('keydown', keyboardNavigate);
 onBeforeUnmount(() => window.removeEventListener('keydown', keyboardNavigate));
 function detach(asTab = false) {
+    if (detachDisabled.value) return;
     detachError.value = false;
     if (!channel) { detachError.value = true; return; }
     activeInstance = crypto.randomUUID(); heartbeatAt = 0;
@@ -223,7 +225,7 @@ function finish() { confirmFinish.value = true; }
             <p v-if="accessLost" role="alert" class="error-banner">{{ messages.collab_access_lost }}</p>
             <p v-if="invitationReplayed" role="status" class="info-banner">{{ messages.collab_link_replayed }}</p>
             <div v-if="pending && !busy" class="info-banner" role="status">{{ pendingStale ? messages.collab_authority_changed : messages.command_pending }} <button v-if="pendingStale" :disabled="busy" @click="pending = undefined">{{ messages.collab_discard_pending }}</button><button v-else :disabled="busy" @click="retry">{{ messages.retry_command }}</button></div>
-            <p v-if="detachError" class="info-banner" role="status">{{ messages.detach_failed }} <button @click="detach(true)">{{ messages.detach_tab }}</button></p>
+            <p v-if="detachError" class="info-banner" role="status">{{ messages.detach_failed }} <button :disabled="detachDisabled" @click="detach(true)">{{ messages.detach_tab }}</button></p>
         </div>
         <template v-if="session && stage">
             <main v-if="!compact" class="conducting-canvas" :inert="panelOpen !== null ? true : undefined" :aria-label="messages.shared_screen">
@@ -278,7 +280,7 @@ function finish() { confirmFinish.value = true; }
                     <button v-else class="focus-answers-toggle" :aria-label="messages.student_answers" :title="messages.student_answers" aria-haspopup="dialog" @click="openPanel('answers', $event)"><StudioIcon name="question" /><span>{{ stageAnswers.length }}</span></button>
                 </template>
                 <span v-else class="focus-detached-stage">{{ index + 1 }} / {{ session.document.stages.length }} · {{ stage.content.title }}</span>
-                <div class="focus-window-actions"><button v-if="!compact && fullscreenAvailable" :aria-label="messages.focus_fullscreen" :title="messages.focus_fullscreen" :aria-pressed="fullScreen" @click="toggleFullscreen">⛶</button><button v-if="compact || detached" :title="messages.return_control" @click="restore"><StudioIcon name="screen" /><span>{{ messages.return_control }}</span></button><template v-else><button class="focus-detach-window" :title="messages.detach_window" @click="detach()"><StudioIcon name="screen" /><span>{{ messages.focus_window }}</span></button><button class="focus-detach-tab" :aria-label="messages.detach_tab" :title="messages.detach_tab" @click="detach(true)">↗</button></template></div>
+                <div class="focus-window-actions"><button v-if="!compact && fullscreenAvailable" :aria-label="messages.focus_fullscreen" :title="messages.focus_fullscreen" :aria-pressed="fullScreen" @click="toggleFullscreen">⛶</button><button v-if="compact || detached" :title="messages.return_control" @click="restore"><StudioIcon name="screen" /><span>{{ messages.return_control }}</span></button><template v-else><button class="focus-detach-window" :disabled="detachDisabled" :title="messages.detach_window" @click="detach()"><StudioIcon name="screen" /><span>{{ messages.focus_window }}</span></button><button class="focus-detach-tab" :disabled="detachDisabled" :aria-label="messages.detach_tab" :title="messages.detach_tab" @click="detach(true)">↗</button></template></div>
             </nav>
         </template>
         <div v-else class="focus-waiting"><p role="status">{{ accessLost ? messages.collab_access_ended : messages.loading }}</p><a :href="`/${locale}/catalog`">{{ messages.focus_return }}</a></div>
