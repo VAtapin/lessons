@@ -44,6 +44,16 @@ return [
             'after_commit' => false,
         ],
 
+        // Isolate long SQL/media backups from the ordinary 90-second reservation window.
+        'operations-backups' => [
+            'driver' => 'database',
+            'connection' => env('DB_QUEUE_CONNECTION'),
+            'table' => env('DB_QUEUE_TABLE', 'jobs'),
+            'queue' => 'backups',
+            'retry_after' => 660,
+            'after_commit' => false,
+        ],
+
         'beanstalkd' => [
             'driver' => 'beanstalkd',
             'host' => env('BEANSTALKD_QUEUE_HOST', 'localhost'),

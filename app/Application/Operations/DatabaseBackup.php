@@ -10,7 +10,7 @@ final readonly class DatabaseBackup
 {
     public function __construct(private DatabaseDumpProcess $process, private ExecutableFinder $executables) {}
 
-    public function create(array $connection, string $directory, string $applicationRoot, int $timeout): string
+    public function create(array $connection, string $directory, string $applicationRoot, int $timeout, bool $schemaOnly = false): string
     {
         if (! in_array($connection['driver'] ?? null, ['mysql', 'mariadb'], true)) {
             throw new BackupFailure('Only MySQL/MariaDB connections support this backup command.');
@@ -40,9 +40,14 @@ final readonly class DatabaseBackup
             $final = $directory.'/lessons-'.$identifier.'.sql';
             $this->privateFile($credentials, $settings);
             $this->privateFile($partial, '');
-            $this->process->run([$binary, '--defaults-file='.$credentials,
+            $arguments = [$binary, '--defaults-file='.$credentials,
                 '--single-transaction', '--quick', '--routines', '--events', '--triggers', '--hex-blob',
-                '--default-character-set=utf8mb4', '--result-file='.$partial, '--databases', $database], $timeout);
+                '--default-character-set=utf8mb4', '--result-file='.$partial];
+            if (! $schemaOnly) {
+                $arguments[] = '--databases';
+            }
+            $arguments[] = $database;
+            $this->process->run($arguments, $timeout);
             clearstatcache(true, $partial);
             if (! is_file($partial) || is_link($partial) || filesize($partial) === 0) {
                 throw new BackupFailure('Dump did not produce a nonempty regular file.');

@@ -31,6 +31,7 @@ final class PlatformCheck extends Command
                 'catalog_submissions' => ['id', 'owner_key', 'lesson_version_id', 'slug', 'metadata', 'revision', 'status', 'reason', 'reviewed_by', 'reviewed_at', 'catalog_entry_id'],
                 'catalog_terms' => ['id', 'kind', 'key', 'labels', 'active', 'revision'],
                 'common_templates' => ['id', 'block_template_record_id', 'labels', 'visible'],
+                'operation_runs' => ['id', 'operation', 'status', 'dry_run', 'counts', 'error_code', 'started_at', 'finished_at'],
                 'lesson_materials' => ['id', 'owner_key', 'revision', 'current_version_id', 'favorite'],
                 'lesson_versions' => ['id', 'lesson_material_id', 'status', 'document', 'purpose', 'editor_draft'],
                 'lesson_save_receipts' => ['id', 'lesson_material_id', 'save_id', 'fingerprint', 'applied_revision', 'applied_version_id', 'created_at'],

@@ -143,7 +143,7 @@ export PATH="/opt/plesk/php/8.5/bin:$PATH" && \
 php artisan lessons:retention --dry-run --batch=100
 ```
 
-Команда выводит counts без имён, ответов, SQL или secrets. `--batch` ограничивает просмотр кандидатов; dry-run ничего не меняет. Write CLI `lessons:retention --batch=100` и queue job `ApplyRetention` реализованы, но schedule ещё не подключён и write cleanup на production в этапе 6A не выполняется. Перед автоматическим запуском проверить восстановление bundle и актуальные cutoffs, затем отдельно настроить Plesk task/очередь с явным PHP 8.5. Не запускать job через HTTP и не заменять существующий crontab. Очистка нескольких batches идемпотентна; после operational failure ранее завершённые batches остаются committed. После restore применить согласованные cutoffs до возвращения сайта online; старый backup не должен вновь открыть истёкшие подробности.
+Команда выводит counts без имён, ответов, SQL или secrets. `--batch` ограничивает просмотр кандидатов; dry-run ничего не меняет. Write CLI `lessons:retention --batch=100` и background `ScheduledRetention` реализованы. Расписание выключено по умолчанию; фактическая production настройка записана в PROJECT_STATUS.md. Перед автоматическим запуском проверить восстановление bundle и актуальные cutoffs, затем отдельно настроить Plesk task/очередь с явным PHP 8.5. Не запускать job через HTTP и не заменять существующий crontab. Очистка нескольких batches идемпотентна; после operational failure ранее завершённые batches остаются committed. После restore применить согласованные cutoffs до возвращения сайта online; старый backup не должен вновь открыть истёкшие подробности.
 
 Auth/claim, history и rehearsal API описаны в [STAGE6_API.md](STAGE6_API.md). Autosave/undo/partial translations относятся к [STAGE6_EDITOR_API.md](STAGE6_EDITOR_API.md) и не считаются выполненными вместе с регистрацией.
 
@@ -164,6 +164,14 @@ php artisan lessons:check
 ```
 
 Установка идемпотентна: повтор проверяет источник и изображения; существующий выпущенный снимок не перезаписывается. Тема содержит 13 этапов и 8 общих иллюстраций на RU/DE. Проверить `/ru/catalog/kto-moi-blizhnii` и `/de/catalog/kto-moi-blizhnii`, поиск/фильтры, запуск нового занятия и отсутствие закрытых заметок/решений в публичном preview. Публикация личных материалов требует отдельной административной проверки.
+
+## Администрирование и фоновые операции
+
+Миграции `2026_10_01_190000` и `2026_10_01_200000` добавляют административные справочники и технические execution records. Применяется штатный `bash scripts/deploy-plesk.sh --migrate`: private SQL/media backup обязателен перед migrations, затем выполняются schema check, caches, `queue:restart`, возврат online и HTTPS health check.
+
+Deployment и фоновые backup/retention используют один приватный flock. Если lock занят, deployment прекращается до maintenance и Git updates. При pre-schema ошибке maintenance снимается только после успешного `lessons:check`; после начала migration или при неуспешной проверке сайт остаётся закрыт до проверки оператором. Первоначально закрытый сайт также не открывается автоматически при ошибке.
+
+Фоновые расписания реализованы, но выключены по умолчанию. Их включение, отдельные Plesk minute tasks/queues, реальный isolated restore и server-side gates описаны в [OPERATIONS.md](OPERATIONS.md). Исторические отчёты ниже относятся к указанным commits; актуальный проверенный production и настройки находятся в [PROJECT_STATUS.md](../PROJECT_STATUS.md).
 
 ## Подтверждённый первый запуск — 2026-09-30
 

@@ -54,6 +54,8 @@ jobs:
       DB_USERNAME: root
       DB_PASSWORD: test-only-mariadb-password
       DB_URL: ''
+      LESSONS_RESTORE_TEST_USERNAME: lessons_restore
+      LESSONS_RESTORE_TEST_PASSWORD: test-only-restore-password
     steps:
       - uses: actions/checkout@v7
         with:
@@ -67,7 +69,61 @@ jobs:
           coverage: none
       - run: composer validate --strict
       - run: composer install --prefer-dist --no-interaction
+      - run: sudo apt-get update && sudo apt-get install -y mariadb-client
+      - run: php tests/Support/prepare_restore_database.php
       - run: composer test
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: node --test tests/load/client.test.mjs
+      - name: Guarded HTTP load integrity (proposed 10 rooms x 30 students)
+        timeout-minutes: 10
+        env:
+          APP_ENV: testing
+          APP_DEBUG: 'false'
+          APP_URL: http://127.0.0.1:8765
+          SESSION_DRIVER: file
+          SESSION_DOMAIN: ''
+          SESSION_SECURE_COOKIE: 'false'
+          CACHE_STORE: file
+          LESSONS_RETENTION_ENABLED: 'false'
+          LESSONS_RETENTION_RESTORE_VERIFIED: 'false'
+          QUEUE_CONNECTION: database
+          MAIL_MAILER: array
+          LOG_CHANNEL: 'null'
+          PHP_CLI_SERVER_WORKERS: '16'
+        run: |
+          set -euo pipefail
+          export APP_KEY="base64:$(php -r 'echo base64_encode(random_bytes(32));')"
+          php artisan config:clear
+          php tests/load/fixture.php >/dev/null
+          php artisan migrate --force --no-interaction
+          LOAD_LOG_DIR=$(mktemp -d)
+          setsid php -S 127.0.0.1:8765 -t public tests/load/router.php >"$LOAD_LOG_DIR/server.log" 2>&1 &
+          LOAD_SERVER_PID=$!
+          trap 'kill -- -"$LOAD_SERVER_PID" 2>/dev/null || true' EXIT
+          LOAD_READY=false
+          for attempt in $(seq 1 60); do
+              if curl --silent --fail --max-time 2 http://127.0.0.1:8765/up >/dev/null; then
+                  LOAD_READY=true
+                  break
+              fi
+              sleep 1
+          done
+          if [ "$LOAD_READY" != true ]; then
+              echo 'Guarded testing HTTP server did not become ready.'
+              exit 1
+          fi
+          if node tests/load/run.mjs --url http://127.0.0.1:8765/ --rooms 10 --students 30 --duration-seconds 15 >"$LOAD_LOG_DIR/metrics.json"; then
+              LOAD_EXIT=0
+          else
+              LOAD_EXIT=$?
+          fi
+          cat "$LOAD_LOG_DIR/metrics.json"
+          exit "$LOAD_EXIT"
 
   frontend:
     runs-on: ubuntu-latest

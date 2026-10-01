@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CatalogAdministrationController;
 use App\Http\Controllers\CommonTemplateController;
+use App\Http\Controllers\OperationsController;
 use App\Http\Middleware\RequireCatalogAdmin;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,7 @@ Route::prefix('api/studio/catalog/submissions')->group(function (): void {
 });
 Route::prefix('api/admin')->middleware(RequireCatalogAdmin::class)->group(function (): void {
     Route::get('/', [CatalogAdministrationController::class, 'account']);
+    Route::get('/operations', [OperationsController::class, 'index']);
     Route::get('/submissions', [CatalogAdministrationController::class, 'queue']);
     Route::get('/submissions/{id}', [CatalogAdministrationController::class, 'show']);
     Route::get('/catalog', [CatalogAdministrationController::class, 'entries']);

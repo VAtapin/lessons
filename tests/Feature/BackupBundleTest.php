@@ -55,6 +55,7 @@ final class BackupBundleTest extends TestCase
         $this->assertSame(['file' => 'database.sql', 'bytes' => filesize($bundle.'/database.sql'),
             'sha256' => hash_file('sha256', $bundle.'/database.sql')], $manifest['database']);
         $this->assertCount(3, $manifest['media']);
+        $this->assertEqualsCanonicalizing([$old->id, $current->id, $other->id], $manifest['requiredMediaVersionIds']);
         foreach ([$old, $current, $other] as $version) {
             $entry = collect($manifest['media'])->firstWhere('versionId', $version->id);
             $this->assertSame(['assetId' => $version->media_asset_id, 'versionId' => $version->id,
@@ -77,8 +78,10 @@ final class BackupBundleTest extends TestCase
             $after = $this->version($asset, 'after SQL fixture');
         });
         $bundle = $this->create($backup);
-        $entries = json_decode(file_get_contents($bundle.'/manifest.json'), true)['media'];
+        $manifest = json_decode(file_get_contents($bundle.'/manifest.json'), true);
+        $entries = $manifest['media'];
         $this->assertEqualsCanonicalizing([$before->id, $after->id], array_column($entries, 'versionId'));
+        $this->assertSame([$before->id], $manifest['requiredMediaVersionIds']);
     }
 
     public function test_empty_media_library_without_storage_directory_still_creates_complete_bundle(): void
@@ -86,8 +89,23 @@ final class BackupBundleTest extends TestCase
         $bundle = $this->create($this->backup());
         $manifest = json_decode(file_get_contents($bundle.'/manifest.json'), true);
         $this->assertSame([], $manifest['media']);
+        $this->assertSame([], $manifest['requiredMediaVersionIds']);
         $this->assertFileExists($bundle.'/database.sql');
         $this->assertDirectoryDoesNotExist($this->temporary.'/media');
+    }
+
+    public function test_disappearing_pre_dump_metadata_aborts_the_new_bundle_and_preserves_previous_backup(): void
+    {
+        $version = $this->version($this->asset(), 'required before snapshot');
+        $previous = $this->create($this->backup());
+        try {
+            $this->create($this->backup(fn () => MediaVersion::whereKey($version->id)->delete()));
+            $this->fail('Physical or metadata deletion during backup must not produce a complete bundle.');
+        } catch (BackupFailure $failure) {
+            $this->assertStringContainsString('disappeared during', $failure->getMessage());
+            $this->assertSame([$previous], glob($this->temporary.'/backups/*'));
+            $this->assertFileExists($this->temporary.'/media/'.$version->storage_key);
+        }
     }
 
     public function test_missing_corrupt_or_size_changed_media_fails_and_preserves_previous_bundle_and_source_files(): void
@@ -320,6 +338,7 @@ final class BackupBundleTest extends TestCase
         if ($process === null) {
             $process = Mockery::mock(DatabaseDumpProcess::class);
             $process->shouldReceive('run')->andReturnUsing(function (array $arguments) use ($duringDump): void {
+                $this->assertNotContains('--databases', $arguments, 'Bundles must not recreate or select the source schema during restore.');
                 $result = collect($arguments)->first(fn (string $argument): bool => str_starts_with($argument, '--result-file='));
                 file_put_contents(substr($result, strlen('--result-file=')), "-- test fixture SQL, not an integration dump\n");
                 if ($duringDump !== null) {

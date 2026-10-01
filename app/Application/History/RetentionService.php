@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\History;
 
+use App\Application\Operations\OperationRunRetention;
 use App\Application\Shared\ApiProblem;
 use App\Application\Shared\OwnerMutation;
 use App\Application\Studio\SaveReceiptRetention;
@@ -18,7 +19,7 @@ use Throwable;
 
 final readonly class RetentionService
 {
-    public function __construct(private RetentionPolicy $policy, private SessionAggregates $aggregates, private SaveReceiptRetention $saveReceipts) {}
+    public function __construct(private RetentionPolicy $policy, private SessionAggregates $aggregates, private SaveReceiptRetention $saveReceipts, private OperationRunRetention $operationRuns) {}
 
     public function run(bool $dryRun, int $batch = 100): array
     {
@@ -42,6 +43,7 @@ final readonly class RetentionService
             }
 
             $counts['saveReceiptsDeleted'] = $this->saveReceipts->run($dryRun, $batch);
+            $counts['operationRunsDeleted'] = $this->operationRuns->run($dryRun, $batch);
 
             return $counts;
         } catch (Throwable) {

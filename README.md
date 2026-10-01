@@ -103,6 +103,14 @@ php artisan lessons:grant-admin exact-existing-verified-email --revoke
 
 Команда `php artisan lessons:install-neighbor` устанавливает RU/DE урок «Кто мой ближний?» из исходного материала: 13 этапов, 45 минут и восемь иллюстраций. Повторный запуск сохраняет установленный immutable snapshot и его видимость. Контракты каталога, проверки публикаций, справочников и общей библиотеки — [STAGE8_API.md](docs/STAGE8_API.md).
 
+## Резервирование и фоновые операции — этап 9
+
+`lessons:backup` создаёт приватный SQL/media bundle с проверкой размеров, SHA256 и покрытия immutable media. `lessons:restore-test` допускает только пустую изолированную MariaDB `lessons_restore_test` с ограниченным аккаунтом в local/testing; production restore этой командой невозможен. Реальный dump/import, права восстановленных занятий и актуальные сроки хранения проверяются в Linux CI.
+
+Ежедневные backup и bounded retention выполняются отдельными database queues. Они выключены по умолчанию; очистка требует подтверждённой проверки восстановления и сначала допускает dry-run. Backup, retention и deployment используют один приватный lock; migration failures оставляют maintenance. Администратор видит состояние расписания, числовые результаты и безопасные сведения об ошибках, без SQL, паролей и ученических ответов. Автоматическое удаление backup и внешнее копирование пока не включены.
+
+Настройка Plesk minute tasks, отдельного worker для backup, включение согласованных gates и безопасный порядок восстановления описаны в [OPERATIONS.md](docs/OPERATIONS.md). Ограниченный HTTP load test запускается только на disposable Linux/MariaDB стенде; предварительный профиль 10×30 не является согласованной нагрузочной приёмкой — [LOAD_ACCEPTANCE.md](docs/LOAD_ACCEPTANCE.md).
+
 ## Общие упражнения — этап 5
 
 Каждый интерактивный блок имеет собственное состояние: подготовлен → открыт → закрыт → результаты раскрыты. Закрытый блок можно открыть снова с сохранением ответов; после раскрытия повторного цикла пока нет. Прежний `core.single-choice@1` открыт по умолчанию для совместимости; новые оцениваемые упражнения и опрос открывает ведущий. Роли и сигналы доступны сразу. Пауза занятия блокирует ответы, пауза таймера — нет.
@@ -134,6 +142,8 @@ php artisan lessons:check
 - [Автосохранение, undo, рабочие переводы и preview — этап 6B](docs/STAGE6_EDITOR_API.md)
 - [Совместное проведение и приглашения — этап 7](docs/STAGE7_API.md)
 - [Публичный каталог, публикации и общая библиотека — этап 8](docs/STAGE8_API.md)
+- [Резервирование, изолированное восстановление и фоновые операции](docs/OPERATIONS.md)
+- [HTTP нагрузочная проверка](docs/LOAD_ACCEPTANCE.md)
 - [Руководство развёртывания](docs/DEPLOYMENT.md)
 
 Путь production-проекта: `/var/www/vhosts/lessons.atapin.de/httpdocs`; document root домена настроен на `httpdocs/public`. Репозиторий Git: [VAtapin/lessons](https://github.com/VAtapin/lessons), основная ветка — `main`.

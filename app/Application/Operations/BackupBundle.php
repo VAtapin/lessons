@@ -42,16 +42,20 @@ final readonly class BackupBundle
             }
             $partial = $candidate;
             $this->files->permissions($partial, 0700);
+            // Every already-committed immutable version must survive the later SQL snapshot.
+            // Later commits may safely add files not referenced by that snapshot.
+            $requiredVersions = $database->table('media_versions')->orderBy('id')->pluck('id')->all();
             // SQL first. With immutable media and no physical deletion, the later
             // committed version list covers its snapshot; concurrent new files are harmless extras.
-            $sql = $this->databaseBackup->create($database->getConfig(), $partial, $applicationRoot, $timeout);
+            // Bundles are schema-scoped: never recreate/select the source database on restore.
+            $sql = $this->databaseBackup->create($database->getConfig(), $partial, $applicationRoot, $timeout, schemaOnly: true);
             $sqlHash = @hash_file('sha256', $sql);
             if ($sqlHash === false || ! @rename($sql, $partial.'/database.sql')) {
                 throw new BackupFailure('Cannot verify or prepare the bundled database dump.');
             }
             $manifest = ['formatVersion' => 1, 'createdAt' => gmdate('c'),
                 'database' => ['file' => 'database.sql', 'bytes' => filesize($partial.'/database.sql'), 'sha256' => $sqlHash],
-                'media' => []];
+                'media' => [], 'requiredMediaVersionIds' => $requiredVersions];
             $this->files->directory($partial.'/media');
             foreach ($database->table('media_versions')->orderBy('id')->cursor() as $version) {
                 $key = $this->storageKey($version);
@@ -65,6 +69,9 @@ final readonly class BackupBundle
                 $manifest['media'][] = ['assetId' => $version->media_asset_id, 'versionId' => $version->id,
                     'versionNo' => (int) $version->version_no, 'file' => 'media/'.$key,
                     'bytes' => (int) $version->bytes, 'sha256' => $version->sha256];
+            }
+            if (array_diff($requiredVersions, array_column($manifest['media'], 'versionId')) !== []) {
+                throw new BackupFailure('An existing immutable media version disappeared during the backup.');
             }
             $json = json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR)."\n";
             $stream = $this->files->open($partial.'/manifest.json');
