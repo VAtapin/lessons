@@ -98,8 +98,13 @@ const joinField = ref<HTMLInputElement>();
 async function copyJoinLink() {
     copied.value = false;
     if (!joinUrl.value) return;
-    try { await navigator.clipboard.writeText(joinUrl.value); copied.value = true; }
-    catch { joinField.value?.focus(); joinField.value?.select(); copied.value = document.execCommand('copy'); if (!copied.value) error.value = props.messages.copy_link_manual; }
+    // Keep the visible selection available in embedded browsers and on denied clipboard access.
+    joinField.value?.focus(); joinField.value?.select();
+    try { copied.value = document.execCommand('copy'); } catch { /* Use the asynchronous clipboard where native copy is unavailable. */ }
+    if (!copied.value) {
+        try { await navigator.clipboard.writeText(joinUrl.value); copied.value = true; }
+        catch { error.value = props.messages.copy_link_manual; }
+    }
 }
 const returnUrl = `/${props.locale}/${scope === 'grant' ? 'catalog' : 'studio?view=overview'}`;
 let leaving = false;

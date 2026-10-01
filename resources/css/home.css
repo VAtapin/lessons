@@ -55,7 +55,7 @@
 .public-hero .public-button{min-height:calc(35 * var(--home-scale));font-size:clamp(13px,1.16vw,17px)!important;padding:calc(8 * var(--home-scale)) calc(21 * var(--home-scale))}
 .hero-blessing{font-size:clamp(11px,.98vw,15px);margin-top:calc(18 * var(--home-scale))!important}
 .hero-handwriting{display:block;white-space:pre-line;top:0;right:3%;max-width:8em;font:italic clamp(13px,1.16vw,18px)/1.5 'Segoe Print','Segoe Script',cursive}
-.hero-verse{width:calc(140 * var(--home-scale));bottom:calc(-32 * var(--home-scale));padding:calc(17 * var(--home-scale)) calc(18 * var(--home-scale));font-size:clamp(13px,1.16vw,17px)}
+.hero-verse{width:calc(140 * var(--home-scale));bottom:calc(26 * var(--home-scale));padding:calc(17 * var(--home-scale)) calc(18 * var(--home-scale));font-size:clamp(13px,1.16vw,17px)}
 .illustrated-card img{height:auto;aspect-ratio:2.05;object-position:center 42%}.topic-card img{aspect-ratio:1.6}
 .home-section>h2{font-size:clamp(25px,2.23vw,33px)}
 .home-section{margin-top:clamp(16px,1.43vw,23px)}
