@@ -16,8 +16,8 @@
             <noscript>
                 <main class="no-script">
                     <h1>{{ $messages['title'] }}</h1>
-                    <p>{{ $messages['status'] }}</p>
-                    <p>{{ $messages['coming_soon'] }}</p>
+                    <p>{{ $messages['description'] }}</p>
+                    <p>{{ $messages['javascript_required'] ?? '' }}</p>
                     <a href="/ru" lang="ru">Русский</a> · <a href="/de" lang="de">Deutsch</a>
                 </main>
             </noscript>

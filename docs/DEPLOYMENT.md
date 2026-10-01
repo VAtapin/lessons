@@ -145,9 +145,25 @@ php artisan lessons:retention --dry-run --batch=100
 
 Команда выводит counts без имён, ответов, SQL или secrets. `--batch` ограничивает просмотр кандидатов; dry-run ничего не меняет. Write CLI `lessons:retention --batch=100` и queue job `ApplyRetention` реализованы, но schedule ещё не подключён и write cleanup на production в этапе 6A не выполняется. Перед автоматическим запуском проверить восстановление bundle и актуальные cutoffs, затем отдельно настроить Plesk task/очередь с явным PHP 8.5. Не запускать job через HTTP и не заменять существующий crontab. Очистка нескольких batches идемпотентна; после operational failure ранее завершённые batches остаются committed. После restore применить согласованные cutoffs до возвращения сайта online; старый backup не должен вновь открыть истёкшие подробности.
 
-Auth/claim, history и rehearsal API описаны в [STAGE6_API.md](STAGE6_API.md). Autosave/undo/partial translations относятся к отдельному контракту 6B и не считаются выполненными вместе с регистрацией.
+Auth/claim, history и rehearsal API описаны в [STAGE6_API.md](STAGE6_API.md). Autosave/undo/partial translations относятся к [STAGE6_EDITOR_API.md](STAGE6_EDITOR_API.md) и не считаются выполненными вместе с регистрацией.
+
+Для этапа 6B требуется additive migration `2026_10_01_150000`: private `editor_draft` и `lesson_save_receipts`. Применять штатный `deploy-plesk.sh --migrate` после полного SQL/media backup. Retention дополнительно возвращает `saveReceiptsDeleted`: отдельный bounded batch квитанций сохранения старше 30 дней, с owner/material locks и повторной проверкой после переноса аккаунта. Содержание, редакции, quota и permanent claim tombstones эта очистка не меняет; расписание остаётся выключено до эксплуатационной приёмки.
 
 Commit/push и зелёная локальная проверка не означают успешный deployment. Статус production подтверждается отдельно после выполнения команд и HTTP-проверки.
+
+## Главная, каталог и двуязычная тема
+
+Миграция `2026_10_01_160000` добавляет каталог, привязанный к проверенному immutable released-снимку. При первом обновлении применить штатный deployment с SQL/media backup, затем установить тему из версионированного источника:
+
+```bash
+cd /var/www/vhosts/lessons.atapin.de/httpdocs && \
+export PATH="/opt/plesk/php/8.5/bin:/opt/plesk/node/22/bin:$PATH" && \
+bash scripts/deploy-plesk.sh --migrate && \
+php artisan lessons:install-neighbor && \
+php artisan lessons:check
+```
+
+Установка идемпотентна: повтор проверяет источник и изображения; существующий выпущенный снимок не перезаписывается. Тема содержит 13 этапов и 8 общих иллюстраций на RU/DE. Проверить `/ru/catalog/kto-moi-blizhnii` и `/de/catalog/kto-moi-blizhnii`, поиск/фильтры, запуск нового занятия и отсутствие закрытых заметок/решений в публичном preview. Публикация личных материалов требует отдельной административной проверки.
 
 ## Подтверждённый первый запуск — 2026-09-30
 

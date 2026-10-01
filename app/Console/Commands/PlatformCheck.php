@@ -26,6 +26,8 @@ final class PlatformCheck extends Command
             $tables = [
                 'users' => ['id', 'owner_key', 'ui_locale', 'email_verified_at'],
                 'guest_workspace_claims' => ['source_owner_key', 'target_user_id', 'target_owner_key', 'result'],
+                'account_deletion_requests' => ['id', 'user_id', 'revision', 'status', 'requested_at', 'cancelled_at'],
+                'catalog_entries' => ['id', 'slug', 'lesson_version_id', 'metadata', 'status', 'approved_at', 'source_revision', 'source_hash'],
                 'lesson_materials' => ['id', 'owner_key', 'revision', 'current_version_id', 'favorite'],
                 'lesson_versions' => ['id', 'lesson_material_id', 'status', 'document', 'purpose', 'editor_draft'],
                 'lesson_save_receipts' => ['id', 'lesson_material_id', 'save_id', 'fingerprint', 'applied_revision', 'applied_version_id', 'created_at'],

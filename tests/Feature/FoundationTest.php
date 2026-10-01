@@ -12,13 +12,15 @@ final class FoundationTest extends TestCase
     {
         $this->withoutVite()->get('/')->assertOk()
             ->assertSee('lang="ru"', false)->assertSee('data-locale="ru"', false)
-            ->assertSee('Первый рабочий конструктор уже доступен');
+            ->assertSee('Интерактивные христианские уроки и пособия')
+            ->assertDontSee('Первый рабочий конструктор уже доступен');
     }
 
     public function test_german_home_receives_its_own_dictionary(): void
     {
         $this->withoutVite()->get('/de')->assertOk()
-            ->assertSee('lang="de"', false)->assertSee('Der erste funktionierende Baukasten');
+            ->assertSee('lang="de"', false)->assertSee('Interaktive christliche Lektionen und Materialien')
+            ->assertDontSee('Der erste funktionierende Baukasten');
     }
 
     public function test_unknown_locale_is_not_accepted(): void

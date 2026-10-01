@@ -41,4 +41,20 @@ foreach ([2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22] as $num
     ];
 }
 
+foreach (['road', 'wounded', 'priest', 'levite', 'samaritan', 'newcomer', 'books', 'game'] as $scene) {
+    $builtins[] = [
+        'assetId' => 'builtin-neighbor-'.$scene,
+        'versionId' => 'builtin-neighbor-'.$scene.'-v1',
+        'file' => 'assets/library/neighbor/scene-'.$scene.'.webp',
+        'mime' => 'image/webp',
+        'labelKey' => 'media_neighbor_'.$scene,
+        'attribution' => [
+            'author' => 'Creator not recorded; supplied by the project owner.',
+            'source' => 'OLD/kto-moi-blizhnii/assets/scene-'.$scene.'.webp',
+            'rightsBasis' => 'permission',
+            'usageRights' => 'Project owner explicitly approved reuse in lessons.atapin.de.',
+        ],
+    ];
+}
+
 return $builtins;
