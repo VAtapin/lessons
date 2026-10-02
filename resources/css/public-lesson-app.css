@@ -474,3 +474,11 @@
 .conducting-app.conducting-app.theme-berry .focus-stage { background: linear-gradient(135deg, #fffafd, #f3dfe9); }
 .conducting-app.conducting-app.theme-berry .focus-stage.focus-stage-cover .focus-stage-visual::after { background: linear-gradient(90deg, #40243be8, #51344b88 48%, #51344b00); }
 .conducting-app.conducting-app.theme-berry .finished-lesson { background: radial-gradient(circle at 55% 30%, #d8a3bd55, transparent 50%), linear-gradient(135deg, #40243b, #8a5070); }
+
+.conducting-app.conducting-app.theme-cobalt { --ink: #233d68; --muted: #586982; --paper: #f3f5fb; --card: #fffafd; --border: #547bb439; --accent: #4e73b7; --olive: #547bb4; --scene-dark: #233d68; --scene-deep: #192c50; --scene-soft: #e3e9f6; --scene-success: #e7edf7; }
+.conducting-app.conducting-app.theme-cobalt .focus-stage { background: linear-gradient(135deg, #fffafd, #e3e9f6); }
+.conducting-app.conducting-app.theme-cobalt .focus-stage.focus-stage-cover .focus-stage-visual::after { background: linear-gradient(90deg, #192c50e8, #233d6888 48%, #233d6800); }
+.conducting-app.conducting-app.theme-cobalt .finished-lesson { background: radial-gradient(circle at 55% 30%, #a3b9d855, transparent 50%), linear-gradient(135deg, #192c50, #547bb4); }
+/* Preserve every source word while leaving room for the paired exit answers. */
+.conducting-app.conducting-app.theme-cobalt .focus-stage:has(.interactive-free-response) .scene-description { white-space: normal; }
+.conducting-app.conducting-app.theme-cobalt .focus-stage:has(.interactive-free-response) .interactive-free-response legend { font-size: clamp(1.3rem, min(2.2vw, 3.7dvh), 2rem); line-height: 1.15; }

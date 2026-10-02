@@ -8,6 +8,27 @@ const { focusStageBlocks } = await import(`data:text/javascript;base64,${Buffer.
 const stage = blocks => ({ id: 'stage', content: { title: 'Actual title' }, config: {}, blocks });
 const image = id => ({ id, type: 'core.image', resources: { image: '/real/immutable/version' }, content: { alt: 'Actual illustration' } });
 
+test('three classroom frames progress in source order and return without duplicating illustrations', () => {
+    const scene = { id: 'scene', type: 'core.presentation', config: { kind: 'scene' }, content: { title: 'Roof', text: 'Four friends' } };
+    const frame = (id, title) => ({ id, type: 'core.presentation', config: { kind: 'reveal' }, content: { title, text: title, label: title }, resources: { image: `/${id}.png` }, runtime: { presentation: { visible: true } } });
+    const forgiveness = frame('forgiveness', 'Forgiveness');
+    const healing = frame('healing', 'Healing');
+    const original = stage([scene, image('original'), forgiveness, healing]);
+    const focused = focusStageBlocks(original);
+    assert.equal(focused.sceneLabels.title, 'Healing');
+    assert.equal(focused.illustration.resources.image, '/healing.png');
+    for (const id of ['forgiveness', 'healing']) {
+        const toggle = focused.copy.find(block => block.id === id);
+        assert.equal(toggle.resources, undefined);
+        assert.equal(toggle.content.text, '');
+        assert.equal(toggle.content.label, id === 'healing' ? 'Healing' : 'Forgiveness');
+    }
+    healing.runtime.presentation.visible = false;
+    assert.equal(focusStageBlocks(original).sceneLabels.title, 'Forgiveness');
+    forgiveness.runtime.presentation.visible = false;
+    assert.equal(focusStageBlocks(original).sceneLabels.title, 'Roof');
+});
+
 test('illustrated reveal switches the scene and image together while preserving the command and tasks', () => {
     const scene = { id: 'intro', type: 'core.presentation', config: { kind: 'scene', scene: 'story' }, content: { title: 'First frame', text: 'Before discussion', modes: [] } };
     const reveal = { id: 'next', type: 'core.presentation', config: { kind: 'reveal' }, content: { title: 'Second frame', text: 'After discussion', source: 'Original source', label: 'Open' }, media: { image: { versionId: 'second' } }, resources: { image: '/second.png' }, runtime: { presentation: { visible: false } } };

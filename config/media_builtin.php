@@ -200,4 +200,19 @@ $builtins[] = ['assetId' => 'builtin-illustrated-talent-12', 'versionId' => 'bui
 $builtins[] = ['assetId' => 'builtin-illustrated-talent-13', 'versionId' => 'builtin-illustrated-talent-13-v1', 'file' => 'assets/library/illustrated/talent/13.jpeg', 'mime' => 'image/jpeg', 'labelKey' => 'media_illustrated_talent_13'];
 $builtins[] = ['assetId' => 'builtin-illustrated-talent-14', 'versionId' => 'builtin-illustrated-talent-14-v1', 'file' => 'assets/library/illustrated/talent/14.jpeg', 'mime' => 'image/jpeg', 'labelKey' => 'media_illustrated_talent_14'];
 
+$builtins[] = ['assetId' => 'builtin-friends-1', 'versionId' => 'builtin-friends-1-v1', 'file' => 'assets/library/friends/01.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_1'];
+$builtins[] = ['assetId' => 'builtin-friends-2', 'versionId' => 'builtin-friends-2-v1', 'file' => 'assets/library/friends/02.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_2'];
+$builtins[] = ['assetId' => 'builtin-friends-3', 'versionId' => 'builtin-friends-3-v1', 'file' => 'assets/library/friends/03.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_3'];
+$builtins[] = ['assetId' => 'builtin-friends-4', 'versionId' => 'builtin-friends-4-v1', 'file' => 'assets/library/friends/04.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_4'];
+$builtins[] = ['assetId' => 'builtin-friends-5', 'versionId' => 'builtin-friends-5-v1', 'file' => 'assets/library/friends/05.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_5'];
+$builtins[] = ['assetId' => 'builtin-friends-6', 'versionId' => 'builtin-friends-6-v1', 'file' => 'assets/library/friends/06.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_6'];
+$builtins[] = ['assetId' => 'builtin-friends-7', 'versionId' => 'builtin-friends-7-v1', 'file' => 'assets/library/friends/07.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_7'];
+$builtins[] = ['assetId' => 'builtin-friends-8', 'versionId' => 'builtin-friends-8-v1', 'file' => 'assets/library/friends/08.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_8'];
+$builtins[] = ['assetId' => 'builtin-friends-9', 'versionId' => 'builtin-friends-9-v1', 'file' => 'assets/library/friends/09.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_9'];
+$builtins[] = ['assetId' => 'builtin-friends-10', 'versionId' => 'builtin-friends-10-v1', 'file' => 'assets/library/friends/10.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_10'];
+$builtins[] = ['assetId' => 'builtin-friends-11', 'versionId' => 'builtin-friends-11-v1', 'file' => 'assets/library/friends/11.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_11'];
+$builtins[] = ['assetId' => 'builtin-friends-12', 'versionId' => 'builtin-friends-12-v1', 'file' => 'assets/library/friends/12.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_12'];
+$builtins[] = ['assetId' => 'builtin-friends-13', 'versionId' => 'builtin-friends-13-v1', 'file' => 'assets/library/friends/13.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_13'];
+$builtins[] = ['assetId' => 'builtin-friends-14', 'versionId' => 'builtin-friends-14-v1', 'file' => 'assets/library/friends/14.png', 'mime' => 'image/png', 'labelKey' => 'media_friends_14'];
+
 return $builtins;

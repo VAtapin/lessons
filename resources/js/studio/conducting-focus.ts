@@ -2,10 +2,11 @@ import type { ProjectedStage } from './types';
 
 /** Recompose a single illustration with its actual material and tasks. */
 export function focusStageBlocks(stage: ProjectedStage) {
-    const reveal = stage.blocks.find(block => block.type === 'core.presentation' && block.config.kind === 'reveal' && block.runtime?.presentation?.visible && block.resources?.image);
+    const revealedFrames = stage.blocks.filter(block => block.type === 'core.presentation' && block.config.kind === 'reveal' && block.runtime?.presentation?.visible && block.resources?.image);
+    const reveal = revealedFrames.at(-1);
     // An illustrated reveal replaces the scene after discussion, while its original ID still owns the toggle.
     const sceneBlocks = reveal && stage.blocks.filter(block => block.type === 'core.image').length === 1 && stage.blocks.some(block => block.type === 'core.presentation' && block.config.kind === 'scene')
-        ? stage.blocks.map(block => block === reveal ? { ...block, content: { ...block.content, title: undefined, text: '', source: undefined, quote: undefined }, media: {}, resources: undefined }
+        ? stage.blocks.map(block => revealedFrames.includes(block) ? { ...block, content: { ...block.content, title: undefined, text: '', source: undefined, quote: undefined }, media: {}, resources: undefined }
             : block.type === 'core.image' ? { ...block, media: reveal.media, resources: reveal.resources, content: { alt: reveal.content.title ?? reveal.content.text, caption: '' } }
                 : block.type === 'core.presentation' && block.config.kind === 'scene' ? { ...block, content: { title: reveal.content.title, text: reveal.content.text, source: reveal.content.source, modes: [] } } : block)
         : stage.blocks;
