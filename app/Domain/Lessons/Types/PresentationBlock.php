@@ -42,7 +42,7 @@ final class PresentationBlock extends InteractiveDefinition
     public function validate(BlockInstance $block, array $locales): void
     {
         Shape::object($block->config, ['kind', 'reviewBlockId', 'sourceBlockIds', 'maxItems'], ['scene', 'imageSide'], 'presentation.config');
-        if ($block->config['kind'] === 'picture-count') {
+        if ($block->config['kind'] === 'picture-count' || ($block->config['kind'] === 'reveal' && $block->media !== [])) {
             Shape::object($block->media, ['image'], [], 'presentation.media');
             $image = Shape::object($block->media['image'], ['assetId', 'versionId'], [], 'presentation.media.image');
             Shape::id($image['assetId'], 'presentation.media.image.assetId');

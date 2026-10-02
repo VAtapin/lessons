@@ -88,4 +88,19 @@ $builtins[] = ['assetId' => 'builtin-talent-3', 'versionId' => 'builtin-talent-3
 $builtins[] = ['assetId' => 'builtin-talent-4', 'versionId' => 'builtin-talent-4-v1', 'file' => 'assets/library/talant/04.png', 'mime' => 'image/png', 'labelKey' => 'media_talent_4'];
 $builtins[] = ['assetId' => 'builtin-talent-5', 'versionId' => 'builtin-talent-5-v1', 'file' => 'assets/library/talant/05.png', 'mime' => 'image/png', 'labelKey' => 'media_talent_5'];
 
+$builtins[] = ['assetId' => 'builtin-fear-1', 'versionId' => 'builtin-fear-1-v1', 'file' => 'assets/library/strakh/01.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_1'];
+$builtins[] = ['assetId' => 'builtin-fear-2', 'versionId' => 'builtin-fear-2-v1', 'file' => 'assets/library/strakh/02.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_2'];
+$builtins[] = ['assetId' => 'builtin-fear-3', 'versionId' => 'builtin-fear-3-v1', 'file' => 'assets/library/strakh/03.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_3'];
+$builtins[] = ['assetId' => 'builtin-fear-4', 'versionId' => 'builtin-fear-4-v1', 'file' => 'assets/library/strakh/04.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_4'];
+$builtins[] = ['assetId' => 'builtin-fear-5', 'versionId' => 'builtin-fear-5-v1', 'file' => 'assets/library/strakh/05.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_5'];
+$builtins[] = ['assetId' => 'builtin-fear-6', 'versionId' => 'builtin-fear-6-v1', 'file' => 'assets/library/strakh/06.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_6'];
+$builtins[] = ['assetId' => 'builtin-fear-7', 'versionId' => 'builtin-fear-7-v1', 'file' => 'assets/library/strakh/07.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_7'];
+$builtins[] = ['assetId' => 'builtin-fear-8', 'versionId' => 'builtin-fear-8-v1', 'file' => 'assets/library/strakh/08.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_8'];
+$builtins[] = ['assetId' => 'builtin-fear-9', 'versionId' => 'builtin-fear-9-v1', 'file' => 'assets/library/strakh/09.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_9'];
+$builtins[] = ['assetId' => 'builtin-fear-10', 'versionId' => 'builtin-fear-10-v1', 'file' => 'assets/library/strakh/10.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_10'];
+$builtins[] = ['assetId' => 'builtin-fear-11', 'versionId' => 'builtin-fear-11-v1', 'file' => 'assets/library/strakh/11.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_11'];
+$builtins[] = ['assetId' => 'builtin-fear-12', 'versionId' => 'builtin-fear-12-v1', 'file' => 'assets/library/strakh/12.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_12'];
+$builtins[] = ['assetId' => 'builtin-fear-13', 'versionId' => 'builtin-fear-13-v1', 'file' => 'assets/library/strakh/13.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_13'];
+$builtins[] = ['assetId' => 'builtin-fear-14', 'versionId' => 'builtin-fear-14-v1', 'file' => 'assets/library/strakh/14.png', 'mime' => 'image/png', 'labelKey' => 'media_fear_14'];
+
 return $builtins;

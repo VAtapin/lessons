@@ -2,11 +2,18 @@ import type { ProjectedStage } from './types';
 
 /** Recompose a single illustration with its actual material and tasks. */
 export function focusStageBlocks(stage: ProjectedStage) {
+    const reveal = stage.blocks.find(block => block.type === 'core.presentation' && block.config.kind === 'reveal' && block.runtime?.presentation?.visible && block.resources?.image);
+    // An illustrated reveal replaces the scene after discussion, while its original ID still owns the toggle.
+    const sceneBlocks = reveal && stage.blocks.filter(block => block.type === 'core.image').length === 1 && stage.blocks.some(block => block.type === 'core.presentation' && block.config.kind === 'scene')
+        ? stage.blocks.map(block => block === reveal ? { ...block, content: { ...block.content, title: undefined, text: '', source: undefined, quote: undefined }, media: {}, resources: undefined }
+            : block.type === 'core.image' ? { ...block, media: reveal.media, resources: reveal.resources, content: { alt: reveal.content.title ?? reveal.content.text, caption: '' } }
+                : block.type === 'core.presentation' && block.config.kind === 'scene' ? { ...block, content: { title: reveal.content.title, text: reveal.content.text, source: reveal.content.source, modes: [] } } : block)
+        : stage.blocks;
     const boardSources = new Set(stage.blocks.filter(block => block.type === 'core.presentation' && block.config.kind === 'response-board').flatMap(block => block.config.sourceBlockIds ?? []));
     const covered = stage.blocks.some(block => block.type === 'core.free-response' && block.runtime?.results && boardSources.has(block.id));
     // The actual board owns the published display; keep the learner's input and own answer intact.
-    const visibleBlocks = stage.blocks.filter(block => block.type !== 'core.presentation' || block.config.kind !== 'closing');
-    const source = visibleBlocks.length === stage.blocks.length ? stage.blocks : visibleBlocks;
+    const visibleBlocks = sceneBlocks.filter(block => block.type !== 'core.presentation' || block.config.kind !== 'closing');
+    const source = visibleBlocks.length === sceneBlocks.length ? sceneBlocks : visibleBlocks;
     const blocks = covered ? source.map(block => block.type === 'core.free-response' && block.runtime?.results && boardSources.has(block.id) ? { ...block, runtime: { ...block.runtime, results: undefined } } : block) : source;
     const images = blocks.filter(block => block.type === 'core.image');
     const scene = blocks.find(block => block.type === 'core.presentation' && block.config.kind === 'scene');

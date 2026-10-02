@@ -8,6 +8,34 @@ const { focusStageBlocks } = await import(`data:text/javascript;base64,${Buffer.
 const stage = blocks => ({ id: 'stage', content: { title: 'Actual title' }, config: {}, blocks });
 const image = id => ({ id, type: 'core.image', resources: { image: '/real/immutable/version' }, content: { alt: 'Actual illustration' } });
 
+test('illustrated reveal switches the scene and image together while preserving the command and tasks', () => {
+    const scene = { id: 'intro', type: 'core.presentation', config: { kind: 'scene', scene: 'story' }, content: { title: 'First frame', text: 'Before discussion', modes: [] } };
+    const reveal = { id: 'next', type: 'core.presentation', config: { kind: 'reveal' }, content: { title: 'Second frame', text: 'After discussion', source: 'Original source', label: 'Open' }, media: { image: { versionId: 'second' } }, resources: { image: '/second.png' }, runtime: { presentation: { visible: false } } };
+    const task = { id: 'task', type: 'core.prompt', content: { text: 'In pairs' } };
+    const original = stage([scene, image('first'), reveal, task]);
+    assert.equal(focusStageBlocks(original).illustration.resources.image, '/real/immutable/version');
+    reveal.runtime.presentation.visible = true;
+    const before = structuredClone(original);
+    const focused = focusStageBlocks(original);
+    assert.equal(focused.illustration.resources.image, '/second.png');
+    assert.equal(focused.sceneLabels.title, 'Second frame');
+    assert.equal(focused.sceneLabels.text, 'After discussion');
+    assert.equal(focused.sceneLabels.source, 'Original source');
+    const toggle = focused.copy.find(block => block.id === 'next');
+    assert.equal(toggle.content.text, '');
+    assert.equal(toggle.resources, undefined);
+    assert.equal(toggle.content.label, 'Open');
+    assert.equal(toggle.runtime.presentation.visible, true);
+    assert.equal(focused.copy.at(-1), task);
+    assert.deepEqual(original, before);
+    reveal.runtime.presentation.visible = false;
+    assert.equal(focusStageBlocks(original).sceneLabels.title, 'First frame');
+    assert.equal(focusStageBlocks(original).illustration.resources.image, '/real/immutable/version');
+    const multiple = stage([...original.blocks, image('another')]);
+    reveal.runtime.presentation.visible = true;
+    assert.equal(focusStageBlocks(multiple).copy, multiple.blocks);
+});
+
 test('welcome uses the full image background while written discussion places the image beside the real input', () => {
     const welcome = focusStageBlocks(stage([image('welcome'), { type: 'core.text' }, { type: 'core.signals' }]));
     assert.equal(welcome.cover, true);

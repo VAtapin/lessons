@@ -35,6 +35,27 @@ const content = node => node.kind === '#comment' ? '' : node.text + node.childre
 const descendants = node => [node, ...node.children.flatMap(descendants)];
 const messages = { undo: 'Undo', sequence_reset: 'Reset', sequence_empty: 'Empty', your_answer: 'Answer', add_answer: 'Add', no_role: 'Release' };
 
+test('illustrated reveals hide images during conducting and keep teacher controls out of the pupil screen', async t => {
+    const block = { id: 'second-frame', type: 'core.presentation', content: { title: 'Second frame', text: 'After answers', label: 'Open frame', hideLabel: 'First frame', modes: [] }, config: { kind: 'reveal' }, resources: { image: '/second.png' }, runtime: { presentation: { visible: false } } };
+    const child = fixture(t, structuredClone(block), {}, presentationComponent);
+    assert.equal(child.nodes('img').length, 0);
+    assert.equal(child.nodes('h2').length, 0);
+    assert.equal(child.nodes('button').length, 0);
+    child.props.block.runtime.presentation.visible = true;
+    await Vue.nextTick();
+    assert.equal(child.nodes('img')[0].props.src, '/second.png');
+    assert.equal(child.nodes('img')[0].props.alt, 'Second frame');
+    assert.match(content(child.root), /Second frameAfter answers/);
+    child.props.block.runtime.presentation.visible = false;
+    await Vue.nextTick();
+    assert.equal(child.nodes('img').length, 0);
+    const teacher = fixture(t, structuredClone(block), { presenter: true }, presentationComponent);
+    teacher.click('Open frame');
+    assert.deepEqual(teacher.events, [['command', 'presentation.toggle', { blockId: 'second-frame' }]]);
+    const preview = fixture(t, structuredClone(block), { conducting: false }, presentationComponent);
+    assert.equal(preview.nodes('img').length, 1);
+});
+
 test('reveal table stays hidden until the teacher opens it and renders accessible headers and rows', async t => {
     const block = { id: 'table', type: 'core.presentation', content: { text: 'At the report', label: 'Show table', hideLabel: 'Hide table', modes: [], table: { headers: ['Servant', 'Received', 'Returned'], rows: [['First', '5', '10'], ['Second', '2', '4'], ['Third', '1', '1']] } }, config: { kind: 'reveal' }, runtime: { presentation: { visible: false } } };
     const child = fixture(t, block, { conducting: true, interactive: true }, presentationComponent);

@@ -23,6 +23,18 @@
 .conducting-app.conducting-app.theme-lavender .focus-stage.focus-stage-cover .focus-stage-visual::after {
     background: linear-gradient(90deg, #362b43dc, #49395675 48%, #49395600);
 }
+.conducting-app.conducting-app.theme-ocean {
+    --ink: #253756; --muted: #4e627b; --paper: #eff6fc; --card: #fbfcff;
+    --border: #455c8d35; --accent: #c67b46; --olive: #4566a2;
+    --scene-dark: #253756; --scene-deep: #1a2b4a; --scene-soft: #dceaf6; --scene-success: #e3eef8;
+}
+.conducting-app.conducting-app.theme-ocean .focus-stage { background: linear-gradient(145deg, #f9fcff, #dceaf6); }
+.conducting-app.conducting-app.theme-ocean .focus-stage.focus-stage-cover .focus-stage-visual::after {
+    background: linear-gradient(90deg, #1a2b4ae8, #25375688 48%, #25375600);
+}
+.conducting-app.conducting-app.theme-ocean .finished-lesson {
+    background: radial-gradient(circle at 55% 30%, #8da5d055, transparent 50%), linear-gradient(135deg, #1a2b4a, #4566a2);
+}
 .conducting-app.conducting-app.theme-lavender .finished-lesson {
     background: radial-gradient(circle at 55% 30%, #bc96bb55, transparent 50%), linear-gradient(135deg, #362b43, #775888);
 }
@@ -442,3 +454,18 @@
 .block-tools .presentation-table { font-size: .9rem; }
 .block-tools .presentation-table caption { font-size: 1rem; }
 .block-tools .presentation-table th, .block-tools .presentation-table td { padding: 6px; }
+.revealed-illustration { margin: 12px 0; }
+.revealed-illustration img { display: block; max-width: 100%; max-height: 45dvh; object-fit: contain; margin: auto; }
+.conducting-app.conducting-app.theme-ocean .focus-stage .scene-title { font-size: clamp(2rem, min(4vw, 7dvh), 4rem); line-height: 1.08; }
+@media (min-width: 900px) {
+    .conducting-app.conducting-app.theme-ocean .focus-stage.focus-stage-split { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); }
+    .conducting-app.conducting-app.theme-ocean .focus-stage.focus-stage-split .focus-stage-copy { padding-block: 16px; }
+}
+.conducting-app.conducting-app.theme-ocean .focus-stage .scene-description { white-space: pre-line; font-size: clamp(1.15rem, 1.8vw, 1.5rem); line-height: 1.4; }
+.conducting-app.conducting-app.theme-ocean .focus-stage .prompt-block { background: var(--scene-soft); }
+.conducting-app.conducting-app.theme-ocean .focus-stage .prompt-block .plain-text { font-size: clamp(1rem, 1.6vw, 1.3rem); line-height: 1.4; }
+.conducting-app.conducting-app.theme-ocean .focus-stage.focus-stage-cover .scene-title { font-size: clamp(3rem, min(7vw, 13dvh), 6.5rem); line-height: .98; letter-spacing: -.03em; }
+@media (max-width: 760px) {
+    .conducting-app.conducting-app.theme-ocean .focus-stage .scene-title { font-size: clamp(1.7rem, 6vw, 2.6rem); }
+    .conducting-app.conducting-app.theme-ocean .focus-stage .scene-description { font-size: 1.2rem; }
+}
