@@ -76,4 +76,10 @@ $builtins[] = ['assetId' => 'builtin-judge-2', 'versionId' => 'builtin-judge-2-v
 $builtins[] = ['assetId' => 'builtin-judge-3', 'versionId' => 'builtin-judge-3-v1', 'file' => 'assets/library/ne-speshi-sudit/03.png', 'mime' => 'image/png', 'labelKey' => 'media_judge_3'];
 $builtins[] = ['assetId' => 'builtin-judge-4', 'versionId' => 'builtin-judge-4-v1', 'file' => 'assets/library/ne-speshi-sudit/04.png', 'mime' => 'image/png', 'labelKey' => 'media_judge_4'];
 
+$builtins[] = ['assetId' => 'builtin-sheep-1', 'versionId' => 'builtin-sheep-1-v1', 'file' => 'assets/library/poteryannaya-ovechka/01.png', 'mime' => 'image/png', 'labelKey' => 'media_sheep_1'];
+$builtins[] = ['assetId' => 'builtin-sheep-2', 'versionId' => 'builtin-sheep-2-v1', 'file' => 'assets/library/poteryannaya-ovechka/02.png', 'mime' => 'image/png', 'labelKey' => 'media_sheep_2'];
+$builtins[] = ['assetId' => 'builtin-sheep-3', 'versionId' => 'builtin-sheep-3-v1', 'file' => 'assets/library/poteryannaya-ovechka/03.png', 'mime' => 'image/png', 'labelKey' => 'media_sheep_3'];
+$builtins[] = ['assetId' => 'builtin-sheep-4', 'versionId' => 'builtin-sheep-4-v1', 'file' => 'assets/library/poteryannaya-ovechka/04.png', 'mime' => 'image/png', 'labelKey' => 'media_sheep_4'];
+$builtins[] = ['assetId' => 'builtin-sheep-5', 'versionId' => 'builtin-sheep-5-v1', 'file' => 'assets/library/poteryannaya-ovechka/05.png', 'mime' => 'image/png', 'labelKey' => 'media_sheep_5'];
+
 return $builtins;

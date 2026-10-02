@@ -82,7 +82,7 @@ final class MediaFileController extends Controller
         foreach ($document->stages as $stage) {
             if ($stage->id === $session->current_stage_id) {
                 foreach ($stage->blocks as $block) {
-                    if ($block->type === 'core.image' && $block->media['image']['assetId'] === $assetId
+                    if (isset($block->media['image']) && $block->media['image']['assetId'] === $assetId
                         && $block->media['image']['versionId'] === $versionId) {
                         return;
                     }

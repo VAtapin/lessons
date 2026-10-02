@@ -3,12 +3,12 @@ import { computed } from 'vue';
 import type { AnswerValue, Messages, OwnAnswer, ProjectedBlock } from './types';
 const props = defineProps<{ block: ProjectedBlock; messages: Messages; presenter?: boolean; interactive?: boolean; answer?: OwnAnswer; disabled?: boolean; conducting?: boolean }>();
 const emit = defineEmits<{ command: [action: string, payload: Record<string, unknown>]; answer: [blockId: string, value: AnswerValue] }>();
-const selectedModeId = computed(() => props.interactive ? props.answer?.value.modeId : props.block.config.kind === 'personal-choice' ? undefined : props.block.runtime?.presentation?.modeId);
-const selectedMode = computed(() => props.block.content.modes?.find(mode => mode.modeId === selectedModeId.value));
+const selectedModeId = computed(() => props.interactive && props.block.config.kind !== 'picture-count' ? props.answer?.value.modeId : props.block.config.kind === 'personal-choice' ? undefined : props.block.runtime?.presentation?.modeId);
+const selectedMode = computed(() => props.block.content.modes?.find(mode => mode.modeId === selectedModeId.value) ?? (props.block.config.kind === 'picture-count' ? props.block.content.modes?.[0] : undefined));
 function selectMode(modeId: string) {
     if (props.disabled) return;
     if (props.presenter) emit('command', 'presentation.mode', { blockId: props.block.id, modeId });
-    else if (props.interactive) emit('answer', props.block.id, { modeId });
+    else if (props.interactive && props.block.config.kind !== 'picture-count') emit('answer', props.block.id, { modeId });
 }
 </script>
 <template>
@@ -16,12 +16,18 @@ function selectMode(modeId: string) {
         <template v-if="block.config.kind === 'scene'">
             <p v-if="block.content.eyebrow" class="scene-eyebrow eyebrow">{{ block.content.eyebrow }}</p>
             <h2 v-if="block.content.title" class="scene-title">{{ block.content.title }}</h2>
-            <p class="scene-description scene-text plain-text">{{ block.content.text }}</p>
+            <p v-if="block.content.text !== block.content.title" class="scene-description scene-text plain-text">{{ block.content.text }}</p>
             <blockquote v-if="block.content.quote" class="scene-quote">{{ block.content.quote }}</blockquote>
             <p v-if="block.content.label && block.config.scene !== 'cover'" class="scene-label">{{ block.content.label }}</p>
             <h3 v-if="block.content.subtitle" class="scene-subtitle">{{ block.content.subtitle }}</h3>
             <p v-if="block.content.feedback" class="scene-feedback">{{ block.content.feedback }}</p>
             <small v-if="block.content.source" class="scene-source">{{ block.content.source }}</small>
+        </template>
+        <template v-else-if="block.config.kind === 'picture-count'">
+            <h2 class="scene-title">{{ selectedMode?.title ?? block.content.title }}</h2>
+            <p class="scene-description">{{ selectedMode?.text }}</p>
+            <div class="picture-count" :style="{ '--picture-columns': Math.min(selectedMode?.count ?? 0, 5) || 1 }"><img v-for="n in selectedMode?.count ?? 0" :key="n" :src="block.resources?.image" :alt="block.content.text" /></div>
+            <div v-if="presenter" class="discussion-modes"><button v-for="mode in block.content.modes" :key="mode.modeId" type="button" :aria-pressed="selectedMode?.modeId === mode.modeId" :disabled="disabled" @click="selectMode(mode.modeId)">{{ mode.label ?? mode.text }}</button></div>
         </template>
         <template v-else-if="block.config.kind === 'summary'">
             <p v-if="block.content.eyebrow" class="summary-eyebrow eyebrow">{{ block.content.eyebrow }}</p>

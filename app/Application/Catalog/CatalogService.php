@@ -118,7 +118,7 @@ final readonly class CatalogService
         $preview = $document->project(Audience::Projector, $locale);
         foreach ($preview['stages'] as &$stage) {
             foreach ($stage['blocks'] as &$block) {
-                if ($block['type'] === 'core.image') {
+                if (isset($block['media']['image'])) {
                     $reference = $block['media']['image'];
                     $block['resources'] = ['image' => $this->media->resolve($reference['assetId'], $reference['versionId'])['url']];
                 }

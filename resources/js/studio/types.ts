@@ -3,7 +3,7 @@ export interface Option { optionId: string; text: string }
 export interface Item { itemId: string; text: string; label?: string; icon?: string }
 export interface Role { roleId: string; text: string }
 export interface AnswerValue { modeId?: string; optionId?: string; optionIds?: string[]; text?: string; itemIds?: string[]; pairs?: { leftId: string; rightId: string }[]; roleId?: string | null; ready?: boolean; question?: boolean }
-export interface BlockContent { title?: string; source?: string; text?: string; alt?: string; caption?: string; question?: string; eyebrow?: string; subtitle?: string; quote?: string; label?: string; placeholder?: string; submitLabel?: string; emptyText?: string; feedback?: string; readyLabel?: string; questionLabel?: string; actionLabel?: string; hideLabel?: string; resetLabel?: string; restartLabel?: string; resetText?: string; feedbackFirstWrong?: string; feedbackWrong?: string; feedbackCorrect?: string; feedbackComplete?: string; reviewLabel?: string; options?: Option[]; items?: Item[]; left?: Item[]; right?: Item[]; roles?: Role[]; modes?: { modeId: string; text: string; label?: string; title?: string }[] }
+export interface BlockContent { title?: string; source?: string; text?: string; alt?: string; caption?: string; question?: string; eyebrow?: string; subtitle?: string; quote?: string; label?: string; placeholder?: string; submitLabel?: string; emptyText?: string; feedback?: string; readyLabel?: string; questionLabel?: string; actionLabel?: string; hideLabel?: string; resetLabel?: string; restartLabel?: string; resetText?: string; feedbackFirstWrong?: string; feedbackWrong?: string; feedbackCorrect?: string; feedbackComplete?: string; reviewLabel?: string; options?: Option[]; items?: Item[]; left?: Item[]; right?: Item[]; roles?: Role[]; modes?: { modeId: string; text: string; label?: string; title?: string; count?: number }[] }
 export type BlockType = 'core.text' | 'core.image' | 'core.prompt' | 'core.single-choice' | 'core.multiple-choice' | 'core.poll' | 'core.free-response' | 'core.sequence' | 'core.matching' | 'core.roles' | 'core.signals' | 'core.presentation';
 export interface Block {
     id: string; type: BlockType; schemaVersion: number; content: Record<string, BlockContent>;
@@ -12,7 +12,7 @@ export interface Block {
     solution?: AnswerValue | null; teacherNotes?: Record<string, string>;
     origin?: { templateId: string; versionId: string } | null;
 }
-export interface Stage { id: string; content: Record<string, { title: string; notes?: string }>; config: { theme?: 'green' | 'terracotta' | 'slate'; layout?: string; durationSeconds?: number; openTasks?: boolean; sequentialTasks?: boolean; closeOnTimer?: boolean; answerSeconds?: number }; blocks: Block[] }
+export interface Stage { id: string; content: Record<string, { title: string; notes?: string }>; config: { theme?: 'green' | 'terracotta' | 'slate' | 'lavender'; layout?: string; durationSeconds?: number; openTasks?: boolean; sequentialTasks?: boolean; closeOnTimer?: boolean; answerSeconds?: number }; blocks: Block[] }
 export interface DocumentationFile { fileId: string; kind: 'plan' | 'presentation'; locale: string; url?: string; bytes?: number; label?: string }
 export interface TeacherDocumentation { schemaVersion: 1; content: Record<string, { plan: string }>; files: DocumentationFile[]; video?: { id: string; locale: string } }
 export interface ProjectedDocumentation { plan: string | null; files: DocumentationFile[]; video: { id: string; locale: string } | null }

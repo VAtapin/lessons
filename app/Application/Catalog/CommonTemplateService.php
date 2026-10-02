@@ -48,7 +48,7 @@ final readonly class CommonTemplateService
         $block = BlockInstance::fromArray($version->block, $this->registry, $version->locales);
         $this->media->assertBlock($block);
         $projection = $block->project(Audience::Projector, $locale);
-        if ($block->type === 'core.image') {
+        if (isset($block->media['image'])) {
             $image = $block->media['image'];
             $projection['resources'] = ['image' => $this->media->resolve($image['assetId'], $image['versionId'])['url']];
         }

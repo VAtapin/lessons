@@ -62,7 +62,7 @@ final class MediaCatalogue
 
     public function assertBlock(BlockInstance $block, ?string $ownerKey = null): void
     {
-        if ($block->type === 'core.image') {
+        if (isset($block->media['image'])) {
             $image = $block->media['image'];
             $this->resolve($image['assetId'], $image['versionId'], $ownerKey);
         }

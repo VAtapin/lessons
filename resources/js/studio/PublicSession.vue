@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { acceptProjection } from './runtime';
 import { api, ApiError, errorMessage, poll } from './api';
 import StageRenderer from './StageRenderer.vue';
@@ -10,6 +10,11 @@ import { canAnswerPublicSession } from './public-session';
 import '../../css/public-lesson-app.css';
 const props = defineProps<{ mode: 'student' | 'projector'; sessionId?: string; projectorToken?: string; rehearsal?: boolean; teacherScoped?: boolean; messages: Messages }>();
 const session = ref<PublicState>();
+const stageTitle = computed(() => {
+    const pictures = session.value?.stage.blocks.find(block => block.type === 'core.presentation' && block.config.kind === 'picture-count');
+    const selected = pictures?.content.modes?.find(mode => mode.modeId === pictures.runtime?.presentation?.modeId) ?? pictures?.content.modes?.[0];
+    return selected?.title ?? session.value?.stage.content.title;
+});
 const error = ref('');
 const connected = ref(false);
 const busy = ref(false);
@@ -45,7 +50,7 @@ async function answer(blockId: string, value: AnswerValue) {
     <div :class="['public-session', 'public-lesson-app', 'conducting-app', 'theme-' + (session?.stage.config.theme ?? 'green'), mode]">
         <div v-if="session?.status !== 'finished'" class="public-lesson-status">
             <span class="public-lesson-mode">{{ mode === 'student' ? messages.student_screen : messages.shared_screen }}</span>
-            <strong v-if="session" class="public-lesson-stage-title">{{ session.stage.content.title }}</strong>
+            <strong v-if="session" class="public-lesson-stage-title">{{ stageTitle }}</strong>
             <span v-if="mode === 'student' && typeof session?.kindnessPoints === 'number'" class="public-lesson-points" role="status" :aria-label="messages.kindness_points"><span aria-hidden="true">✦</span> {{ session.kindnessPoints }}</span>
             <span :class="['public-lesson-connection', { disconnected: !connected }]" role="status"><span aria-hidden="true">●</span> {{ connected ? messages.connected : messages.reconnecting }}</span>
             <RuntimeStatus v-if="session" :state="session" :messages="messages" :hide-status="session.status === 'running'" />

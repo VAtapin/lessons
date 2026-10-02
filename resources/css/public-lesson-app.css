@@ -15,6 +15,17 @@
     --scene-success: #e2ede5;
     color: var(--ink);
 }
+.conducting-app.conducting-app.theme-lavender {
+    --ink: #493956; --muted: #6c6079; --paper: #f4eff8; --card: #fffcf8;
+    --border: #76588035; --accent: #a26787; --olive: #775888;
+    --scene-dark: #493956; --scene-deep: #362b43; --scene-soft: #eae0ef; --scene-success: #ede6f2;
+}
+.conducting-app.conducting-app.theme-lavender .focus-stage.focus-stage-cover .focus-stage-visual::after {
+    background: linear-gradient(90deg, #362b43dc, #49395675 48%, #49395600);
+}
+.conducting-app.conducting-app.theme-lavender .finished-lesson {
+    background: radial-gradient(circle at 55% 30%, #bc96bb55, transparent 50%), linear-gradient(135deg, #362b43, #775888);
+}
 .conducting-app.conducting-app.theme-terracotta {
     --ink: #4c2927; --muted: #70534b; --paper: #faf0e4; --card: #fffaf2;
     --border: #6e34302e; --accent: #b85435; --olive: #964839;
@@ -394,3 +405,22 @@
 .conducting-app.conducting-app .focus-stage-summary .takeaway-path strong { margin-top: .5rem; font-size: clamp(1.2rem, 2.2vw, 1.7rem); }
 .conducting-app.conducting-app .focus-stage-summary .takeaway-path p { font: .9rem/1.4 'Segoe UI', Arial, sans-serif; }
 .conducting-app.conducting-app .focus-stage-summary .summary-quote { margin: 0; border: 0; padding: 0; font-size: clamp(1.4rem, 3vw, 2.35rem); }
+
+/* A whole search illustration must stay visible: the sheep is at its left edge. */
+.conducting-app.conducting-app.theme-lavender .focus-stage { background: linear-gradient(155deg, #fffcf8, #eae0ef); }
+.conducting-app.conducting-app.theme-lavender .focus-stage-split .focus-stage-visual img { object-fit: contain; background: var(--paper); }
+.conducting-app.conducting-app.theme-lavender .focus-stage .scene-eyebrow { color: var(--olive); }
+.conducting-app.conducting-app.theme-lavender .focus-stage .scene-title { font-size: clamp(2rem, min(4vw, 7dvh), 4rem); line-height: 1.08; }
+.conducting-app.conducting-app.theme-lavender .focus-stage .scene-description,
+.conducting-app.conducting-app.theme-lavender .focus-stage .presentation-revealed { font-size: clamp(1.2rem, min(2.6vw, 4dvh), 2rem); line-height: 1.35; }
+.conducting-app.conducting-app.theme-lavender .focus-stage.focus-stage-cover .scene-title { font-size: clamp(3rem, min(7vw, 13dvh), 6.5rem); letter-spacing: -.03em; line-height: .96; }
+.picture-count { display: grid; grid-template-columns: repeat(var(--picture-columns, 5), minmax(0, 1fr)); gap: clamp(8px, 2vw, 24px); align-items: center; margin: 24px auto; max-width: 1100px; }
+.picture-count img { display: block; width: 100%; max-height: 32dvh; object-fit: contain; }
+.block-tools .picture-count { gap: 4px; margin: 10px 0; }
+.block-tools .picture-count img { max-height: 80px; }
+.conducting-app.conducting-app.theme-lavender .focus-stage .prompt-block { background: var(--scene-soft); }
+@media (max-width: 760px) {
+    .conducting-app.conducting-app.theme-lavender .focus-stage .scene-title { font-size: clamp(1.6rem, 6vw, 2.6rem); }
+    .conducting-app.conducting-app.theme-lavender .focus-stage .scene-description { font-size: 1.2rem; }
+    .picture-count { gap: 5px; margin-block: 20px; }
+}

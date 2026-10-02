@@ -35,6 +35,21 @@ const content = node => node.kind === '#comment' ? '' : node.text + node.childre
 const descendants = node => [node, ...node.children.flatMap(descendants)];
 const messages = { undo: 'Undo', sequence_reset: 'Reset', sequence_empty: 'Empty', your_answer: 'Answer', add_answer: 'Add', no_role: 'Release' };
 
+test('teacher-controlled picture count renders five then four images for pupils without answer buttons', async t => {
+    const block = { id: 'herd', type: 'core.presentation', content: { title: 'Our herd', text: 'Sheep', modes: [{ modeId: 'herd', count: 5, title: 'Our herd', text: 'How many?', label: 'Show five' }, { modeId: 'missing', count: 4, title: 'One missing', text: 'Who is missing?', label: 'Take one away' }] }, config: { kind: 'picture-count' }, resources: { image: '/sheep.png' }, runtime: { presentation: {} } };
+    const child = fixture(t, block, { interactive: true, answer: { value: { modeId: 'herd' } } }, presentationComponent);
+    assert.equal(child.nodes('img').length, 5);
+    assert.equal(child.nodes('button').length, 0);
+    child.props.block.runtime.presentation.modeId = 'missing';
+    await Vue.nextTick();
+    assert.equal(child.nodes('img').length, 4);
+    assert.match(content(child.root), /One missing/);
+    assert.deepEqual(child.events, []);
+    const teacher = fixture(t, structuredClone(block), { presenter: true, interactive: false }, presentationComponent);
+    teacher.click('Take one away');
+    assert.deepEqual(teacher.events, [['command', 'presentation.mode', { blockId: 'herd', modeId: 'missing' }]]);
+});
+
 function fixture(t, block, extra = {}, renderedComponent = component) {
     const events = [];
     const node = (kind, text = '') => ({ kind, text, props: {}, children: [], parent: null, value: '', listeners: {},

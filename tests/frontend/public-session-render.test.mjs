@@ -42,13 +42,24 @@ test('student status renders both earned and zero actual kindnessPoints from the
     }
 });
 
-test('slate stage theme reaches student and projector during the lesson and closing', async () => {
-    const stage = { id: 'stage', content: { title: 'Context' }, blocks: [], config: { theme: 'slate' } };
-    const closing = { content: { title: 'Finished', text: 'Reflection' } };
+test('picture-count header follows the displayed mode without announcing the missing sheep early', async () => {
+    const block = { type: 'core.presentation', config: { kind: 'picture-count' }, content: { modes: [{ modeId: 'herd', title: 'Our little herd' }, { modeId: 'missing', title: 'One missing' }] }, runtime: { presentation: {} } };
+    const stage = { id: 'stage', content: { title: 'One missing' }, config: { theme: 'lavender' }, blocks: [block] };
     for (const mode of ['student', 'projector']) {
+        assert.match(await render(mode, 0, { stage }), /public-lesson-stage-title">Our little herd<\/strong>/);
+        block.runtime.presentation.modeId = 'missing';
+        assert.match(await render(mode, 0, { stage }), /public-lesson-stage-title">One missing<\/strong>/);
+        delete block.runtime.presentation.modeId;
+    }
+});
+
+test('slate and lavender themes reach student and projector during the lesson and closing', async () => {
+    const closing = { content: { title: 'Finished', text: 'Reflection' } };
+    for (const theme of ['slate', 'lavender']) for (const mode of ['student', 'projector']) {
+        const stage = { id: 'stage', content: { title: 'Context' }, blocks: [], config: { theme } };
         for (const status of ['running', 'finished']) {
             const html = await render(mode, 0, { stage, status, closing });
-            assert.match(html, /conducting-app theme-slate/);
+            assert.match(html, new RegExp(`conducting-app theme-${theme}`));
             if (status === 'finished') assert.match(html, /class="finished-lesson"/);
         }
         assert.match(await render(mode, 0), /conducting-app theme-green/);

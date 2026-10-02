@@ -24,7 +24,7 @@ final class MediaUsage
                 foreach ($document['stages'] as $stage) {
                     foreach ($stage['blocks'] as $block) {
                         $reference = $block['media']['image'] ?? null;
-                        if ($block['type'] === 'core.image' && is_array($reference) && $reference['assetId'] === $assetId
+                        if (is_array($reference) && $reference['assetId'] === $assetId
                             && in_array($reference['versionId'], $mediaVersionIds, true)) {
                             $key = json_encode([$block['id'], $reference['assetId'], $reference['versionId']], JSON_THROW_ON_ERROR);
                             if (isset($seen[$key])) {
@@ -44,7 +44,7 @@ final class MediaUsage
             foreach ($templates as $version) {
                 $block = $version->block;
                 $reference = $block['media']['image'] ?? null;
-                if ($block['type'] === 'core.image' && is_array($reference) && $reference['assetId'] === $assetId
+                if (is_array($reference) && $reference['assetId'] === $assetId
                     && in_array($reference['versionId'], $mediaVersionIds, true)) {
                     $usages[] = ['kind' => 'template', 'templateId' => $version->block_template_record_id,
                         'templateVersionId' => $version->id, 'versionId' => $reference['versionId'],

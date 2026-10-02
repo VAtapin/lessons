@@ -16,7 +16,7 @@ final readonly class RuntimeMediaProjection
     public function stage(array $projection, TeachingSession $session, Audience $audience, bool $teacherScoped = false): array
     {
         foreach ($projection['blocks'] as &$block) {
-            if ($block['type'] !== 'core.image') {
+            if (! isset($block['media']['image'])) {
                 continue;
             }
             $reference = $block['media']['image'];

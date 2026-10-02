@@ -45,7 +45,7 @@ final readonly class CommonStarterInstaller
             $this->media->assertBlock($block);
             $metadata = $this->metadata->parse($entry['attribution']);
             $mediaHashes = [];
-            if ($block->type === 'core.image') {
+            if (isset($block->media['image'])) {
                 $image = $block->media['image'];
                 $resolved = $this->media->resolve($image['assetId'], $image['versionId']);
                 $mediaHashes[$image['versionId']] = hash_file('sha256', $resolved['path']);

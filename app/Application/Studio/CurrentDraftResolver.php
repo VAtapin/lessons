@@ -46,7 +46,7 @@ final readonly class CurrentDraftResolver
     {
         foreach ($draft->toArray()['stages'] as $stageIndex => $stage) {
             foreach ($stage['blocks'] as $blockIndex => $block) {
-                if ($block['type'] !== 'core.image') {
+                if (! isset($block['media']['image'])) {
                     continue;
                 }
                 $reference = $block['media']['image'];
@@ -116,7 +116,7 @@ final readonly class CurrentDraftResolver
             throw $this->problem($problem, $draft->readiness());
         }
         foreach ($stage['blocks'] as &$block) {
-            if ($block['type'] === 'core.image') {
+            if (isset($block['media']['image'])) {
                 $reference = $block['media']['image'];
                 $block['resources'] = ['image' => $this->media->resolve($reference['assetId'], $reference['versionId'], $owner)['url']];
             }

@@ -600,6 +600,10 @@ return [
     'theme_green' => 'Зелёная',
     'theme_terracotta' => 'Терракотовая',
 
+    'theme_lavender' => 'Сиреневая',
+    'picture_count_mode' => 'Текст кнопки',
+    'picture_count_teacher' => 'Управляет ведущий',
+    'picture_count' => 'Количество изображений',
     'theme_slate' => 'Синяя',
     'media_judge_1' => 'Первое впечатление',
     'media_judge_2' => 'Ученик сидит отдельно',
@@ -610,4 +614,15 @@ return [
     'documentation_judge_3' => 'Раздатка (Word)',
     'documentation_judge_4' => 'Раздатка (PDF)',
     'documentation_judge_5' => 'Презентация',
+
+    'media_sheep_1' => 'Пастух с найденной овечкой',
+    'media_sheep_2' => 'Овечка за кустом',
+    'media_sheep_3' => 'Бережная забота пастуха',
+    'media_sheep_4' => 'Приглашение в общую игру',
+    'media_sheep_5' => 'Овечка для игры и поиска',
+    'documentation_sheep_1' => 'Полный урок DOCX',
+    'documentation_sheep_2' => 'Полный урок PDF',
+    'documentation_sheep_3' => 'Раздатка DOCX',
+    'documentation_sheep_4' => 'Раздатка PDF',
+    'documentation_sheep_5' => 'Презентация PPTX',
 ];

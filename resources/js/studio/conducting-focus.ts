@@ -14,7 +14,7 @@ export function focusStageBlocks(stage: ProjectedStage) {
     const journey = blocks.some(block => block.type === 'core.sequence');
     const scenario = blocks.some(block => block.type === 'core.presentation' && block.config.kind === 'discussion');
     const summary = blocks.some(block => block.type === 'core.presentation' && block.config.kind === 'summary') || (illustrated && blocks.some(block => block.type === 'core.text' && block.content?.title && block.config?.presentation === 'list'));
-    const sceneHeading = blocks.some(block => block.type === 'core.presentation' && ['scene', 'summary'].includes(block.config.kind ?? '') && !!block.content?.title);
+    const sceneHeading = blocks.some(block => block.type === 'core.presentation' && ['scene', 'summary', 'picture-count'].includes(block.config.kind ?? '') && !!block.content?.title);
     const decision = covered || blocks.some(block => block.type === 'core.free-response' && boardSources.has(block.id));
     const choice = !illustrated && blocks.some(block => ['core.poll', 'core.single-choice'].includes(block.type));
     const cover = illustrated && !journey && (scene?.config.scene === 'cover' || (blocks.some(block => block.type === 'core.signals') && blocks.every(block => ['core.text', 'core.image', 'core.signals'].includes(block.type) || (block.type === 'core.presentation' && block.config.kind === 'scene'))));

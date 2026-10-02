@@ -87,7 +87,7 @@ final readonly class PresentationCommands
                     $this->review($session, $this->blocks->find($document, $block->config['reviewBlockId'], $session->current_stage_id));
                 }
             } elseif ($action === 'presentation.mode') {
-                if ($block->config['kind'] !== 'discussion' || ! is_string($payload['modeId']) || ! in_array($payload['modeId'], InteractiveShape::ids($block, 'modes', 'modeId'), true)) {
+                if (! in_array($block->config['kind'], ['discussion', 'picture-count'], true) || ! is_string($payload['modeId']) || ! in_array($payload['modeId'], InteractiveShape::ids($block, 'modes', 'modeId'), true)) {
                     throw new ApiProblem('invalid_action', 422);
                 }
                 $presentation['modeId'] = $payload['modeId'];

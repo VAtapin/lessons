@@ -25,8 +25,7 @@ final readonly class ReviewedLessonInstaller
         $mediaHashes = [];
         foreach ($document->stages as $stage) {
             foreach ($stage->blocks as $block) {
-                if ($block->type === 'core.image') {
-                    $reference = $block->media['image'];
+                foreach ($block->media as $reference) {
                     $file = $this->media->resolve($reference['assetId'], $reference['versionId']);
                     $mediaHashes[$reference['versionId']] = hash_file('sha256', $file['path']);
                 }

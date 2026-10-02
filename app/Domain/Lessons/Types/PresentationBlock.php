@@ -40,12 +40,19 @@ final class PresentationBlock extends InteractiveDefinition
     public function validate(BlockInstance $block, array $locales): void
     {
         Shape::object($block->config, ['kind', 'reviewBlockId', 'sourceBlockIds', 'maxItems'], ['scene', 'imageSide'], 'presentation.config');
-        Shape::object($block->media, [], [], 'presentation.media');
+        if ($block->config['kind'] === 'picture-count') {
+            Shape::object($block->media, ['image'], [], 'presentation.media');
+            $image = Shape::object($block->media['image'], ['assetId', 'versionId'], [], 'presentation.media.image');
+            Shape::id($image['assetId'], 'presentation.media.image.assetId');
+            Shape::id($image['versionId'], 'presentation.media.image.versionId');
+        } else {
+            Shape::object($block->media, [], [], 'presentation.media');
+        }
         if ((array_key_exists('scene', $block->config) && (! in_array($block->config['scene'], ['cover', 'story', 'question', 'scenario', 'decision', 'discussion', 'journey', 'choice'], true) || $block->config['kind'] !== 'scene'))
             || (array_key_exists('imageSide', $block->config) && (! in_array($block->config['imageSide'], ['left', 'right'], true) || $block->config['kind'] !== 'scene'))) {
             throw new ValidationException('Unsupported scene composition.');
         }
-        if (! in_array($block->config['kind'], ['reveal', 'discussion', 'personal-choice', 'response-board', 'scene', 'summary', 'closing'], true)
+        if (! in_array($block->config['kind'], ['reveal', 'discussion', 'personal-choice', 'response-board', 'scene', 'summary', 'closing', 'picture-count'], true)
             || $block->solution !== null || ! is_int($block->config['maxItems'])
             || $block->config['maxItems'] < 1 || $block->config['maxItems'] > 50) {
             throw new ValidationException('Invalid presentation configuration.');
@@ -61,6 +68,7 @@ final class PresentationBlock extends InteractiveDefinition
             Shape::id($id, 'presentation.sourceBlockId');
         }
         $identity = null;
+        $countIdentity = null;
         $itemIdentity = null;
         foreach ($locales as $locale) {
             $content = Shape::object($block->content[$locale], ['text', 'modes'], ['title', 'eyebrow', 'subtitle', 'quote', 'source', 'label', 'actionLabel', 'hideLabel', 'resetLabel', 'restartLabel', 'resetText', 'emptyText', 'feedback', 'items'], 'presentation.content');
@@ -91,8 +99,15 @@ final class PresentationBlock extends InteractiveDefinition
                 throw new ValidationException('Too many discussion modes.');
             }
             $ids = [];
+            $counts = [];
             foreach ($modes as $mode) {
-                Shape::object($mode, ['modeId', 'text'], ['label', 'title'], 'presentation.mode');
+                Shape::object($mode, $block->config['kind'] === 'picture-count' ? ['modeId', 'text', 'count'] : ['modeId', 'text'], ['label', 'title'], 'presentation.mode');
+                if ($block->config['kind'] === 'picture-count') {
+                    if (! is_int($mode['count']) || $mode['count'] < 0 || $mode['count'] > min(20, $block->config['maxItems'])) {
+                        throw new ValidationException('Invalid picture count.');
+                    }
+                    $counts[] = $mode['count'];
+                }
                 $ids[] = Shape::id($mode['modeId'], 'presentation.modeId');
                 Shape::boundedText($mode['text'], 'presentation.mode.text', 5000);
                 if (array_key_exists('label', $mode)) {
@@ -105,9 +120,13 @@ final class PresentationBlock extends InteractiveDefinition
             if (count(array_unique($ids)) !== count($ids) || ($identity !== null && $identity !== $ids)) {
                 throw new ValidationException('Discussion identities must match.');
             }
+            if ($countIdentity !== null && $countIdentity !== $counts) {
+                throw new ValidationException('Picture counts must match across translations.');
+            }
+            $countIdentity = $counts;
             $identity = $ids;
         }
-        if (in_array($block->config['kind'], ['discussion', 'personal-choice'], true) !== ($identity !== [])
+        if (in_array($block->config['kind'], ['discussion', 'personal-choice', 'picture-count'], true) !== ($identity !== [])
             || ($block->config['kind'] !== 'response-board' && $sources !== [])
             || ($block->config['kind'] !== 'reveal' && $block->config['reviewBlockId'] !== null)) {
             throw new ValidationException('Presentation fields do not match its kind.');

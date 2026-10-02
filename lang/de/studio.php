@@ -600,6 +600,10 @@ return [
     'theme_green' => 'Grün',
     'theme_terracotta' => 'Terrakotta',
 
+    'theme_lavender' => 'Lavendel',
+    'picture_count_mode' => 'Schaltflächentext',
+    'picture_count_teacher' => 'Steuerung durch die Lehrkraft',
+    'picture_count' => 'Anzahl der Bilder',
     'theme_slate' => 'Blau',
     'media_judge_1' => 'Der erste Eindruck',
     'media_judge_2' => 'Ein Schüler sitzt allein',
@@ -610,4 +614,15 @@ return [
     'documentation_judge_3' => 'Arbeitsblätter (Word, Russisch)',
     'documentation_judge_4' => 'Arbeitsblätter (PDF, Russisch)',
     'documentation_judge_5' => 'Präsentation (Russisch)',
+
+    'media_sheep_1' => 'Hirte mit dem gefundenen Schaf',
+    'media_sheep_2' => 'Schaf hinter dem Busch',
+    'media_sheep_3' => 'Fürsorge des Hirten',
+    'media_sheep_4' => 'Einladung zum gemeinsamen Spiel',
+    'media_sheep_5' => 'Schaf zum Spielen und Suchen',
+    'documentation_sheep_1' => 'Vollständige Stunde DOCX · Russisches Original',
+    'documentation_sheep_2' => 'Vollständige Stunde PDF · Russisches Original',
+    'documentation_sheep_3' => 'Kopiervorlagen DOCX · Russisches Original',
+    'documentation_sheep_4' => 'Kopiervorlagen PDF · Russisches Original',
+    'documentation_sheep_5' => 'Präsentation PPTX · Russisches Original',
 ];
