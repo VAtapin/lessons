@@ -71,4 +71,9 @@ $builtins[] = ['assetId' => 'builtin-zakkhei-2', 'versionId' => 'builtin-zakkhei
 $builtins[] = ['assetId' => 'builtin-zakkhei-3', 'versionId' => 'builtin-zakkhei-3-v1', 'file' => 'assets/library/zakkhei/03.png', 'mime' => 'image/png', 'labelKey' => 'media_zakkhei_3'];
 $builtins[] = ['assetId' => 'builtin-zakkhei-4', 'versionId' => 'builtin-zakkhei-4-v1', 'file' => 'assets/library/zakkhei/04.png', 'mime' => 'image/png', 'labelKey' => 'media_zakkhei_4'];
 
+$builtins[] = ['assetId' => 'builtin-judge-1', 'versionId' => 'builtin-judge-1-v1', 'file' => 'assets/library/ne-speshi-sudit/01.png', 'mime' => 'image/png', 'labelKey' => 'media_judge_1'];
+$builtins[] = ['assetId' => 'builtin-judge-2', 'versionId' => 'builtin-judge-2-v1', 'file' => 'assets/library/ne-speshi-sudit/02.png', 'mime' => 'image/png', 'labelKey' => 'media_judge_2'];
+$builtins[] = ['assetId' => 'builtin-judge-3', 'versionId' => 'builtin-judge-3-v1', 'file' => 'assets/library/ne-speshi-sudit/03.png', 'mime' => 'image/png', 'labelKey' => 'media_judge_3'];
+$builtins[] = ['assetId' => 'builtin-judge-4', 'versionId' => 'builtin-judge-4-v1', 'file' => 'assets/library/ne-speshi-sudit/04.png', 'mime' => 'image/png', 'labelKey' => 'media_judge_4'];
+
 return $builtins;

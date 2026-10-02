@@ -599,4 +599,15 @@ return [
     'stage_theme' => 'Расцветка этапа',
     'theme_green' => 'Зелёная',
     'theme_terracotta' => 'Терракотовая',
+
+    'theme_slate' => 'Синяя',
+    'media_judge_1' => 'Первое впечатление',
+    'media_judge_2' => 'Ученик сидит отдельно',
+    'media_judge_3' => 'Разговор с учителем',
+    'media_judge_4' => 'Разговор после урока',
+    'documentation_judge_1' => 'Полный урок (Word)',
+    'documentation_judge_2' => 'Полный урок (PDF)',
+    'documentation_judge_3' => 'Раздатка (Word)',
+    'documentation_judge_4' => 'Раздатка (PDF)',
+    'documentation_judge_5' => 'Презентация',
 ];

@@ -599,4 +599,15 @@ return [
     'stage_theme' => 'Farbgestaltung des Schritts',
     'theme_green' => 'Grün',
     'theme_terracotta' => 'Terrakotta',
+
+    'theme_slate' => 'Blau',
+    'media_judge_1' => 'Der erste Eindruck',
+    'media_judge_2' => 'Ein Schüler sitzt allein',
+    'media_judge_3' => 'Ein Gespräch mit der Lehrkraft',
+    'media_judge_4' => 'Ein Gespräch nach dem Unterricht',
+    'documentation_judge_1' => 'Vollständiger Unterricht (Word, Russisch)',
+    'documentation_judge_2' => 'Vollständiger Unterricht (PDF, Russisch)',
+    'documentation_judge_3' => 'Arbeitsblätter (Word, Russisch)',
+    'documentation_judge_4' => 'Arbeitsblätter (PDF, Russisch)',
+    'documentation_judge_5' => 'Präsentation (Russisch)',
 ];

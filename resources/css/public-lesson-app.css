@@ -27,6 +27,48 @@
     background: radial-gradient(circle at 55% 30%, #a45c3e55, transparent 50%), linear-gradient(135deg, #452923, #824735);
 }
 
+.conducting-app.conducting-app.theme-slate {
+    --ink: #233b59; --muted: #536579; --paper: #edf2f7; --card: #fbfcff;
+    --border: #233b592e; --accent: #537aa2; --olive: #456b93;
+    --scene-dark: #233b59; --scene-deep: #162a42; --scene-soft: #e0e9f3; --scene-success: #e3edf5;
+}
+.conducting-app.conducting-app.theme-slate .focus-stage.focus-stage-cover .focus-stage-visual::after {
+    background: linear-gradient(90deg, #162a42e6 0%, #233b598c 48%, #233b5900 100%);
+}
+.conducting-app.conducting-app.theme-slate .finished-lesson {
+    background: radial-gradient(circle at 55% 30%, #537aa255, transparent 50%), linear-gradient(135deg, #162a42, #456b93);
+}
+.conducting-app.conducting-app.theme-slate .focus-stage {
+    background: linear-gradient(155deg, #f7faff, #dce6f0);
+}
+.conducting-app.conducting-app.theme-slate .focus-stage-split .focus-stage-copy {
+    background: #fbfcfff2; border-color: var(--border); outline-color: #537aa23d;
+}
+.conducting-app.conducting-app.theme-slate .focus-stage .scene-eyebrow { color: var(--olive); }
+.conducting-app.conducting-app.theme-slate .focus-stage .prompt-block,
+.conducting-app.conducting-app.theme-slate .focus-stage [data-presentation-kind='personal-choice'] .presentation-revealed {
+    background: var(--scene-soft);
+}
+@media (min-width: 900px) {
+    .conducting-app.conducting-app.theme-slate .focus-stage.focus-stage-split { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+    .conducting-app.conducting-app.theme-slate .focus-stage .focus-stage-copy { padding: 12px 22px; }
+    .conducting-app.conducting-app.theme-slate .focus-stage .scene-description { white-space: normal; font-size: 1rem; line-height: 1.35; }
+    .conducting-app.conducting-app.theme-slate .focus-stage .scene-title { font-size: clamp(1.8rem, 2.5vw, 2.2rem); margin-bottom: 8px; }
+    .conducting-app.conducting-app.theme-slate .focus-stage .scene-subtitle { font-size: 1.3rem; margin-block: 8px; padding-bottom: 8px; }
+    .conducting-app.conducting-app.theme-slate .focus-stage .choice-grid,
+    .conducting-app.conducting-app.theme-slate .focus-stage .discussion-modes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+    .conducting-app.conducting-app.theme-slate .focus-stage .choice-option { min-height: 48px; padding: 6px 8px; font-size: .9rem; }
+    .conducting-app.conducting-app.theme-slate .focus-stage .render-block + .render-block { margin-top: 4px; }
+    .conducting-app.conducting-app.theme-slate .focus-stage .interactive-block legend { font-size: 1rem; margin-bottom: 4px; }
+    .conducting-app.conducting-app.theme-slate .focus-stage .prompt-block { padding: 6px 10px; }
+    .conducting-app.conducting-app.theme-slate .focus-stage .prompt-block .plain-text { font-size: .9rem; line-height: 1.35; margin: 4px 0 0; }
+    .conducting-app.conducting-app.theme-slate .focus-stage .prompt-block .eyebrow { margin: 0; }
+    .conducting-app.conducting-app.theme-slate .focus-stage [data-presentation-kind='personal-choice'] .presentation-revealed { padding: 2px 8px; margin: 4px 0; }
+    .conducting-app.conducting-app.theme-slate .focus-stage .discussion-modes button { min-height: 36px; padding: 5px 8px; }
+    .conducting-app.conducting-app.theme-slate .focus-stage .class-voice { padding: 5px 8px; margin-top: 6px; }
+    .conducting-app.conducting-app.theme-slate .focus-stage .class-voice-bar { padding: 5px; font-size: .65rem; }
+}
+
 .conducting-app.conducting-app .focus-backdrop,
 .conducting-app.conducting-app .focus-backdrop:hover:not(:disabled) {
     background: #3d241745;

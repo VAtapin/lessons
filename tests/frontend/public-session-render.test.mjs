@@ -42,6 +42,19 @@ test('student status renders both earned and zero actual kindnessPoints from the
     }
 });
 
+test('slate stage theme reaches student and projector during the lesson and closing', async () => {
+    const stage = { id: 'stage', content: { title: 'Context' }, blocks: [], config: { theme: 'slate' } };
+    const closing = { content: { title: 'Finished', text: 'Reflection' } };
+    for (const mode of ['student', 'projector']) {
+        for (const status of ['running', 'finished']) {
+            const html = await render(mode, 0, { stage, status, closing });
+            assert.match(html, /conducting-app theme-slate/);
+            if (status === 'finished') assert.match(html, /class="finished-lesson"/);
+        }
+        assert.match(await render(mode, 0), /conducting-app theme-green/);
+    }
+});
+
 test('projector and responses without an actual personal score never synthesize a counter', async () => {
     assert.doesNotMatch(await render('projector', 4), /public-lesson-points/);
     assert.doesNotMatch(await render('student', undefined), /public-lesson-points/);
