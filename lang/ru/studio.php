@@ -586,4 +586,17 @@ return [
     'return_to_control' => 'Вернуться в пульт',
     'active_sessions_title' => 'Активные занятия',
     'retry' => 'Повторить',
+
+    'media_zakkhei_1' => 'Закхей на дереве и Иисус',
+    'media_zakkhei_2' => 'Встреча у дерева',
+    'media_zakkhei_3' => 'Воображаемое исполнение обещания Закхея',
+    'media_zakkhei_4' => 'Разговор об испорченной книге',
+    'documentation_zakkhei_1' => 'Полный урок · DOCX',
+    'documentation_zakkhei_2' => 'Полный урок · PDF',
+    'documentation_zakkhei_3' => 'Карточки и рабочий лист · DOCX',
+    'documentation_zakkhei_4' => 'Карточки и рабочий лист · PDF',
+    'documentation_zakkhei_5' => 'Презентация · PPTX',
+    'stage_theme' => 'Расцветка этапа',
+    'theme_green' => 'Зелёная',
+    'theme_terracotta' => 'Терракотовая',
 ];

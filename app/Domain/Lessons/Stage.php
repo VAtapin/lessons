@@ -30,7 +30,10 @@ final readonly class Stage
         }
 
         $config = array_key_exists('config', $data) ? $data['config'] : [];
-        Shape::object($config, [], ['layout', 'durationSeconds', 'openTasks', 'sequentialTasks', 'closeOnTimer', 'answerSeconds'], 'stage.config');
+        Shape::object($config, [], ['layout', 'durationSeconds', 'openTasks', 'sequentialTasks', 'closeOnTimer', 'answerSeconds', 'theme'], 'stage.config');
+        if (array_key_exists('theme', $config) && ! in_array($config['theme'], ['green', 'terracotta'], true)) {
+            throw new ValidationException('Unsupported stage theme.');
+        }
         if (array_key_exists('answerSeconds', $config)) {
             Shape::integer($config['answerSeconds'], 'stage.config.answerSeconds', 1, 3600);
         }

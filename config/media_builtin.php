@@ -66,4 +66,9 @@ $builtins[] = ['assetId' => 'builtin-words-support', 'versionId' => 'builtin-wor
 $builtins[] = ['assetId' => 'builtin-words-repair', 'versionId' => 'builtin-words-repair-v1', 'file' => 'assets/library/slova-ranyat/07-repair.png', 'mime' => 'image/png', 'labelKey' => 'media_words_repair'];
 $builtins[] = ['assetId' => 'builtin-words-good-word', 'versionId' => 'builtin-words-good-word-v1', 'file' => 'assets/library/slova-ranyat/08-good-word.png', 'mime' => 'image/png', 'labelKey' => 'media_words_good_word'];
 
+$builtins[] = ['assetId' => 'builtin-zakkhei-1', 'versionId' => 'builtin-zakkhei-1-v1', 'file' => 'assets/library/zakkhei/01.png', 'mime' => 'image/png', 'labelKey' => 'media_zakkhei_1'];
+$builtins[] = ['assetId' => 'builtin-zakkhei-2', 'versionId' => 'builtin-zakkhei-2-v1', 'file' => 'assets/library/zakkhei/02.png', 'mime' => 'image/png', 'labelKey' => 'media_zakkhei_2'];
+$builtins[] = ['assetId' => 'builtin-zakkhei-3', 'versionId' => 'builtin-zakkhei-3-v1', 'file' => 'assets/library/zakkhei/03.png', 'mime' => 'image/png', 'labelKey' => 'media_zakkhei_3'];
+$builtins[] = ['assetId' => 'builtin-zakkhei-4', 'versionId' => 'builtin-zakkhei-4-v1', 'file' => 'assets/library/zakkhei/04.png', 'mime' => 'image/png', 'labelKey' => 'media_zakkhei_4'];
+
 return $builtins;

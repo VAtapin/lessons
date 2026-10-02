@@ -586,4 +586,17 @@ return [
     'return_to_control' => 'Zum Leitungspult zurückkehren',
     'active_sessions_title' => 'Aktive Unterrichtssitzungen',
     'retry' => 'Erneut versuchen',
+
+    'media_zakkhei_1' => 'Zachäus auf einem Baum und Jesus',
+    'media_zakkhei_2' => 'Begegnung am Baum',
+    'media_zakkhei_3' => 'Vorgestellte Erfüllung des Versprechens von Zachäus',
+    'media_zakkhei_4' => 'Gespräch über ein beschädigtes Buch',
+    'documentation_zakkhei_1' => 'Vollständige Stunde · DOCX',
+    'documentation_zakkhei_2' => 'Vollständige Stunde · PDF',
+    'documentation_zakkhei_3' => 'Karten und Arbeitsblatt · DOCX',
+    'documentation_zakkhei_4' => 'Karten und Arbeitsblatt · PDF',
+    'documentation_zakkhei_5' => 'Präsentation · PPTX',
+    'stage_theme' => 'Farbgestaltung des Schritts',
+    'theme_green' => 'Grün',
+    'theme_terracotta' => 'Terrakotta',
 ];

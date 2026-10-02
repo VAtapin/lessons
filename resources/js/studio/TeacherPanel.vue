@@ -255,7 +255,7 @@ function closeReturnedControl() {
 function finish() { confirmFinish.value = true; }
 </script>
 <template>
-    <div :class="['teacher-panel', 'conducting-app', { 'compact-control': compact, 'focus-detached': detached, 'has-embedded-tools': !compact && !detached && toolsOpen }]">
+    <div :class="['teacher-panel', 'conducting-app', 'theme-' + (stage?.config.theme ?? 'green'), { 'compact-control': compact, 'focus-detached': detached, 'has-embedded-tools': !compact && !detached && toolsOpen }]">
         <div v-if="error || accessLost || (pending && !busy) || invitationReplayed || detachError" class="focus-notifications">
             <p v-if="error && !accessLost" role="alert" class="error-banner">{{ error }}</p>
             <p v-if="accessLost" role="alert" class="error-banner">{{ messages.collab_access_lost }}</p>

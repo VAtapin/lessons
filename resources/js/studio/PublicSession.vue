@@ -42,7 +42,7 @@ async function answer(blockId: string, value: AnswerValue) {
 }
 </script>
 <template>
-    <div :class="['public-session', 'public-lesson-app', 'conducting-app', mode]">
+    <div :class="['public-session', 'public-lesson-app', 'conducting-app', 'theme-' + (session?.stage.config.theme ?? 'green'), mode]">
         <div v-if="session?.status !== 'finished'" class="public-lesson-status">
             <span class="public-lesson-mode">{{ mode === 'student' ? messages.student_screen : messages.shared_screen }}</span>
             <strong v-if="session" class="public-lesson-stage-title">{{ session.stage.content.title }}</strong>
