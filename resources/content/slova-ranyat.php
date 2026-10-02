@@ -101,7 +101,7 @@ foreach (['ru', 'de'] as $locale) {
 }
 $files = [];
 foreach (config('lesson-files') as $id => $file) {
-    if (str_starts_with($id, 'words-file-')) {
+    if (str_starts_with($id, 'words-file-') && str_ends_with($id, '-v1')) {
         $files[] = ['fileId' => $id, 'kind' => $file['kind'], 'locale' => 'ru'];
     }
 }

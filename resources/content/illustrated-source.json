@@ -1,0 +1,1520 @@
+{
+  "neighbor": {
+    "slides": [
+      {
+        "number": 1,
+        "text": [
+          "Кто мой",
+          "ближний?",
+          "Притча о милосердном",
+          "самарянине",
+          "Лк 10:25–37"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-neighbor-1",
+          "versionId": "builtin-illustrated-neighbor-1-v1"
+        },
+        "sha256": "a9b910f3b54adfe6e6bfa13a4eb304c0e3bf7ef921f5c82bf1559a44786a3ac8"
+      },
+      {
+        "number": 2,
+        "text": [
+          "Человек на дороге",
+          "Из Иерусалима",
+          "в Иерихон",
+          "Разыграем притчу"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-neighbor-2",
+          "versionId": "builtin-illustrated-neighbor-2-v1"
+        },
+        "sha256": "06d11c51fb207e6b84e5d184c46f1b9fc58345fd4c518fd01bec460afc84953d"
+      },
+      {
+        "number": 3,
+        "text": [
+          "Священник",
+          "Какую причину",
+          "ты можешь",
+          "придумать, чтобы",
+          "пройти мимо?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-neighbor-3",
+          "versionId": "builtin-illustrated-neighbor-3-v1"
+        },
+        "sha256": "ac7691ad4f0440d0d817c319d262a42186bebf0283b062c014a97cd01a637b0d"
+      },
+      {
+        "number": 4,
+        "text": [
+          "Левит",
+          "Как ты объяснишь,",
+          "почему",
+          "не остановился?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-neighbor-4",
+          "versionId": "builtin-illustrated-neighbor-4-v1"
+        },
+        "sha256": "91568b88c5ac420a3db606b22c8996e84e856cc118b900f93c285647f00f5f05"
+      },
+      {
+        "number": 5,
+        "text": [
+          "Самарянин",
+          "Ты тоже мог",
+          "пройти мимо.",
+          "Почему ты",
+          "решил помочь?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-neighbor-5",
+          "versionId": "builtin-illustrated-neighbor-5-v1"
+        },
+        "sha256": "a390d429eaa9bef2715570e1e164644430002e42711693d9e54889b251a535a7"
+      },
+      {
+        "number": 6,
+        "text": [
+          "Что мешает помочь?",
+          "Действительно ли названные причины",
+          "мешали остановиться?",
+          "Что всё-таки можно было сделать?",
+          "Мог ли самарянин найти такое же оправдание?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-neighbor-6",
+          "versionId": "builtin-illustrated-neighbor-6-v1"
+        },
+        "sha256": "ac7691ad4f0440d0d817c319d262a42186bebf0283b062c014a97cd01a637b0d"
+      },
+      {
+        "number": 7,
+        "text": [
+          "Поступки самарянина",
+          "1  Увидел",
+          "2  Подошёл",
+          "3  Помог",
+          "4  Привёз",
+          "5  Позаботился дальше",
+          "Что он сделал сам?",
+          "Как позаботился о человеке",
+          "после отъезда?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-neighbor-7",
+          "versionId": "builtin-illustrated-neighbor-7-v1"
+        },
+        "sha256": "a390d429eaa9bef2715570e1e164644430002e42711693d9e54889b251a535a7"
+      },
+      {
+        "number": 8,
+        "text": [
+          "Кто оказался ближним?",
+          "По каким поступкам",
+          "мы это понимаем?",
+          "«Иди, и ты поступай так же»",
+          "Лк 10:37"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-neighbor-8",
+          "versionId": "builtin-illustrated-neighbor-8-v1"
+        },
+        "sha256": "a390d429eaa9bef2715570e1e164644430002e42711693d9e54889b251a535a7"
+      },
+      {
+        "number": 9,
+        "text": [
+          "Новенький на перемене",
+          "Он сидит один.",
+          "Что можно",
+          "ему сказать",
+          "или предложить?",
+          "Как оправдать бездействие?",
+          "А как всё-таки помочь?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-neighbor-9",
+          "versionId": "builtin-illustrated-neighbor-9-v1"
+        },
+        "sha256": "d7726ed9c5c4819dd487b40b0d3b1627a27c71bde9eade21e5521937d8ca2cf3"
+      },
+      {
+        "number": 10,
+        "text": [
+          "Рассыпавшиеся книги",
+          "Младший ученик",
+          "уронил книги.",
+          "Как подойти",
+          "и предложить помощь?",
+          "Как оправдать бездействие?",
+          "А как всё-таки помочь?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-neighbor-10",
+          "versionId": "builtin-illustrated-neighbor-10-v1"
+        },
+        "sha256": "d524cbd22e95f6fcda4fdd4e233802051569b72e9764a1336aff7b7ff379d35f"
+      },
+      {
+        "number": 11,
+        "text": [
+          "Не берут в игру",
+          "Одноклассник",
+          "остался в стороне.",
+          "Как помочь ему",
+          "присоединиться?",
+          "Как оправдать бездействие?",
+          "А как всё-таки помочь?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-neighbor-11",
+          "versionId": "builtin-illustrated-neighbor-11-v1"
+        },
+        "sha256": "5e1878b1bc24e8f435713e6bf15d62e67f44d028134796e2adfa4ac1a00f2fee"
+      },
+      {
+        "number": 12,
+        "text": [
+          "Кому я могу",
+          "помочь?",
+          "На этой неделе я могу…",
+          "Один посильный поступок"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-neighbor-12",
+          "versionId": "builtin-illustrated-neighbor-12-v1"
+        },
+        "sha256": "a9b910f3b54adfe6e6bfa13a4eb304c0e3bf7ef921f5c82bf1559a44786a3ac8"
+      }
+    ],
+    "mapping": [
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        8
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        11
+      ],
+      [
+        12
+      ],
+      [
+        12
+      ]
+    ],
+    "changedFiles": {
+      "neighbor-presentation-ru-v1": "neighbor-presentation-ru-v2"
+    },
+    "sourceFile": null
+  },
+  "words": {
+    "slides": [
+      {
+        "number": 1,
+        "text": [
+          "Слова ранят.",
+          "Слова лечат",
+          "Как наши слова влияют",
+          "на другого человека?",
+          "12–14 лет   45 минут"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-1",
+          "versionId": "builtin-illustrated-words-1-v1"
+        },
+        "sha256": "deb86c711a380e0dac226d5112d8088261b9b9ffda8fe1fabbd75dc20af30eb7"
+      },
+      {
+        "number": 2,
+        "text": [
+          "Сообщение уже прочитано",
+          "«От тебя опять",
+          "никакой пользы»",
+          "Сообщение прочитано.",
+          "Если удалить его,",
+          "исчезнет ли обида?",
+          "Да / Нет / Не знаю"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-2",
+          "versionId": "builtin-illustrated-words-2-v1"
+        },
+        "sha256": "709a5d11b54510537fe5c334468d718051fffd334229ff4d1000ba0b83bf6048"
+      },
+      {
+        "number": 3,
+        "text": [
+          "Отправить или изменить",
+          "«Ты вообще ничего нормально",
+          "сделать не можешь»",
+          "«Мне неприятно, что ты так сделал.",
+          "Давай поговорим»",
+          "Отправить / Изменить / Не отправлять"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-3",
+          "versionId": "builtin-illustrated-words-3-v1"
+        },
+        "sha256": "709a5d11b54510537fe5c334468d718051fffd334229ff4d1000ba0b83bf6048"
+      },
+      {
+        "number": 4,
+        "text": [
+          "Шутка и насмешка",
+          "«Все уже поняли, кроме тебя»",
+          "«Ты ужасно выглядишь»",
+          "Что почувствует адресат?",
+          "Отправить / Изменить / Не отправлять"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-4",
+          "versionId": "builtin-illustrated-words-4-v1"
+        },
+        "sha256": "709a5d11b54510537fe5c334468d718051fffd334229ff4d1000ba0b83bf6048"
+      },
+      {
+        "number": 5,
+        "text": [
+          "Маленькая искра",
+          "«Посмотри,",
+          "небольшой огонь",
+          "как много вещества",
+          "зажигает!»",
+          "Иак. 3:5"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-5",
+          "versionId": "builtin-illustrated-words-5-v1"
+        },
+        "sha256": "70adf7b91439137f5a5b0030d702c489b80a76ef6e747e885443064839631df6"
+      },
+      {
+        "number": 6,
+        "text": [
+          "Доброе слово",
+          "«Никакое гнилое слово да не исходит",
+          "из уст ваших, а только доброе",
+          "для назидания в вере, дабы оно",
+          "доставляло благодать слушающим»",
+          "Еф. 4:29",
+          "Можно ли сказать неприятную правду по-доброму?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-6",
+          "versionId": "builtin-illustrated-words-6-v1"
+        },
+        "sha256": "7878fe163c07fd239437b7d692473b2d262e1d6647a2bbc7952f96c17a88b325"
+      },
+      {
+        "number": 7,
+        "text": [
+          "Ошибка в общей работе",
+          "«Ты опять",
+          "всё испортил!»",
+          "Как сказать о той же",
+          "ошибке без унижения?",
+          "Один ответ своими словами"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-7",
+          "versionId": "builtin-illustrated-words-7-v1"
+        },
+        "sha256": "08d2d755e22ae9b4109e3889df7cbbfd6ce6e403c6abd6a01718c5a6582712c9"
+      },
+      {
+        "number": 8,
+        "text": [
+          "Опоздание",
+          "Друг снова опоздал.",
+          "Ты ждал двадцать минут.",
+          "Тебе обидно. Что ты скажешь?",
+          "Как договориться на следующий раз?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-8",
+          "versionId": "builtin-illustrated-words-8-v1"
+        },
+        "sha256": "08d2d755e22ae9b4109e3889df7cbbfd6ce6e403c6abd6a01718c5a6582712c9"
+      },
+      {
+        "number": 9,
+        "text": [
+          "Почему ответ бывает резким",
+          "Рассердился",
+          "Хотел пошутить",
+          "Хотел понравиться другим",
+          "Хотел ответить тем же",
+          "Сказал не подумав",
+          "Хотел доказать, что прав",
+          "Какие две причины тебе понятнее?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-9",
+          "versionId": "builtin-illustrated-words-9-v1"
+        },
+        "sha256": "077b599b266a62f676e12d62f86d0990a2c769db8b22e89d03b820ac45bfe3ac"
+      },
+      {
+        "number": 10,
+        "text": [
+          "Пауза перед ответом",
+          "Это правда?",
+          "Нужно ли говорить",
+          "это сейчас?",
+          "Как сказать это",
+          "с уважением?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-10",
+          "versionId": "builtin-illustrated-words-10-v1"
+        },
+        "sha256": "077b599b266a62f676e12d62f86d0990a2c769db8b22e89d03b820ac45bfe3ac"
+      },
+      {
+        "number": 11,
+        "text": [
+          "Друг получил плохую оценку",
+          "«У меня опять",
+          "плохая оценка.",
+          "Я ничего",
+          "не понимаю»",
+          "Что можно сказать другу?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-11",
+          "versionId": "builtin-illustrated-words-11-v1"
+        },
+        "sha256": "a993c9d900f7c5cb014afdca013dfee7ae3e357fec23f66bcd77b04582afb76d"
+      },
+      {
+        "number": 12,
+        "text": [
+          "Насмешка в общем чате",
+          "В чате высмеивают одноклассника.",
+          "А. Добавлю смешной комментарий",
+          "Б. Ничего не сделаю",
+          "В. Не поддержу насмешку и помогу человеку",
+          "Г. Оскорблю тех, кто смеётся",
+          "Что можно написать ему лично?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-12",
+          "versionId": "builtin-illustrated-words-12-v1"
+        },
+        "sha256": "709a5d11b54510537fe5c334468d718051fffd334229ff4d1000ba0b83bf6048"
+      },
+      {
+        "number": 13,
+        "text": [
+          "Если я уже обидел",
+          "Остановить обиду",
+          "Признать свой поступок",
+          "Попросить прощения",
+          "Исправить то, что возможно"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-13",
+          "versionId": "builtin-illustrated-words-13-v1"
+        },
+        "sha256": "5d5b365734c3fdd7a3b1b1613ee77c3f037d35a7accf190348fd969b7043e398"
+      },
+      {
+        "number": 14,
+        "text": [
+          "Что я скажу теперь",
+          "Друг не сделал свою часть проекта.",
+          "Завтра нужно сдавать работу.",
+          "А. «Ты безответственный, как всегда»",
+          "Б. «Ничего страшного, я всё сделаю за тебя»",
+          "В. «Твоя часть не готова. Давай решим,",
+          "что ты успеешь сделать сегодня»"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-14",
+          "versionId": "builtin-illustrated-words-14-v1"
+        },
+        "sha256": "08d2d755e22ae9b4109e3889df7cbbfd6ce6e403c6abd6a01718c5a6582712c9"
+      },
+      {
+        "number": 15,
+        "text": [
+          "Мой шаг на неделю",
+          "Сделаю паузу, когда злюсь",
+          "Не поддержу насмешку",
+          "Скажу слово поддержки",
+          "Попрошу прощения",
+          "Один шаг. Выбор можно оставить при себе."
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-15",
+          "versionId": "builtin-illustrated-words-15-v1"
+        },
+        "sha256": "7878fe163c07fd239437b7d692473b2d262e1d6647a2bbc7952f96c17a88b325"
+      },
+      {
+        "number": 16,
+        "text": [
+          "Слова",
+          "могут помочь",
+          "Я могу выбирать слова,",
+          "которые помогают",
+          "человеку.",
+          "Еф. 4:29"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-words-16",
+          "versionId": "builtin-illustrated-words-16-v1"
+        },
+        "sha256": "7878fe163c07fd239437b7d692473b2d262e1d6647a2bbc7952f96c17a88b325"
+      }
+    ],
+    "mapping": [
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        8
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        11
+      ],
+      [
+        12
+      ],
+      [
+        13
+      ],
+      [
+        14
+      ],
+      [
+        15
+      ],
+      [
+        16
+      ]
+    ],
+    "changedFiles": {
+      "words-file-3-ru-v1": "words-file-3-ru-v2"
+    },
+    "sourceFile": "slova-ranyat"
+  },
+  "zakkhei": {
+    "slides": [
+      {
+        "number": 1,
+        "text": [
+          "Закхей",
+          "Можно ли исправить",
+          "ошибку?",
+          "9–11 лет   45 минут"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-zakkhei-1",
+          "versionId": "builtin-illustrated-zakkhei-1-v1"
+        },
+        "sha256": "9e6673a6d520b913017e95f0e4c54f59984dc7ccdf6962ce1f0eb0897afe6155"
+      },
+      {
+        "number": 2,
+        "text": [
+          "Что произошло?",
+          "Случайно пролил воду.",
+          "Списал и сказал, что решил сам.",
+          "А. Случайная ошибка",
+          "Б. Сознательный обман"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-zakkhei-2",
+          "versionId": "builtin-illustrated-zakkhei-2-v1"
+        },
+        "sha256": "59ee21525b1a2dcbbc4de005cd23f131999d06ed59c92154d8026524b9b93196"
+      },
+      {
+        "number": 3,
+        "text": [
+          "Человек на дереве",
+          "Закхей хотел увидеть Иисуса.",
+          "Лк. 19:1–4",
+          "Почему Закхей оказался на дереве?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-zakkhei-3",
+          "versionId": "builtin-illustrated-zakkhei-3-v1"
+        },
+        "sha256": "fe8b30d426298e79913f4997c14b487c16f1cd64f91cab08b9222af50f309963"
+      },
+      {
+        "number": 4,
+        "text": [
+          "Неожиданное приглашение",
+          "Иисус зовёт Закхея по имени",
+          "и хочет быть у него дома.",
+          "Лк. 19:5–7",
+          "А. Иисус",
+          "Б. Закхей",
+          "В. Толпа"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-zakkhei-4",
+          "versionId": "builtin-illustrated-zakkhei-4-v1"
+        },
+        "sha256": "fe8b30d426298e79913f4997c14b487c16f1cd64f91cab08b9222af50f309963"
+      },
+      {
+        "number": 5,
+        "text": [
+          "Обещание Закхея",
+          "Половину имущества бедным.",
+          "Возместить обиду вчетверо.",
+          "Лк. 19:8",
+          "Чем это отличается от слов «мне жаль»?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-zakkhei-5",
+          "versionId": "builtin-illustrated-zakkhei-5-v1"
+        },
+        "sha256": "78ed1c44afcb66e1fcf1cc33e2b4a93d2120fc16a21a598fd8dbde74607bef44"
+      },
+      {
+        "number": 6,
+        "text": [
+          "Слова и действия",
+          "«Прости, но ты сам виноват».",
+          "«Я обманул. Прости. Я скажу правду».",
+          "Где герой перестаёт перекладывать вину?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-zakkhei-6",
+          "versionId": "builtin-illustrated-zakkhei-6-v1"
+        },
+        "sha256": "59ee21525b1a2dcbbc4de005cd23f131999d06ed59c92154d8026524b9b93196"
+      },
+      {
+        "number": 7,
+        "text": [
+          "Следующий шаг",
+          "Признать поступок.",
+          "Попросить прощения.",
+          "Исправить вред.",
+          "Поступить иначе.",
+          "Почему одного обещания иногда мало?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-zakkhei-7",
+          "versionId": "builtin-illustrated-zakkhei-7-v1"
+        },
+        "sha256": "78ed1c44afcb66e1fcf1cc33e2b4a93d2120fc16a21a598fd8dbde74607bef44"
+      },
+      {
+        "number": 8,
+        "text": [
+          "Чужая работа",
+          "Ты выдал чужой рисунок за свой.",
+          "Учитель похвалил тебя.",
+          "Как вернуть автору признание?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-zakkhei-8",
+          "versionId": "builtin-illustrated-zakkhei-8-v1"
+        },
+        "sha256": "59ee21525b1a2dcbbc4de005cd23f131999d06ed59c92154d8026524b9b93196"
+      },
+      {
+        "number": 9,
+        "text": [
+          "Можно ли вернуть доверие?",
+          "Друг пока не хочет давать",
+          "тебе свою вещь снова.",
+          "А. Потребовать доверия",
+          "Б. Дать время и соблюдать обещания",
+          "В. Снова взять без спроса"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-zakkhei-9",
+          "versionId": "builtin-illustrated-zakkhei-9-v1"
+        },
+        "sha256": "59ee21525b1a2dcbbc4de005cd23f131999d06ed59c92154d8026524b9b93196"
+      },
+      {
+        "number": 10,
+        "text": [
+          "Испорченная книга",
+          "Ты порвал чужую книгу.",
+          "Что скажешь? Что предложишь?",
+          "Что реально поможет владельцу книги?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-zakkhei-10",
+          "versionId": "builtin-illustrated-zakkhei-10-v1"
+        },
+        "sha256": "59ee21525b1a2dcbbc4de005cd23f131999d06ed59c92154d8026524b9b93196"
+      },
+      {
+        "number": 11,
+        "text": [
+          "Один шаг",
+          "На этой неделе я могу…",
+          "признать • вернуть • исправить",
+          "Что поможет выполнить обещание?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-zakkhei-11",
+          "versionId": "builtin-illustrated-zakkhei-11-v1"
+        },
+        "sha256": "78ed1c44afcb66e1fcf1cc33e2b4a93d2120fc16a21a598fd8dbde74607bef44"
+      },
+      {
+        "number": 12,
+        "text": [
+          "Встреча меняет жизнь",
+          "«Сын Человеческий пришёл",
+          "взыскать и спасти погибшее»",
+          "Лк. 19:10",
+          "Чем покаяние отличается от оправдания?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-zakkhei-12",
+          "versionId": "builtin-illustrated-zakkhei-12-v1"
+        },
+        "sha256": "9e6673a6d520b913017e95f0e4c54f59984dc7ccdf6962ce1f0eb0897afe6155"
+      }
+    ],
+    "mapping": [
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        8
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        11
+      ],
+      [
+        12
+      ]
+    ],
+    "changedFiles": {
+      "zakkhei-file-3-ru-v1": "zakkhei-file-3-ru-v2",
+      "zakkhei-file-4-ru-v1": "zakkhei-file-4-ru-v2",
+      "zakkhei-file-5-ru-v1": "zakkhei-file-5-ru-v2"
+    },
+    "sourceFile": "zakkhei"
+  },
+  "judge": {
+    "slides": [
+      {
+        "number": 1,
+        "text": [
+          "Не спеши",
+          "судить",
+          "13–15 лет   45 минут"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-judge-1",
+          "versionId": "builtin-illustrated-judge-1-v1"
+        },
+        "sha256": "ca2d39b48b995ad0bc2bac119dc135fa284f14d3eea0a451cc97859552ab79a8"
+      },
+      {
+        "number": 2,
+        "text": [
+          "Первое впечатление",
+          "Ученик не включился",
+          "в общую работу.",
+          "А. Ему всё равно",
+          "Б. Он не понял задание",
+          "В. Ему сейчас трудно",
+          "Г. Пока не знаю"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-judge-2",
+          "versionId": "builtin-illustrated-judge-2-v1"
+        },
+        "sha256": "e665a030dd28a60b697709a7856e5ce271aafc040ed732465458cf90a085f5d6"
+      },
+      {
+        "number": 3,
+        "text": [
+          "Видимое и додуманное",
+          "Он сидит отдельно.",
+          "Он не хочет помогать.",
+          "Он всегда эгоист.",
+          "Какая фраза требует дополнительных сведений?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-judge-3",
+          "versionId": "builtin-illustrated-judge-3-v1"
+        },
+        "sha256": "e665a030dd28a60b697709a7856e5ce271aafc040ed732465458cf90a085f5d6"
+      },
+      {
+        "number": 4,
+        "text": [
+          "Сучок и бревно",
+          "«Вынь прежде бревно",
+          "из твоего глаза».",
+          "Мф. 7:1–5",
+          "Почему Иисус сначала говорит о собственном бревне?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-judge-4",
+          "versionId": "builtin-illustrated-judge-4-v1"
+        },
+        "sha256": "86c3170d9d4fcabb2347f03bd7d883223e8be757ec11b61c4560f0cccaee4bd8"
+      },
+      {
+        "number": 5,
+        "text": [
+          "Появился контекст",
+          "Он просит учителя помочь.",
+          "Мы всё ещё не знаем",
+          "полной истории.",
+          "А. Ему всё равно",
+          "Б. Он не понял задание",
+          "В. Ему сейчас трудно",
+          "Г. Пока не знаю",
+          "Какие выводы теперь стоит пересмотреть?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-judge-5",
+          "versionId": "builtin-illustrated-judge-5-v1"
+        },
+        "sha256": "86c3170d9d4fcabb2347f03bd7d883223e8be757ec11b61c4560f0cccaee4bd8"
+      },
+      {
+        "number": 6,
+        "text": [
+          "Моё бревно",
+          "Я тоже иногда делаю выводы,",
+          "не задав вопроса.",
+          "Что помогает увидеть свою ошибку?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-judge-6",
+          "versionId": "builtin-illustrated-judge-6-v1"
+        },
+        "sha256": "86c3170d9d4fcabb2347f03bd7d883223e8be757ec11b61c4560f0cccaee4bd8"
+      },
+      {
+        "number": 7,
+        "text": [
+          "Поступок и человек",
+          "«Ты лентяй».",
+          "«Твоя часть пока не готова».",
+          "С какой фразой легче начать решение?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-judge-7",
+          "versionId": "builtin-illustrated-judge-7-v1"
+        },
+        "sha256": "faa003195e8984430c180635e35365404f328b71b604e0949abb9f6146cbf24d"
+      },
+      {
+        "number": 8,
+        "text": [
+          "Когда действие опасно",
+          "В чате травят ученика.",
+          "Можно ли назвать это вредом?",
+          "А. Присоединиться",
+          "Б. Поддержать пострадавшего и позвать взрослого",
+          "В. Терпеть любые действия"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-judge-8",
+          "versionId": "builtin-illustrated-judge-8-v1"
+        },
+        "sha256": "faa003195e8984430c180635e35365404f328b71b604e0949abb9f6146cbf24d"
+      },
+      {
+        "number": 9,
+        "text": [
+          "Вопрос до вывода",
+          "«Что случилось?»",
+          "«Я правильно понял?»",
+          "«Какая помощь нужна?»",
+          "Есть ли у человека пространство ответить?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-judge-9",
+          "versionId": "builtin-illustrated-judge-9-v1"
+        },
+        "sha256": "faa003195e8984430c180635e35365404f328b71b604e0949abb9f6146cbf24d"
+      },
+      {
+        "number": 10,
+        "text": [
+          "Разговор после урока",
+          "«Я заметил, что работа не готова.",
+          "Что произошло?»",
+          "Как совместить понимание и ответственность?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-judge-10",
+          "versionId": "builtin-illustrated-judge-10-v1"
+        },
+        "sha256": "faa003195e8984430c180635e35365404f328b71b604e0949abb9f6146cbf24d"
+      },
+      {
+        "number": 11,
+        "text": [
+          "Переписать ярлык",
+          "«Она всегда всё портит».",
+          "Как сказать о конкретном случае?",
+          "Можно ли проверить нашу новую фразу?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-judge-11",
+          "versionId": "builtin-illustrated-judge-11-v1"
+        },
+        "sha256": "e665a030dd28a60b697709a7856e5ce271aafc040ed732465458cf90a085f5d6"
+      },
+      {
+        "number": 12,
+        "text": [
+          "Внимательный взгляд",
+          "Я могу проверить факт,",
+          "заметить свою ошибку",
+          "и задать вопрос.",
+          "Чему учит образ бревна перед помощью брату?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-judge-12",
+          "versionId": "builtin-illustrated-judge-12-v1"
+        },
+        "sha256": "ca2d39b48b995ad0bc2bac119dc135fa284f14d3eea0a451cc97859552ab79a8"
+      }
+    ],
+    "mapping": [
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        8
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        11
+      ],
+      [
+        12
+      ]
+    ],
+    "changedFiles": {
+      "judge-file-3-ru-v1": "judge-file-3-ru-v2",
+      "judge-file-4-ru-v1": "judge-file-4-ru-v2",
+      "judge-file-5-ru-v1": "judge-file-5-ru-v2"
+    },
+    "sourceFile": "ne-speshi-sudit"
+  },
+  "sheep": {
+    "slides": [
+      {
+        "number": 1,
+        "text": [
+          "Потерянная",
+          "овечка",
+          "5–7 лет   35 минут"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-1",
+          "versionId": "builtin-illustrated-sheep-1-v1"
+        },
+        "sha256": "2e07c57bee98a8f0b69199dcdf79d30450ae0c89897e9e515fbea1641f9afec2"
+      },
+      {
+        "number": 2,
+        "text": [
+          "Наше маленькое стадо",
+          "Сколько овечек в нашей игре?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-2",
+          "versionId": "builtin-illustrated-sheep-2-v1"
+        },
+        "sha256": "b6b11aa84ad40d6afd8a7061f612a8466f3c3fae89163e1bf3a63d5f3610d331"
+      },
+      {
+        "number": 3,
+        "text": [
+          "Одной не хватает",
+          "Кого не хватает?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-3",
+          "versionId": "builtin-illustrated-sheep-3-v1"
+        },
+        "sha256": "b6b11aa84ad40d6afd8a7061f612a8466f3c3fae89163e1bf3a63d5f3610d331"
+      },
+      {
+        "number": 4,
+        "text": [
+          "Чей это голос?",
+          "Ш-ш-ш",
+          "Буль-буль",
+          "Ме-е"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-4",
+          "versionId": "builtin-illustrated-sheep-4-v1"
+        },
+        "sha256": "b6b11aa84ad40d6afd8a7061f612a8466f3c3fae89163e1bf3a63d5f3610d331"
+      },
+      {
+        "number": 5,
+        "text": [
+          "Где овечка?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-5",
+          "versionId": "builtin-illustrated-sheep-5-v1"
+        },
+        "sha256": "36f886531ce4a7dce091f7d5b19b50bba1a0ff459f9ba7a298e0b922af705a7d"
+      },
+      {
+        "number": 6,
+        "text": [
+          "Пастух нашёл овечку",
+          "Он радуется",
+          "и бережно несёт",
+          "овечку.",
+          "Лк. 15:5"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-6",
+          "versionId": "builtin-illustrated-sheep-6-v1"
+        },
+        "sha256": "9c586f661c67e5b65600dad76b4b1dc5febb348db2db5a17a057ad12a4325534"
+      },
+      {
+        "number": 7,
+        "text": [
+          "Радость вместе",
+          "Пастух: «Я нашёл овечку!»",
+          "Друзья: «Мы рады!»"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-7",
+          "versionId": "builtin-illustrated-sheep-7-v1"
+        },
+        "sha256": "9c586f661c67e5b65600dad76b4b1dc5febb348db2db5a17a057ad12a4325534"
+      },
+      {
+        "number": 8,
+        "text": [
+          "Наш настольный театр",
+          "Ищем",
+          "Нашли",
+          "Радуемся"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-8",
+          "versionId": "builtin-illustrated-sheep-8-v1"
+        },
+        "sha256": "b6b11aa84ad40d6afd8a7061f612a8466f3c3fae89163e1bf3a63d5f3610d331"
+      },
+      {
+        "number": 9,
+        "text": [
+          "Что было сначала?",
+          "Нашёл",
+          "Одной нет",
+          "Радуется",
+          "Ищет"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-9",
+          "versionId": "builtin-illustrated-sheep-9-v1"
+        },
+        "sha256": "36f886531ce4a7dce091f7d5b19b50bba1a0ff459f9ba7a298e0b922af705a7d"
+      },
+      {
+        "number": 10,
+        "text": [
+          "История по порядку",
+          "1. Одной нет",
+          "2. Ищет",
+          "3. Нашёл",
+          "4. Радуется"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-10",
+          "versionId": "builtin-illustrated-sheep-10-v1"
+        },
+        "sha256": "9c586f661c67e5b65600dad76b4b1dc5febb348db2db5a17a057ad12a4325534"
+      },
+      {
+        "number": 11,
+        "text": [
+          "Радость о возвращении",
+          "Бог рад, когда люди",
+          "возвращаются к Нему.",
+          "Лк. 15:7",
+          "«Прости меня. Я хочу помириться»."
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-11",
+          "versionId": "builtin-illustrated-sheep-11-v1"
+        },
+        "sha256": "9c586f661c67e5b65600dad76b4b1dc5febb348db2db5a17a057ad12a4325534"
+      },
+      {
+        "number": 12,
+        "text": [
+          "Приглашение в игру",
+          "«Хочешь строить",
+          "с нами?»",
+          "«Я покажу,",
+          "как начать»."
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-12",
+          "versionId": "builtin-illustrated-sheep-12-v1"
+        },
+        "sha256": "e0ec9a5299b1ac9f60f67413397bf5e427a4aae73f0321f7841cfffb2e8d4daf"
+      },
+      {
+        "number": 13,
+        "text": [
+          "Помощь в действии",
+          "Кубик далеко",
+          "Не знаю, как начать",
+          "Я пока стою рядом"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-13",
+          "versionId": "builtin-illustrated-sheep-13-v1"
+        },
+        "sha256": "e0ec9a5299b1ac9f60f67413397bf5e427a4aae73f0321f7841cfffb2e8d4daf"
+      },
+      {
+        "number": 14,
+        "text": [
+          "Каждый дорог Богу",
+          "Пастух искал и нашёл овечку.",
+          "Он радовался.",
+          "Какую заботу я покажу",
+          "на этой неделе?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-sheep-14",
+          "versionId": "builtin-illustrated-sheep-14-v1"
+        },
+        "sha256": "f2aacdcda09553f140b667258c4a92dcb2e80720d582ddc2f85cff5a52bb96ca"
+      }
+    ],
+    "mapping": [
+      [
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        8
+      ],
+      [
+        9,
+        10
+      ],
+      [
+        11
+      ],
+      [
+        12
+      ],
+      [
+        13
+      ],
+      [
+        14
+      ]
+    ],
+    "changedFiles": {
+      "sheep-file-3-ru-v1": "sheep-file-3-ru-v2",
+      "sheep-file-4-ru-v1": "sheep-file-4-ru-v2",
+      "sheep-file-5-ru-v1": "sheep-file-5-ru-v2"
+    },
+    "sourceFile": "poteryannaya-ovechka"
+  },
+  "talent": {
+    "slides": [
+      {
+        "number": 1,
+        "text": [
+          "Что делать",
+          "со своим",
+          "талантом?",
+          "11–13 лет   45 минут"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-1",
+          "versionId": "builtin-illustrated-talent-1-v1"
+        },
+        "sha256": "bd956e3e02fb80bf8cab1f15755c0faabf6d19e587bdeb12cd5d5ed8b9aa9b77"
+      },
+      {
+        "number": 2,
+        "text": [
+          "Доверенное трём слугам",
+          "Пять",
+          "Два",
+          "Один",
+          "Мф. 25:14–18"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-2",
+          "versionId": "builtin-illustrated-talent-2-v1"
+        },
+        "sha256": "e5f8597c96bd1d0b4c2538f688711eb1637ef3434b1bd21bc750a770baa0a911"
+      },
+      {
+        "number": 3,
+        "text": [
+          "Слуга",
+          "Получил",
+          "При отчёте",
+          "Первый",
+          "5",
+          "10",
+          "Второй",
+          "2",
+          "4",
+          "Третий",
+          "1",
+          "1",
+          "Что слуги принесли к отчёту?",
+          "До решения хозяина о третьем слуге."
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-3",
+          "versionId": "builtin-illustrated-talent-3-v1"
+        },
+        "sha256": "8e697ef83656a8e4c240cf391a2df972410f6bb32925dd277027a61efb75aaff"
+      },
+      {
+        "number": 4,
+        "text": [
+          "Два значения слова «талант»",
+          "В притче",
+          "Денежная мера",
+          "Сегодня",
+          "Способность",
+          "Что доверено мне и как это использовать?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-4",
+          "versionId": "builtin-illustrated-talent-4-v1"
+        },
+        "sha256": "32841f8aacb6b731f05d86af1d6de2924db6ad14dca2d3aee52e64e9ccc6e2e4"
+      },
+      {
+        "number": 5,
+        "text": [
+          "Одинаковая похвала",
+          "«В малом ты был верен…»",
+          "Мф. 25:21 и 23",
+          "За что хозяин хвалит обоих?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-5",
+          "versionId": "builtin-illustrated-talent-5-v1"
+        },
+        "sha256": "8e697ef83656a8e4c240cf391a2df972410f6bb32925dd277027a61efb75aaff"
+      },
+      {
+        "number": 6,
+        "text": [
+          "Спрятанное серебро",
+          "Он спрятал",
+          "доверенное.",
+          "Мф. 25:24–30",
+          "Что поможет начать с маленького шага?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-6",
+          "versionId": "builtin-illustrated-talent-6-v1"
+        },
+        "sha256": "21d8fa846b13b1c083755abf913cc447ad39e0111a359a91f7c2d8f9680455fa"
+      },
+      {
+        "number": 7,
+        "text": [
+          "Разные возможности",
+          "Что у меня",
+          "уже получается?",
+          "Чему я хочу",
+          "научиться?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-7",
+          "versionId": "builtin-illustrated-talent-7-v1"
+        },
+        "sha256": "d165babe153deb35135da624c5e2f1b26c08fb9fe1a1367ec7ba509df13a5bd6"
+      },
+      {
+        "number": 8,
+        "text": [
+          "Помощь начинается с вопроса",
+          "«Что поможет тебе",
+          "присоединиться?»",
+          "1 Пет. 4:10"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-8",
+          "versionId": "builtin-illustrated-talent-8-v1"
+        },
+        "sha256": "d400fee0167baf78d18b349702a56d6c6d0f55fb090fc64c56d780d67e4e362c"
+      },
+      {
+        "number": 9,
+        "text": [
+          "Мастерская помощи",
+          "Приглашение в общую игру",
+          "Два понятных первых шага",
+          "Приветствие на 30 секунд",
+          "6 минут на общее дело"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-9",
+          "versionId": "builtin-illustrated-talent-9-v1"
+        },
+        "sha256": "bd956e3e02fb80bf8cab1f15755c0faabf6d19e587bdeb12cd5d5ed8b9aa9b77"
+      },
+      {
+        "number": 10,
+        "text": [
+          "Проверка с гостем",
+          "Гость объясняет,",
+          "что он понял.",
+          "«Мне помогло…»",
+          "«Хочу уточнить…»"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-10",
+          "versionId": "builtin-illustrated-talent-10-v1"
+        },
+        "sha256": "06daad41dfa314c208a826f465c89f7cf3968bb5630ddc1c2052e27cac2df4bd"
+      },
+      {
+        "number": 11,
+        "text": [
+          "Мой один шаг",
+          "Кому поможет?",
+          "Что сделаю первым?",
+          "Когда начну?",
+          "Кто поддержит?"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-11",
+          "versionId": "builtin-illustrated-talent-11-v1"
+        },
+        "sha256": "32841f8aacb6b731f05d86af1d6de2924db6ad14dca2d3aee52e64e9ccc6e2e4"
+      },
+      {
+        "number": 12,
+        "text": [
+          "Пример маленького дела",
+          "Могу объяснить правило игры.",
+          "Спрошу младшего брата.",
+          "В субботу покажу один ход.",
+          "Если трудно, попрошу совета."
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-12",
+          "versionId": "builtin-illustrated-talent-12-v1"
+        },
+        "sha256": "06daad41dfa314c208a826f465c89f7cf3968bb5630ddc1c2052e27cac2df4bd"
+      },
+      {
+        "number": 13,
+        "text": [
+          "Помеха и поддержка",
+          "Не умею всего",
+          "Сравниваю себя",
+          "Не хватает времени",
+          "Если это случится, я…"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-13",
+          "versionId": "builtin-illustrated-talent-13-v1"
+        },
+        "sha256": "3bced2d824efdcc94cbdc8b25c157106de56d55ab9e1ad61d8ccbad14631ec79"
+      },
+      {
+        "number": 14,
+        "text": [
+          "Доверенное для добра",
+          "«Служите друг другу,",
+          "каждый тем даром,",
+          "какой получил…»",
+          "1 Пет. 4:10",
+          "Мой первый шаг — …"
+        ],
+        "media": {
+          "assetId": "builtin-illustrated-talent-14",
+          "versionId": "builtin-illustrated-talent-14-v1"
+        },
+        "sha256": "bd956e3e02fb80bf8cab1f15755c0faabf6d19e587bdeb12cd5d5ed8b9aa9b77"
+      }
+    ],
+    "mapping": [
+      [
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        8
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        13
+      ],
+      [
+        14
+      ]
+    ],
+    "changedFiles": {
+      "talent-file-3-ru-v1": "talent-file-3-ru-v2",
+      "talent-file-4-ru-v1": "talent-file-4-ru-v2",
+      "talent-file-5-ru-v1": "talent-file-5-ru-v2"
+    },
+    "sourceFile": "talant"
+  }
+}

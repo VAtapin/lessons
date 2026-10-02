@@ -469,3 +469,8 @@
     .conducting-app.conducting-app.theme-ocean .focus-stage .scene-title { font-size: clamp(1.7rem, 6vw, 2.6rem); }
     .conducting-app.conducting-app.theme-ocean .focus-stage .scene-description { font-size: 1.2rem; }
 }
+
+.conducting-app.conducting-app.theme-berry { --ink: #51344b; --muted: #725d72; --paper: #fcf2f7; --card: #fffafd; --border: #8a507039; --accent: #ba567d; --olive: #8a5070; --scene-dark: #51344b; --scene-deep: #40243b; --scene-soft: #f3dfe9; --scene-success: #f5e5ef; }
+.conducting-app.conducting-app.theme-berry .focus-stage { background: linear-gradient(135deg, #fffafd, #f3dfe9); }
+.conducting-app.conducting-app.theme-berry .focus-stage.focus-stage-cover .focus-stage-visual::after { background: linear-gradient(90deg, #40243be8, #51344b88 48%, #51344b00); }
+.conducting-app.conducting-app.theme-berry .finished-lesson { background: radial-gradient(circle at 55% 30%, #d8a3bd55, transparent 50%), linear-gradient(135deg, #40243b, #8a5070); }

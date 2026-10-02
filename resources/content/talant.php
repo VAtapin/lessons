@@ -71,7 +71,7 @@ foreach ($raw['screens'] as $i => $screen) {
 }
 $files = [];
 foreach (config('lesson-files') as $id => $file) {
-    if (str_starts_with($id, 'talent-file-')) {
+    if (str_starts_with($id, 'talent-file-') && str_ends_with($id, '-v1')) {
         $files[] = ['fileId' => $id, 'kind' => $file['kind'], 'locale' => 'ru'];
     }
 }
