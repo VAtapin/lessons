@@ -482,3 +482,25 @@
 /* Preserve every source word while leaving room for the paired exit answers. */
 .conducting-app.conducting-app.theme-cobalt .focus-stage:has(.interactive-free-response) .scene-description { white-space: normal; }
 .conducting-app.conducting-app.theme-cobalt .focus-stage:has(.interactive-free-response) .interactive-free-response legend { font-size: clamp(1.3rem, min(2.2vw, 3.7dvh), 2rem); line-height: 1.15; }
+
+.conducting-app.conducting-app.theme-plum { --ink: #4a345f; --muted: #74647d; --paper: #f4eff8; --card: #fffafd; --border: #735a8839; --accent: #856096; --olive: #735a88; --scene-dark: #4a345f; --scene-deep: #32213f; --scene-soft: #ece1f3; --scene-success: #eee4f4; }
+.conducting-app.conducting-app.theme-plum .focus-stage { background: linear-gradient(135deg, #fffafd, #ece1f3); }
+.conducting-app.conducting-app.theme-plum .focus-stage.focus-stage-cover .focus-stage-visual::after { background: linear-gradient(90deg, #32213fe8, #4a345f88 48%, #4a345f00); }
+.conducting-app.conducting-app.theme-plum .finished-lesson { background: radial-gradient(circle at 55% 30%, #b6a0c955, transparent 50%), linear-gradient(135deg, #32213f, #735a88); }
+/* Preserve every source word while leaving room for the paired exit answers. */
+.conducting-app.conducting-app.theme-plum .focus-stage:has(.interactive-free-response) .scene-description { white-space: normal; }
+.conducting-app.conducting-app.theme-plum .focus-stage:has(.interactive-free-response) .interactive-free-response legend { font-size: clamp(1.3rem, min(2.2vw, 3.7dvh), 2rem); line-height: 1.15; }
+.conducting-app.conducting-app.theme-plum .focus-stage-cover .scene-title { font-size: clamp(2.5rem, min(6vw, 7dvh), 5.5rem); }
+/* Six source events remain visible together during the discussion. */
+.conducting-app.conducting-app.theme-plum .focus-stage:has(.presentation-table) { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+.conducting-app.conducting-app.theme-plum .focus-stage:has(.presentation-table) .focus-stage-copy { padding: 18px 24px; }
+.conducting-app.conducting-app.theme-plum .focus-stage:has(.presentation-table) .scene-title { font-size: clamp(1.5rem, 3dvh, 2rem); margin-bottom: 8px; }
+.conducting-app.conducting-app.theme-plum .focus-stage:has(.presentation-table) .presentation-table { font-size: 1rem; margin: 8px 0; }
+.conducting-app.conducting-app.theme-plum .focus-stage:has(.presentation-table) .presentation-table caption { font-size: 1.2rem; }
+.conducting-app.conducting-app.theme-plum .focus-stage:has(.presentation-table) .presentation-table th,
+.conducting-app.conducting-app.theme-plum .focus-stage:has(.presentation-table) .presentation-table td { padding: 6px 8px; }
+.conducting-app.conducting-app.theme-plum .focus-stage:has(.interactive-sequence) .scene-description { white-space: normal; }
+.conducting-app.conducting-app.theme-plum .focus-stage:has(.interactive-sequence) .focus-stage-copy { padding-block: 18px; }
+@media (max-width: 850px) {
+    .conducting-app.conducting-app.theme-plum .focus-stage:has(.presentation-table) { grid-template-columns: minmax(0, 1fr); }
+}
