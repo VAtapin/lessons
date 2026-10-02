@@ -24,7 +24,9 @@ final class PresentationBlock extends InteractiveDefinition
         ], ['title', 'eyebrow', 'subtitle', 'quote', 'source', 'label', 'actionLabel', 'hideLabel', 'resetLabel', 'restartLabel', 'resetText', 'emptyText', 'feedback']),
             ['path' => ['items', '*', 'label'], 'required' => false, 'blankMode' => 'unicode'],
             ['path' => ['modes', '*', 'label'], 'required' => false, 'blankMode' => 'unicode'],
-            ['path' => ['modes', '*', 'title'], 'required' => false, 'blankMode' => 'unicode']];
+            ['path' => ['modes', '*', 'title'], 'required' => false, 'blankMode' => 'unicode'],
+            ['path' => ['table', 'headers', '*'], 'required' => true, 'blankMode' => 'unicode'],
+            ['path' => ['table', 'rows', '*', '*'], 'required' => true, 'blankMode' => 'unicode']];
     }
 
     public function defaults(): array
@@ -70,14 +72,43 @@ final class PresentationBlock extends InteractiveDefinition
         $identity = null;
         $countIdentity = null;
         $itemIdentity = null;
+        $tableIdentity = null;
         foreach ($locales as $locale) {
-            $content = Shape::object($block->content[$locale], ['text', 'modes'], ['title', 'eyebrow', 'subtitle', 'quote', 'source', 'label', 'actionLabel', 'hideLabel', 'resetLabel', 'restartLabel', 'resetText', 'emptyText', 'feedback', 'items'], 'presentation.content');
+            $content = Shape::object($block->content[$locale], ['text', 'modes'], ['title', 'eyebrow', 'subtitle', 'quote', 'source', 'label', 'actionLabel', 'hideLabel', 'resetLabel', 'restartLabel', 'resetText', 'emptyText', 'feedback', 'items', 'table'], 'presentation.content');
             Shape::boundedText($content['text'], 'presentation.text', 5000);
             foreach (['title', 'eyebrow', 'subtitle', 'quote', 'source', 'label', 'actionLabel', 'hideLabel', 'resetLabel', 'restartLabel', 'resetText', 'emptyText', 'feedback'] as $field) {
                 if (array_key_exists($field, $content)) {
                     Shape::boundedText($content[$field], 'presentation.'.$field, $field === 'quote' || $field === 'feedback' ? 5000 : 500, true);
                 }
             }
+            $dimensions = null;
+            if (array_key_exists('table', $content)) {
+                if ($block->config['kind'] !== 'reveal') {
+                    throw new ValidationException('Tables require a teacher-controlled reveal.');
+                }
+                $table = Shape::object($content['table'], ['headers', 'rows'], [], 'presentation.table');
+                $headers = Shape::list($table['headers'], 'presentation.table.headers', 2);
+                $rows = Shape::list($table['rows'], 'presentation.table.rows', 1);
+                if (count($headers) > 6 || count($rows) > 12) {
+                    throw new ValidationException('Presentation table is too large.');
+                }
+                foreach ($headers as $header) {
+                    Shape::boundedText($header, 'presentation.table.header', 200);
+                }
+                foreach ($rows as $row) {
+                    if (count(Shape::list($row, 'presentation.table.row')) !== count($headers)) {
+                        throw new ValidationException('Table rows must match the headers.');
+                    }
+                    foreach ($row as $cell) {
+                        Shape::boundedText($cell, 'presentation.table.cell', 500);
+                    }
+                }
+                $dimensions = [count($headers), count($rows)];
+            }
+            if ($tableIdentity !== null && $tableIdentity !== [$dimensions]) {
+                throw new ValidationException('Table dimensions must match across translations.');
+            }
+            $tableIdentity = [$dimensions];
             $itemIds = [];
             foreach (Shape::list($content['items'] ?? [], 'presentation.items', 0) as $item) {
                 Shape::object($item, ['itemId', 'text'], ['label'], 'presentation.item');

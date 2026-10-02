@@ -40,7 +40,8 @@ function selectMode(modeId: string) {
         </template>
         <template v-else-if="block.config.kind === 'reveal'">
             <button v-if="presenter" type="button" class="presentation-toggle" :disabled="disabled" :aria-expanded="!!block.runtime?.presentation?.visible" @click="$emit('command', 'presentation.toggle', { blockId: block.id })">{{ block.runtime?.presentation?.visible ? (block.content.hideLabel ?? messages.presentation_hide) : (block.content.label ?? messages.presentation_show) }}</button>
-            <p v-if="!conducting || block.runtime?.presentation?.visible" class="presentation-revealed plain-text">{{ block.content.text }}</p>
+            <p v-if="!block.content.table && (!conducting || block.runtime?.presentation?.visible)" class="presentation-revealed plain-text">{{ block.content.text }}</p>
+            <table v-if="block.content.table && (!conducting || block.runtime?.presentation?.visible)" class="presentation-table"><caption>{{ block.content.text }}</caption><thead><tr><th v-for="(header, column) in block.content.table.headers" :key="column" scope="col">{{ header }}</th></tr></thead><tbody><tr v-for="(row, index) in block.content.table.rows" :key="index"><template v-for="(cell, column) in row" :key="column"><th v-if="column === 0" scope="row">{{ cell }}</th><td v-else>{{ cell }}</td></template></tr></tbody></table>
             <blockquote v-if="block.content.quote && (!conducting || block.runtime?.presentation?.visible)" class="scene-quote">{{ block.content.quote }}</blockquote>
             <small v-if="block.content.source && (!conducting || block.runtime?.presentation?.visible)" class="scene-source">{{ block.content.source }}</small>
         </template>

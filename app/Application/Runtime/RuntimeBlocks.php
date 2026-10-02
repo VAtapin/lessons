@@ -192,7 +192,7 @@ final class RuntimeBlocks
                 $presentation = $state['presentation'] ?? [];
                 if ($block->config['kind'] === 'reveal' && ! ($presentation['visible'] ?? false)) {
                     $view['blocks'][$index]['content']['text'] = '';
-                    unset($view['blocks'][$index]['content']['quote'], $view['blocks'][$index]['content']['source']);
+                    unset($view['blocks'][$index]['content']['quote'], $view['blocks'][$index]['content']['source'], $view['blocks'][$index]['content']['table']);
                 }
                 if ($block->config['kind'] === 'response-board' && $detailsAvailable) {
                     $runtime['board'] = SessionAnswer::query()->where('teaching_session_id', $session->id)

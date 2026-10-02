@@ -35,6 +35,26 @@ const content = node => node.kind === '#comment' ? '' : node.text + node.childre
 const descendants = node => [node, ...node.children.flatMap(descendants)];
 const messages = { undo: 'Undo', sequence_reset: 'Reset', sequence_empty: 'Empty', your_answer: 'Answer', add_answer: 'Add', no_role: 'Release' };
 
+test('reveal table stays hidden until the teacher opens it and renders accessible headers and rows', async t => {
+    const block = { id: 'table', type: 'core.presentation', content: { text: 'At the report', label: 'Show table', hideLabel: 'Hide table', modes: [], table: { headers: ['Servant', 'Received', 'Returned'], rows: [['First', '5', '10'], ['Second', '2', '4'], ['Third', '1', '1']] } }, config: { kind: 'reveal' }, runtime: { presentation: { visible: false } } };
+    const child = fixture(t, block, { conducting: true, interactive: true }, presentationComponent);
+    assert.equal(child.nodes('table').length, 0);
+    assert.equal(child.nodes('button').length, 0);
+    child.props.block.runtime.presentation.visible = true;
+    await Vue.nextTick();
+    assert.equal(child.nodes('table').length, 1);
+    assert.equal(child.nodes('caption').length, 1);
+    assert.equal(child.nodes('th').filter(node => node.props.scope === 'col').length, 3);
+    assert.equal(child.nodes('th').filter(node => node.props.scope === 'row').length, 3);
+    assert.match(content(child.root), /First510Second24Third11/);
+    child.props.block.runtime.presentation.visible = false;
+    await Vue.nextTick();
+    assert.equal(child.nodes('table').length, 0);
+    const teacher = fixture(t, structuredClone(block), { conducting: true, presenter: true }, presentationComponent);
+    teacher.click('Show table');
+    assert.deepEqual(teacher.events, [['command', 'presentation.toggle', { blockId: 'table' }]]);
+});
+
 test('teacher-controlled picture count renders five then four images for pupils without answer buttons', async t => {
     const block = { id: 'herd', type: 'core.presentation', content: { title: 'Our herd', text: 'Sheep', modes: [{ modeId: 'herd', count: 5, title: 'Our herd', text: 'How many?', label: 'Show five' }, { modeId: 'missing', count: 4, title: 'One missing', text: 'Who is missing?', label: 'Take one away' }] }, config: { kind: 'picture-count' }, resources: { image: '/sheep.png' }, runtime: { presentation: {} } };
     const child = fixture(t, block, { interactive: true, answer: { value: { modeId: 'herd' } } }, presentationComponent);

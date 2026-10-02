@@ -82,4 +82,10 @@ $builtins[] = ['assetId' => 'builtin-sheep-3', 'versionId' => 'builtin-sheep-3-v
 $builtins[] = ['assetId' => 'builtin-sheep-4', 'versionId' => 'builtin-sheep-4-v1', 'file' => 'assets/library/poteryannaya-ovechka/04.png', 'mime' => 'image/png', 'labelKey' => 'media_sheep_4'];
 $builtins[] = ['assetId' => 'builtin-sheep-5', 'versionId' => 'builtin-sheep-5-v1', 'file' => 'assets/library/poteryannaya-ovechka/05.png', 'mime' => 'image/png', 'labelKey' => 'media_sheep_5'];
 
+$builtins[] = ['assetId' => 'builtin-talent-1', 'versionId' => 'builtin-talent-1-v1', 'file' => 'assets/library/talant/01.png', 'mime' => 'image/png', 'labelKey' => 'media_talent_1'];
+$builtins[] = ['assetId' => 'builtin-talent-2', 'versionId' => 'builtin-talent-2-v1', 'file' => 'assets/library/talant/02.png', 'mime' => 'image/png', 'labelKey' => 'media_talent_2'];
+$builtins[] = ['assetId' => 'builtin-talent-3', 'versionId' => 'builtin-talent-3-v1', 'file' => 'assets/library/talant/03.png', 'mime' => 'image/png', 'labelKey' => 'media_talent_3'];
+$builtins[] = ['assetId' => 'builtin-talent-4', 'versionId' => 'builtin-talent-4-v1', 'file' => 'assets/library/talant/04.png', 'mime' => 'image/png', 'labelKey' => 'media_talent_4'];
+$builtins[] = ['assetId' => 'builtin-talent-5', 'versionId' => 'builtin-talent-5-v1', 'file' => 'assets/library/talant/05.png', 'mime' => 'image/png', 'labelKey' => 'media_talent_5'];
+
 return $builtins;
