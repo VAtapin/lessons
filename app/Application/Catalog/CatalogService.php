@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 final readonly class CatalogService
 {
-    public function __construct(private BlockRegistry $registry, private MediaCatalogue $media, private StudioService $studio, private RuntimeService $runtime, private DocumentationService $documentation, private DocumentationFiles $documentationFiles) {}
+    public function __construct(private BlockRegistry $registry, private MediaCatalogue $media, private StudioService $studio, private RuntimeService $runtime, private DocumentationService $documentation, private DocumentationFiles $documentationFiles, private CatalogMaterials $materials) {}
 
     /** Approval is an explicit trusted administrative operation, never part of personal release. */
     public function approve(LessonVersion $version, array $metadata, string $reviewer, string $slug, ?string $sourceRevision = null, ?string $sourceHash = null): CatalogEntry
@@ -85,19 +85,30 @@ final readonly class CatalogService
             }
             $matches = true;
             foreach (['age', 'topic', 'audience', 'format'] as $field) {
+                if ($field === 'format' && in_array($filters[$field] ?? '', ['game', 'questions'], true)) {
+                    continue;
+                }
                 if (isset($filters[$field]) && ! in_array($filters[$field], $card[$field], true)) {
                     $matches = false;
                 }
-            }
-            if (isset($filters['q']) && ! str_contains(mb_strtolower($card['title'].' '.$card['description']), mb_strtolower($filters['q']))) {
-                $matches = false;
             }
             $duration = $card['durationMinutes'] <= 20 ? 'short' : ($card['durationMinutes'] <= 60 ? 'standard' : 'long');
             if (isset($filters['duration']) && $filters['duration'] !== $duration) {
                 $matches = false;
             }
             if ($matches) {
-                $entries[] = $card;
+                if (in_array($filters['format'] ?? '', ['notes', 'presentation', 'worksheet'], true)) {
+                    $candidates = $this->materials->cards($card, $this->documentation->forVersion($entry->version, $document), $locale, $filters['format']);
+                } elseif (in_array($filters['format'] ?? '', ['game', 'questions'], true)) {
+                    $candidates = $this->materials->activities($card, $document, $locale, $filters['format']);
+                } else {
+                    $candidates = [$card];
+                }
+                foreach ($candidates as $candidate) {
+                    if (! isset($filters['q']) || str_contains(mb_strtolower($candidate['title'].' '.$candidate['description'].' '.($candidate['lessonTitle'] ?? '')), mb_strtolower($filters['q']))) {
+                        $entries[] = $candidate;
+                    }
+                }
             }
         }
         $page = (int) ($filters['page'] ?? 1);
@@ -197,11 +208,24 @@ final readonly class CatalogService
         $meta = $entry->metadata;
         $cover = isset($meta['cover']) ? $this->media->resolve($meta['cover']['assetId'], $meta['cover']['versionId'])['url'] : null;
         $size = isset($meta['cover']) ? getimagesize($this->media->resolve($meta['cover']['assetId'], $meta['cover']['versionId'])['path']) : null;
+        $formats = $meta['format'];
+        $documentation = $this->documentation->forVersion($entry->version, $document);
+        if ($documentation !== null) {
+            $materials = $documentation->project($locale);
+            if (trim($materials['plan'] ?? '') !== '') {
+                $formats[] = 'notes';
+            }
+            foreach ($materials['files'] as $reference) {
+                // Downloads explicitly show their language, including original-language files.
+                $file = $this->documentationFiles->resolve($reference['fileId']);
+                $formats[] = CatalogMaterials::format($file);
+            }
+        }
 
         return ['slug' => $entry->slug, 'versionId' => $entry->lesson_version_id,
             'title' => $meta['translations'][$locale]['title'], 'description' => $meta['translations'][$locale]['description'],
             'locales' => $document->locales, 'age' => $meta['age'], 'topic' => $meta['topic'], 'audience' => $meta['audience'],
-            'format' => $meta['format'], 'durationMinutes' => $meta['durationMinutes'], 'coverUrl' => $cover,
+            'format' => array_values(array_unique($formats)), 'durationMinutes' => $meta['durationMinutes'], 'coverUrl' => $cover,
             'coverWidth' => $size[0] ?? null, 'coverHeight' => $size[1] ?? null];
     }
 }

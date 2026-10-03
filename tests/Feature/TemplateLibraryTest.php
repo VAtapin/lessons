@@ -26,6 +26,20 @@ final class TemplateLibraryTest extends TestCase
         Storage::fake('media');
     }
 
+    public function test_personal_library_pages_filtered_results_without_exposing_other_owners(): void
+    {
+        for ($i = 0; $i < 14; $i++) {
+            $this->create();
+        }
+        $first = $this->getJson('/api/studio/templates?type=core.single-choice')->assertOk()->assertJsonCount(12, 'templates')->assertJsonPath('pagination.total', 14);
+        $second = $this->getJson('/api/studio/templates?type=core.single-choice&page=2')->assertOk()->assertJsonCount(2, 'templates');
+        $this->assertEmpty(array_intersect(array_column($first->json('templates'), 'id'), array_column($second->json('templates'), 'id')));
+        $this->getJson('/api/studio/templates?type=core.text')->assertOk()->assertJsonCount(0, 'templates');
+        $this->getJson('/api/studio/templates?page=0')->assertUnprocessable();
+        $this->withSession(['studio_owner_key' => (string) Str::uuid()]);
+        $this->getJson('/api/studio/templates')->assertOk()->assertJsonPath('pagination.total', 0);
+    }
+
     public function test_template_copies_the_saved_owned_block_and_all_translations_with_attribution(): void
     {
         [$lesson, $template] = $this->create();

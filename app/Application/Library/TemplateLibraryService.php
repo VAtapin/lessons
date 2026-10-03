@@ -42,14 +42,22 @@ final readonly class TemplateLibraryService
             $query->whereJsonContains('tags', $filters['tag']);
         }
 
-        return $query->get()->filter(function (BlockTemplateRecord $record) use ($filters): bool {
-            return (! isset($filters['type']) || $record->currentVersion->block['type'] === $filters['type'])
-                && (! isset($filters['locale']) || in_array($filters['locale'], $record->currentVersion->locales, true));
-        })->map(fn (BlockTemplateRecord $record) => [
+        $query->whereHas('currentVersion', function ($q) use ($filters): void {
+            if (! empty($filters['type'])) {
+                $q->where('block->type', $filters['type']);
+            }
+            if (! empty($filters['locale'])) {
+                $q->whereJsonContains('locales', $filters['locale']);
+            }
+        });
+        $page = $query->paginate(12, ['*'], 'page', (int) ($filters['page'] ?? 1));
+        $templates = $page->getCollection()->map(fn (BlockTemplateRecord $record) => [
             'id' => $record->id, 'title' => $record->title, 'tags' => $record->tags,
             'type' => $record->currentVersion->block['type'], 'locales' => $record->currentVersion->locales,
             'revision' => $record->revision, 'currentVersionId' => $record->current_version_id, 'archived' => $record->archived,
-        ])->values()->all();
+        ])->all();
+
+        return ['templates' => $templates, 'pagination' => ['page' => $page->currentPage(), 'perPage' => $page->perPage(), 'total' => $page->total(), 'lastPage' => $page->lastPage()]];
     }
 
     public function createFromLesson(string $ownerKey, string $lessonId, int $expectedLessonRevision, string $blockId, array $metadata): BlockTemplateRecord

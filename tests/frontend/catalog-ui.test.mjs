@@ -101,3 +101,22 @@ test('custom taxonomy options remain selectable and loading blocks navigation', 
     loading.submit();
     assert.deepEqual(navigations, []);
 });
+
+
+test('material cards render direct file downloads and a separate related lesson link', async () => {
+    location.search = '?format=presentation';
+    const catalog = component('catalog/CatalogPage.vue', {
+        '../studio/api': { api: async () => ({}), ApiError: class extends Error {} },
+        './CatalogFilters.vue': stub, './PublicIcon.vue': stub, '../studio/ActiveSessionList.vue': stub,
+        './start-session': { catalogStartDecision() {} }, '../studio/StageRenderer.vue': stub,
+        '../studio/LessonDocumentation.vue': stub, './filters': filters,
+    });
+    const html = await renderToString(Vue.createSSRApp(catalog, { locale: 'ru', messages: { download_material: 'Download', related_lesson: 'Related lesson' }, initial: {
+        entries: [{ slug: 'source-lesson', materialId: 'slides', title: 'Slides', description: '', format: ['presentation'], locales: ['ru'], topic: [], downloads: [{ url: '/lesson-files/slides', extension: 'PPTX', bytes: 200 }], coverUrl: null }],
+        pagination: { page: 1, total: 1, lastPage: 1, perPage: 12 },
+    } }));
+    assert.match(html, /href="\/lesson-files\/slides"[^>]*download/);
+    assert.match(html, /Download PPTX/);
+    assert.match(html, /href="\/ru\/catalog\/source-lesson"/);
+    assert.match(html, /Related lesson/);
+});

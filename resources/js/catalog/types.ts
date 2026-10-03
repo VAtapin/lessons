@@ -1,5 +1,6 @@
 import type { ProjectedDocumentation } from '../studio/types';
 export interface CatalogEntry {
+    stageIndex?: number; materialId?: string; lessonTitle?: string; downloads?: { url: string; extension: string; bytes: number }[];
     slug: string; title: string; description: string; locales: string[];
     age: string[]; topic: string[]; audience: string[]; format: string[];
     durationMinutes: number; coverUrl: string | null; versionId: string;

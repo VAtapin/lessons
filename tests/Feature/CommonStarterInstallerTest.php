@@ -99,7 +99,10 @@ final class CommonStarterInstallerTest extends TestCase
     {
         $this->install();
         foreach (['ru', 'de'] as $locale) {
-            $templates = $this->getJson('/api/catalog/templates?locale='.$locale)->assertOk()->assertJsonCount(16, 'templates')->json('templates');
+            $templates = array_merge(
+                $this->getJson('/api/catalog/templates?locale='.$locale)->assertOk()->assertJsonCount(12, 'templates')->assertJsonPath('pagination.total', 16)->json('templates'),
+                $this->getJson('/api/catalog/templates?locale='.$locale.'&page=2')->assertOk()->assertJsonCount(4, 'templates')->json('templates'),
+            );
             foreach ($templates as $template) {
                 $response = $this->getJson('/api/catalog/templates/'.$template['id'].'?locale='.$locale)->assertOk();
                 $preview = $response->json('preview');

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'download_material' => 'Herunterladen',
+    'related_lesson' => 'Interaktive Lektion öffnen',
+
     'social_locale' => 'de_DE',
     'any_filter' => 'Alle',
     'sign_in' => 'Anmelden',
@@ -57,7 +60,7 @@ return [
     'about_text' => 'Christlicher Unterricht, bei dem Kinder und Erwachsene zuhören und mitmachen. Wählen Sie eine fertige Lektion oder erstellen Sie Ihre eigene im Lehrkräftebereich.',
     'contact_text' => 'Fragen und Ideen für neue Materialien', 'catalog_title' => 'Materialkatalog', 'catalog_intro' => 'Fertige Lektionen zum gemeinsamen Lernen, Nachdenken und guten Handeln.',
     'loading' => 'Materialien werden geladen…', 'load_error' => 'Die Materialien konnten nicht geladen werden. Prüfen Sie die Verbindung und versuchen Sie es erneut.', 'retry' => 'Erneut versuchen',
-    'empty_title' => 'Noch keine passenden Materialien', 'empty_text' => 'Ändern Sie die Filter oder öffnen Sie den gesamten Katalog. Hier erscheinen nur veröffentlichte Lektionen.',
+    'empty_title' => 'Noch keine passenden Materialien', 'empty_text' => 'Ändern Sie die Filter oder öffnen Sie den gesamten Katalog. Hier erscheinen Materialien veröffentlichter Lektionen.',
     'results' => 'Gefundene Materialien:', 'minutes' => 'Min.', 'details' => 'Lektion ansehen', 'back_catalog' => 'Gesamter Katalog', 'lesson_content' => 'Inhalt der Lektion',
     'use_lesson' => 'In meinen Bereich kopieren', 'start_lesson' => 'Diese Lektion durchführen', 'action_pending' => 'Wird vorbereitet…', 'action_error' => 'Die Lektion konnte nicht vorbereitet werden. Versuchen Sie es erneut.',
     'copy_hint' => 'Eine Kopie erscheint in Ihrem Bereich. Sie können sie bearbeiten und speichern. Eine Registrierung ist nicht erforderlich.', 'start_hint' => 'Das Leitungspult öffnet sich. Dort starten Sie die Lektion und laden Teilnehmende ein.',

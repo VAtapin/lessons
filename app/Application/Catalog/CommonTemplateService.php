@@ -56,6 +56,52 @@ final readonly class CommonTemplateService
         return ['template' => $this->present($common, $locale), 'preview' => $projection];
     }
 
+    /** Filter and paginate before loading block payloads; history belongs only to detail. */
+    public function page(string $locale, array $filters): array
+    {
+        $query = CommonTemplate::query()->where('visible', true)
+            ->whereHas('record', fn ($q) => $q->where('archived', false))
+            ->whereHas('record.currentVersion', function ($q) use ($locale, $filters): void {
+                $q->whereJsonContains('locales', $locale);
+                if (! empty($filters['type'])) {
+                    $q->where('block->type', $filters['type']);
+                }
+            });
+        if (! empty($filters['q'])) {
+            $text = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $filters['q']).'%';
+            $grammar = $query->getQuery()->getGrammar();
+            $query->where(function ($q) use ($grammar, $locale, $text): void {
+                foreach (['title', 'description'] as $field) {
+                    $q->orWhereRaw($grammar->wrap('labels->'.$locale.'->'.$field)." LIKE ? ESCAPE '!'", [$text]);
+                }
+            });
+        }
+        if (! empty($filters['tag'])) {
+            $query->whereHas('record', fn ($q) => $q->whereJsonContains('tags', $filters['tag']));
+        }
+        // Use the immutable installation receipt, which survives later editorial versions.
+        $universalSource = fn ($q) => $q->where('version_no', 1)
+            ->where('attribution->installation->pack', 'universal-starter-v1');
+        if (($filters['scope'] ?? '') === 'lesson') {
+            $query->whereDoesntHave('record.versions', $universalSource);
+        } elseif (($filters['scope'] ?? '') === 'universal') {
+            $query->whereHas('record.versions', $universalSource);
+        }
+        $page = $query->with(['record.currentVersion', 'record.versions' => fn ($q) => $q->where('version_no', 1)->select('id', 'block_template_record_id', 'attribution')])
+            ->orderBy('id')->paginate(12, ['*'], 'page', (int) ($filters['page'] ?? 1));
+        $entries = $page->getCollection()->map(function ($common) use ($locale): array {
+            $record = $common->record;
+            $pack = $record->versions->first()?->attribution['installation']['pack'] ?? null;
+
+            return ['id' => $common->id, 'versionId' => $record->current_version_id,
+                'type' => $record->currentVersion->block['type'], 'locales' => $record->currentVersion->locales,
+                'tags' => $record->tags, 'scope' => $pack === 'universal-starter-v1' ? 'universal' : 'lesson',
+                ...$common->labels[$locale]];
+        })->all();
+
+        return ['templates' => $entries, 'pagination' => ['page' => $page->currentPage(), 'perPage' => $page->perPage(), 'total' => $page->total(), 'lastPage' => $page->lastPage()]];
+    }
+
     public function save(User $admin, array $data, ?string $id = null, ?int $revision = null): array
     {
         $this->access->require($admin);

@@ -50,11 +50,17 @@
                     <article class="catalog-card"><a href="/{{ $locale }}/catalog/{{ $lesson['slug'] }}">
                         @if ($lesson['coverUrl'])<img src="{{ $lesson['coverUrl'] }}" alt="{{ $lesson['title'] }}" width="{{ $lesson['coverWidth'] }}" height="{{ $lesson['coverHeight'] }}" loading="lazy">@endif
                         <div><h2>{{ $lesson['title'] }}</h2><p>{{ $lesson['description'] }}</p><p>{{ implode(', ', $lesson['age']) }} · {{ $lesson['durationMinutes'] }} {{ $messages['minutes'] }}</p></div>
-                    </a></article>
+                    </a>
+                    @if (isset($lesson['downloads']))
+                        <div class="catalog-material"><p>{{ implode(' / ', array_map('strtoupper', $lesson['locales'])) }}</p>
+                        @foreach ($lesson['downloads'] as $file)<a class="public-button" href="{{ $file['url'] }}" download>{{ $messages['download_material'] }} {{ $file['extension'] }}</a> @endforeach
+                        <a class="card-detail-link" href="/{{ $locale }}/catalog/{{ $lesson['slug'] }}">{{ $messages['related_lesson'] }}</a></div>
+                    @endif
+                    </article>
                 @endforeach
             </div>
             @if ($publicContent['pagination']['lastPage'] > 1)
-                <nav aria-label="{{ $messages['page'] }}">@for ($number = 1; $number <= $publicContent['pagination']['lastPage']; $number++)<a href="/{{ $locale }}/catalog?page={{ $number }}">{{ $number }}</a> @endfor</nav>
+                <nav aria-label="{{ $messages['page'] }}">@for ($number = 1; $number <= $publicContent['pagination']['lastPage']; $number++)<a href="{{ request()->fullUrlWithQuery(['page' => $number]) }}">{{ $number }}</a> @endfor</nav>
             @endif
         @endif
     </main>

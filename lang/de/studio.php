@@ -1,6 +1,14 @@
 <?php
 
 return [
+    'library_scope' => 'Verwendung',
+    'library_universal' => 'Allgemeine Vorlagen',
+    'library_lesson' => 'Unterrichtsmaterialien',
+    'library_all' => 'Alle Vorlagen',
+    'library_scope_hint' => 'Allgemeine Vorlagen eignen sich für verschiedene Themen. Unterrichtsmaterialien enthalten konkrete Geschichten und Aufgaben: Prüfen Sie vor dem Einfügen den Kontext und die Hinweise für die Leitung.',
+    'library_total' => 'Gefundene Vorlagen',
+    'library_pages' => 'Bibliotheksseiten',
+
     'show_qr_on_screen' => 'QR-Code auf der Leinwand zeigen',
     'hide_qr_on_screen' => 'QR-Code ausblenden',
     'scan_qr' => 'QR-Code mit der Kamera scannen',

@@ -19,10 +19,10 @@ final class TemplateController extends Controller
         $filters = $request->validate([
             'q' => ['sometimes', 'nullable', 'string', 'max:200'], 'tag' => ['sometimes', 'nullable', 'string', 'max:50'],
             'type' => ['sometimes', 'nullable', 'string', 'max:128'], 'locale' => ['sometimes', 'nullable', 'string', 'max:35'],
-            'archived' => ['sometimes', 'in:0,1'],
+            'archived' => ['sometimes', 'in:0,1'], 'page' => ['sometimes', 'integer', 'min:1', 'max:100000'],
         ]);
 
-        return response()->json(['templates' => $this->library->listOwned($this->identity->key($request), array_filter($filters, fn ($value) => $value !== null))]);
+        return response()->json($this->library->listOwned($this->identity->key($request), array_filter($filters, fn ($value) => $value !== null)));
     }
 
     public function show(Request $request, string $id): JsonResponse

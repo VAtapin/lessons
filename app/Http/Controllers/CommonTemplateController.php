@@ -16,9 +16,12 @@ final readonly class CommonTemplateController
 
     public function index(Request $request): JsonResponse
     {
-        $input = $request->validate(['locale' => ['sometimes', Rule::in(['ru', 'de'])]]);
+        $input = $request->validate(['locale' => ['sometimes', Rule::in(['ru', 'de'])],
+            'q' => ['sometimes', 'nullable', 'string', 'max:200'], 'tag' => ['sometimes', 'nullable', 'string', 'max:50'],
+            'type' => ['sometimes', 'nullable', 'string', 'max:128'], 'scope' => ['sometimes', Rule::in(['all', 'universal', 'lesson'])],
+            'page' => ['sometimes', 'integer', 'min:1', 'max:100000']]);
 
-        return response()->json(['templates' => $this->templates->listing($input['locale'] ?? 'ru')]);
+        return response()->json($this->templates->page($input['locale'] ?? 'ru', $input));
     }
 
     public function show(Request $request, string $id): JsonResponse

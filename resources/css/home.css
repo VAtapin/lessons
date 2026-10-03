@@ -82,3 +82,5 @@
 @media (max-width: 600px) {
     .public-hero-copy { width: 100%; padding-inline: var(--home-content-inset); }
 }
+
+.catalog-material{padding:20px}.catalog-material .public-actions{flex-wrap:wrap;margin-top:20px}

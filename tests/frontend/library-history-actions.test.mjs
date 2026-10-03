@@ -58,7 +58,7 @@ function fixture(t, renderedComponent, extra = {}) {
 
 const apiModule = api => ({ api, errorMessage: () => 'Request failed', ApiError: class extends Error {} });
 const blockRenderer = { props: ['block'], setup: props => () => Vue.h('div', { class: 'render-block' }, props.block.content.text ?? props.block.content.question ?? '') };
-const common = api => component('CommonLibrary.vue', { './api': apiModule(api), './admin': { adminError: () => 'Request failed' }, './library': library, './PreviewDialog.vue': vueModule(dialog), './BlockRenderer.vue': vueModule(blockRenderer), '../../css/admin.css': {} });
+const common = api => component('CommonLibrary.vue', { './api': apiModule(api), './admin': { adminError: () => 'Request failed' }, './library': library, './interactive': interactive, './PreviewDialog.vue': vueModule(dialog), './BlockRenderer.vue': vueModule(blockRenderer), '../../css/admin.css': {} });
 const attribution = { title: 'Template', tags: ['help'], author: 'Hidden Author', source: 'Hidden Source', rightsBasis: 'permission', usageRights: 'Hidden Rights' };
 const template = { id: 'common-one', title: 'Help', description: 'Block', tags: ['help'], locales: ['ru'], versionId: 'v2', attribution, versions: [{ id: 'v2', versionNo: 2, locales: ['ru'], attribution }, { id: 'v1', versionNo: 1, locales: ['ru'], attribution }] };
 
@@ -105,7 +105,7 @@ test('common modal renders the preview without attribution and inserts the selec
     await flush(); page.click(messages.admin_preview); await flush();
     assert.match(text(page.nodes('dialog')[0]), /Actual preview/);
     assert.doesNotMatch(text(page.root), /Hidden Author|Hidden Source|Hidden Rights/);
-    const select = page.nodes('select')[0];
+    const select = descendants(page.nodes('dialog')[0]).find(node => node.kind === 'select');
     select.options[0].selected = false; select.options[1].selected = true;
     select.listeners.change({ target: select });
     await Vue.nextTick(); page.click(messages.admin_insert); await flush();
@@ -229,4 +229,26 @@ test('purged legacy history never attempts to fetch the removed authoring copy',
     assert.deepEqual(calls, ['/api/studio/sessions/session/history']);
     assert.match(text(page.root), /Anna/);
     assert.doesNotMatch(text(page.root), /open_editor|run_again|lesson_trash/);
+});
+
+
+test('common library requests bounded server pages, retains filters and resets page on search', async t => {
+    const calls = [];
+    const page = fixture(t, common(async path => {
+        calls.push(path);
+        const url = new URL(path, 'https://example.test');
+        return { templates: [{ ...template, scope: 'universal' }], pagination: { page: Number(url.searchParams.get('page')), total: 25, lastPage: 3 } };
+    }));
+    await flush();
+    assert.match(calls[0], /scope=universal/);
+    page.click(messages.next); await flush();
+    assert.match(calls.at(-1), /page=2/);
+    assert.match(calls.at(-1), /scope=universal/);
+    const input = page.nodes('input')[0];
+    input.value = 'pair'; input.listeners.input({ target: input });
+    await Vue.nextTick();
+    page.nodes('form')[0].props.onSubmit({ preventDefault() {} }); await flush();
+    assert.match(calls.at(-1), /page=1/);
+    assert.match(calls.at(-1), /q=pair/);
+    assert.equal(page.button(messages.previous).props.disabled, true);
 });
