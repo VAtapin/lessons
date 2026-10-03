@@ -230,4 +230,19 @@ $builtins[] = ['assetId' => 'builtin-choices-12', 'versionId' => 'builtin-choice
 $builtins[] = ['assetId' => 'builtin-choices-13', 'versionId' => 'builtin-choices-13-v1', 'file' => 'assets/library/choices/13.png', 'mime' => 'image/png', 'labelKey' => 'media_choices_13'];
 $builtins[] = ['assetId' => 'builtin-choices-14', 'versionId' => 'builtin-choices-14-v1', 'file' => 'assets/library/choices/14.png', 'mime' => 'image/png', 'labelKey' => 'media_choices_14'];
 
+$builtins[] = ['assetId' => 'builtin-forgiveness-1', 'versionId' => 'builtin-forgiveness-1-v1', 'file' => 'assets/library/forgiveness/01.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_1'];
+$builtins[] = ['assetId' => 'builtin-forgiveness-2', 'versionId' => 'builtin-forgiveness-2-v1', 'file' => 'assets/library/forgiveness/02.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_2'];
+$builtins[] = ['assetId' => 'builtin-forgiveness-3', 'versionId' => 'builtin-forgiveness-3-v1', 'file' => 'assets/library/forgiveness/03.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_3'];
+$builtins[] = ['assetId' => 'builtin-forgiveness-4', 'versionId' => 'builtin-forgiveness-4-v1', 'file' => 'assets/library/forgiveness/04.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_4'];
+$builtins[] = ['assetId' => 'builtin-forgiveness-5', 'versionId' => 'builtin-forgiveness-5-v1', 'file' => 'assets/library/forgiveness/05.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_5'];
+$builtins[] = ['assetId' => 'builtin-forgiveness-6', 'versionId' => 'builtin-forgiveness-6-v1', 'file' => 'assets/library/forgiveness/06.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_6'];
+$builtins[] = ['assetId' => 'builtin-forgiveness-7', 'versionId' => 'builtin-forgiveness-7-v1', 'file' => 'assets/library/forgiveness/07.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_7'];
+$builtins[] = ['assetId' => 'builtin-forgiveness-8', 'versionId' => 'builtin-forgiveness-8-v1', 'file' => 'assets/library/forgiveness/08.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_8'];
+$builtins[] = ['assetId' => 'builtin-forgiveness-9', 'versionId' => 'builtin-forgiveness-9-v1', 'file' => 'assets/library/forgiveness/09.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_9'];
+$builtins[] = ['assetId' => 'builtin-forgiveness-10', 'versionId' => 'builtin-forgiveness-10-v1', 'file' => 'assets/library/forgiveness/10.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_10'];
+$builtins[] = ['assetId' => 'builtin-forgiveness-11', 'versionId' => 'builtin-forgiveness-11-v1', 'file' => 'assets/library/forgiveness/11.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_11'];
+$builtins[] = ['assetId' => 'builtin-forgiveness-12', 'versionId' => 'builtin-forgiveness-12-v1', 'file' => 'assets/library/forgiveness/12.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_12'];
+$builtins[] = ['assetId' => 'builtin-forgiveness-13', 'versionId' => 'builtin-forgiveness-13-v1', 'file' => 'assets/library/forgiveness/13.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_13'];
+$builtins[] = ['assetId' => 'builtin-forgiveness-14', 'versionId' => 'builtin-forgiveness-14-v1', 'file' => 'assets/library/forgiveness/14.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_14'];
+
 return $builtins;

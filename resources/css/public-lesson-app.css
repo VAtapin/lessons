@@ -504,3 +504,25 @@
 @media (max-width: 850px) {
     .conducting-app.conducting-app.theme-plum .focus-stage:has(.presentation-table) { grid-template-columns: minmax(0, 1fr); }
 }
+
+.conducting-app.conducting-app.theme-copper { --ink: #55382f; --muted: #80695f; --paper: #f7f0eb; --card: #fffafd; --border: #9d685239; --accent: #ae6545; --olive: #9d6852; --scene-dark: #55382f; --scene-deep: #392720; --scene-soft: #f0e2d8; --scene-success: #f4e8df; }
+.conducting-app.conducting-app.theme-copper .focus-stage { background: linear-gradient(135deg, #fffafd, #f0e2d8); }
+.conducting-app.conducting-app.theme-copper .focus-stage.focus-stage-cover .focus-stage-visual::after { background: linear-gradient(90deg, #392720e8, #55382f88 48%, #55382f00); }
+.conducting-app.conducting-app.theme-copper .finished-lesson { background: radial-gradient(circle at 55% 30%, #c6a38a55, transparent 50%), linear-gradient(135deg, #392720, #9d6852); }
+/* Preserve every source word while leaving room for the paired exit answers. */
+.conducting-app.conducting-app.theme-copper .focus-stage:has(.interactive-free-response) .scene-description { white-space: normal; }
+.conducting-app.conducting-app.theme-copper .focus-stage:has(.interactive-free-response) .interactive-free-response legend { font-size: clamp(1.3rem, min(2.2vw, 3.7dvh), 2rem); line-height: 1.15; }
+.conducting-app.conducting-app.theme-copper .focus-stage-cover .scene-title { font-size: clamp(2.5rem, min(6vw, 7dvh), 5.5rem); }
+/* Keep both debt amounts visible beside the four-event exercise. */
+.conducting-app.conducting-app.theme-copper .focus-stage:has(.presentation-table) { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+.conducting-app.conducting-app.theme-copper .focus-stage:has(.presentation-table) .focus-stage-copy { padding: 18px 24px; }
+.conducting-app.conducting-app.theme-copper .focus-stage:has(.presentation-table) .scene-title { font-size: clamp(1.5rem, 3dvh, 2rem); margin-bottom: 8px; }
+.conducting-app.conducting-app.theme-copper .focus-stage:has(.presentation-table) .presentation-table { font-size: 1rem; margin: 8px 0; }
+.conducting-app.conducting-app.theme-copper .focus-stage:has(.presentation-table) .presentation-table caption { font-size: 1.2rem; }
+.conducting-app.conducting-app.theme-copper .focus-stage:has(.presentation-table) .presentation-table th,
+.conducting-app.conducting-app.theme-copper .focus-stage:has(.presentation-table) .presentation-table td { padding: 6px 8px; }
+.conducting-app.conducting-app.theme-copper .focus-stage:has(.interactive-sequence) .scene-description { white-space: normal; }
+.conducting-app.conducting-app.theme-copper .focus-stage:has(.interactive-sequence) .focus-stage-copy { padding-block: 18px; }
+@media (max-width: 850px) {
+    .conducting-app.conducting-app.theme-copper .focus-stage:has(.presentation-table) { grid-template-columns: minmax(0, 1fr); }
+}
