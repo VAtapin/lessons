@@ -245,4 +245,19 @@ $builtins[] = ['assetId' => 'builtin-forgiveness-12', 'versionId' => 'builtin-fo
 $builtins[] = ['assetId' => 'builtin-forgiveness-13', 'versionId' => 'builtin-forgiveness-13-v1', 'file' => 'assets/library/forgiveness/13.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_13'];
 $builtins[] = ['assetId' => 'builtin-forgiveness-14', 'versionId' => 'builtin-forgiveness-14-v1', 'file' => 'assets/library/forgiveness/14.png', 'mime' => 'image/png', 'labelKey' => 'media_forgiveness_14'];
 
+$builtins[] = ['assetId' => 'builtin-pressure-1', 'versionId' => 'builtin-pressure-1-v1', 'file' => 'assets/library/pressure/01.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_1'];
+$builtins[] = ['assetId' => 'builtin-pressure-2', 'versionId' => 'builtin-pressure-2-v1', 'file' => 'assets/library/pressure/02.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_2'];
+$builtins[] = ['assetId' => 'builtin-pressure-3', 'versionId' => 'builtin-pressure-3-v1', 'file' => 'assets/library/pressure/03.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_3'];
+$builtins[] = ['assetId' => 'builtin-pressure-4', 'versionId' => 'builtin-pressure-4-v1', 'file' => 'assets/library/pressure/04.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_4'];
+$builtins[] = ['assetId' => 'builtin-pressure-5', 'versionId' => 'builtin-pressure-5-v1', 'file' => 'assets/library/pressure/05.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_5'];
+$builtins[] = ['assetId' => 'builtin-pressure-6', 'versionId' => 'builtin-pressure-6-v1', 'file' => 'assets/library/pressure/06.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_6'];
+$builtins[] = ['assetId' => 'builtin-pressure-7', 'versionId' => 'builtin-pressure-7-v1', 'file' => 'assets/library/pressure/07.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_7'];
+$builtins[] = ['assetId' => 'builtin-pressure-8', 'versionId' => 'builtin-pressure-8-v1', 'file' => 'assets/library/pressure/08.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_8'];
+$builtins[] = ['assetId' => 'builtin-pressure-9', 'versionId' => 'builtin-pressure-9-v1', 'file' => 'assets/library/pressure/09.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_9'];
+$builtins[] = ['assetId' => 'builtin-pressure-10', 'versionId' => 'builtin-pressure-10-v1', 'file' => 'assets/library/pressure/10.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_10'];
+$builtins[] = ['assetId' => 'builtin-pressure-11', 'versionId' => 'builtin-pressure-11-v1', 'file' => 'assets/library/pressure/11.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_11'];
+$builtins[] = ['assetId' => 'builtin-pressure-12', 'versionId' => 'builtin-pressure-12-v1', 'file' => 'assets/library/pressure/12.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_12'];
+$builtins[] = ['assetId' => 'builtin-pressure-13', 'versionId' => 'builtin-pressure-13-v1', 'file' => 'assets/library/pressure/13.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_13'];
+$builtins[] = ['assetId' => 'builtin-pressure-14', 'versionId' => 'builtin-pressure-14-v1', 'file' => 'assets/library/pressure/14.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_14'];
+
 return $builtins;

@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+// Distribute the four team conditions individually on paper; do not publish them together in the lesson.
+return [
+    ['Рассказчик-глашатай', 'Повеление и музыкальный сигнал. Сообщи донос, переход к печи, помощь Ангела и выход троих; полный порядок — в сценарии.', 'Erzähler und Herold', 'Befehl und Musiksignal. Meldung, Weg zum Ofen, Hilfe des Engels und Ausgang der drei berichten; vollständiger Ablauf im Skript.', 2],
+    ['Царь', 'Дай последнюю возможность поклониться. После картины печи удивись: «Я вижу четверых». Позови троих выйти и благослови Бога.', 'König', 'Letzte Gelegenheit zur Anbetung geben. Nach dem Ofenbild staunen: „Ich sehe vier.“ Die drei herausrufen und Gott preisen.', 2],
+    ['Седрах', 'Скажи первую часть общего ответа: «Нет нужды нам отвечать тебе на это». Стой рядом с двумя друзьями.', 'Schadrach', 'Ersten Teil der gemeinsamen Antwort sprechen: „Wir brauchen dir darauf nicht zu antworten.“ Neben den beiden Freunden stehen.', 2],
+    ['Мисах', 'Скажи слова ст. 17: «Бог наш, Которому мы служим, силен спасти нас…». Полная реплика — в сценарии.', 'Meschach', 'Vers 17 sprechen: „Unser Gott, dem wir dienen, kann uns retten…“ Vollständige Worte im Skript.', 2],
+    ['Авденаго', 'Скажи ст. 18: «Если же и не будет того… не поклонимся». Полная реплика — в сценарии. Выходи с двумя друзьями.', 'Abed-Nego', 'Vers 18 sprechen: „Auch wenn es nicht geschieht… werden wir uns nicht verneigen.“ Vollständige Worte im Skript. Mit den beiden Freunden herauskommen.', 2],
+    ['Четверо в печи', 'Дан. 3:49–51, 91–92. Бог посылает Ангела; царь видит четверых невредимых.', 'Vier im Ofen', 'Daniel 3,49–51; 91–92. Gott sendet einen Engel; der König sieht vier unversehrte Männer.', 3],
+    ['Повеление царя', 'Дан. 3:1, 4–7. Всем велено поклониться золотому истукану.', 'Befehl des Königs', 'Daniel 3,1; 4–7. Alle sollen das goldene Standbild anbeten.', 3],
+    ['Трое выходят', 'Дан. 3:93–95. Они невредимы; царь благословляет Бога.', 'Drei kommen heraus', 'Daniel 3,93–95. Sie sind unversehrt; der König preist Gott.', 3],
+    ['Ответ троих', 'Дан. 3:16–18. Даже без гарантии спасения они не станут поклоняться идолу.', 'Antwort der drei', 'Daniel 3,16–18. Auch ohne Garantie der Rettung werden sie den Götzen nicht anbeten.', 3],
+    ['«Все так делают»', 'Давление большинством. Можно ли отказаться? Предложите честное приглашение.', '„Alle machen das“', 'Druck durch Mehrheit. Darf man ablehnen? Eine ehrliche Einladung vorschlagen.', 4],
+    ['«Ты что, трус?»', 'Давление стыдом. Требуют доказать смелость плохим поступком.', '„Bist du etwa ein Feigling?“', 'Druck durch Scham. Mut soll mit einer schlechten Handlung bewiesen werden.', 4],
+    ['«Не сделаешь — ты не наш»', 'Угроза исключением. Принадлежность ставят в зависимость от согласия.', '„Machst du nicht mit, gehörst du nicht zu uns“', 'Ausschlussdrohung. Zugehörigkeit wird an Zustimmung gebunden.', 4],
+    ['«Никто не узнает»', 'Скрытность вместо оценки поступка. Кто пострадает, даже если никто не узнает?', '„Niemand erfährt es“', 'Heimlichkeit statt Beurteilung der Handlung. Wer leidet, auch wenn niemand davon erfährt?', 4],
+    ['«Всего один раз»', 'Преуменьшение выбора. Меняется ли вред от того, что это один раз?', '„Nur einmal“', 'Verharmlosung der Entscheidung. Ändert sich der Schaden dadurch, dass es nur einmal ist?', 4],
+    ['«Это просто шутка»', 'Преуменьшение чужой боли. Что нужно узнать у того, над кем смеются?', '„Das ist nur Spaß“', 'Verharmlosung des Schmerzes anderer. Was müssen wir die Person fragen, über die gelacht wird?', 4],
+    ['1. Что происходит', 'В общем чате предлагают переслать унизительное фото Артёма. Фото уже есть у нескольких ребят, но ты его ещё не переслал.', '1. Was geschieht', 'Im Gruppenchat wird vorgeschlagen, ein erniedrigendes Foto von Artjom weiterzuleiten. Einige haben es schon; du hast es noch nicht weitergeleitet.', 6],
+    ['2. Что давит', 'Организатор пишет: «Не перешлёшь — исключим из компании». Двое участников тоже сомневаются и готовы поддержать спокойный отказ.', '2. Was Druck ausübt', 'Der Organisator schreibt: „Leitest du es nicht weiter, schließen wir dich aus.“ Zwei andere zweifeln auch und unterstützen ein ruhiges Nein.', 6],
+    ['3. Какая помощь доступна', 'Классный руководитель сейчас в соседнем кабинете. Можно обратиться вдвоём и показать сообщение, не распространяя фото дальше.', '3. Welche Hilfe verfügbar ist', 'Die Klassenleitung ist jetzt im Nachbarraum. Zu zweit hingehen und die Nachricht zeigen, ohne das Foto weiterzuverbreiten.', 6],
+    ['4. Чего хочет Артём', 'Артём сказал: «Не делайте из меня героя перед всем классом. Поговорите со мной лично». Он хочет продолжать играть с ребятами в баскетбол.', '4. Was Artjom möchte', 'Artjom sagte: „Macht mich nicht vor der ganzen Klasse zum Helden. Sprecht persönlich mit mir.“ Er möchte weiter mit den anderen Basketball spielen.', 6],
+    ['Чужое фото', 'Предложение: «Перешли, все уже отправили!» Ответь: конкретный отказ, короткая причина, другой вариант.', 'Fremdes Foto', 'Vorschlag: „Leite es weiter, alle haben es schon geschickt!“ Antworte mit konkretem Nein, kurzem Grund und einer Alternative.', 7],
+    ['Готовые ответы', 'Предложение: «Спиши у меня, все так делают». Откажись от обмана; предложи вместе разобрать задачу.', 'Fertige Antworten', 'Vorschlag: „Schreib bei mir ab, alle machen das.“ Täuschung ablehnen und gemeinsames Verstehen der Aufgabe anbieten.', 7],
+    ['Исключить из игры', 'Предложение: «Не зови его, он не наш». Предложи понятные правила игры и возможность участвовать.', 'Vom Spiel ausschließen', 'Vorschlag: „Lade ihn nicht ein, er gehört nicht zu uns.“ Verständliche Spielregeln und die Möglichkeit zur Teilnahme vorschlagen.', 7],
+    ['Насмешка над верой', 'Предложение: «Скажи, что вера — глупость, иначе ты не с нами». Сохрани верность Богу и уважение к собеседнику.', 'Spott über den Glauben', 'Vorschlag: „Sag, dass Glaube Unsinn ist, sonst gehörst du nicht zu uns.“ Gott treu bleiben und den Gesprächspartner respektieren.', 7],
+];

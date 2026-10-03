@@ -1,0 +1,14 @@
+<?php
+
+declare(strict_types=1);
+
+$cards = require __DIR__.'/pressure-cards.php';
+$section = static fn ($start, $length) => implode("\n\n", array_map(static fn ($c) => $c[2]."\n".$c[3], array_slice($cards, $start, $length)));
+
+return '1. Rollen für das Spiel'."\n".'Ein Satz pro Gruppe, an der Linie ausschneiden. Erst Lesung, sofort Spiel, danach Besprechung. Die gemeinsame Antwort der drei ist für die Stunde auf die Rollen verteilt.'."\n\n".$section(0, 5)."\n\n".'Für die Lehrkraft: vollständige Worte und vier Episoden im Lehrmaterial. Der Engel erscheint im Bild; keine eigene Rolle nötig.'."\n\n".
+    '2. Reihenfolge der Ereignisse'."\n".'Vier Karten pro Paar, schneiden und mischen. Einer ordnet, der andere erklärt die Entscheidung vor dem Wunder; Rollen wechseln, Verse prüfen. Orthodoxe Zählung von Daniel 3.'."\n\n".$section(5, 4)."\n\n".
+    '3. Wie klingt Druck?'."\n".'Sechs Karten pro Paar. Zwei auswählen, Druckworte unterstreichen. Durch ehrliche Einladung ersetzen, die ein Nein respektiert. Die Änderung erklären.'."\n\n".$section(9, 6)."\n\n".'Kurze Antwort üben: Entscheidung → Grund → anderer Vorschlag, wenn passend.'."\n".'Mein klarer Satz zum Nein: __________'."\n".'Statt der schlechten Handlung schlage ich vor: __________'."\n\n".
+    '4. Vier Informationen — ein Plan'."\n".'Viererteam, eine Karte pro Person. Nacheinander teilen, Plan mit allen vier Bedingungen entwickeln. Felder nicht ausschneiden. Ersten Plan nicht löschen.'."\n\n".$section(15, 4)."\n\n".'Nach dem ersten Plan öffnet die Lehrkraft eine neue Bedingung: Der Druck geht weiter. Ergänzt die Änderungen.'."\n".'Erster Schritt gegen die Verbreitung des Schadens: __________'."\n".'Wie wir Artjoms Bitte beachten: __________'."\n".'An wen wir uns wenden und welche andere gemeinsame Aktivität wir anbieten: __________'."\n".'Zweiter Plan: Was wir bei weiterem Druck ergänzen: __________'."\n\n".
+    '5. Gespräch zu zweit ausprobieren'."\n".'Einer liest den gedruckten Vorschlag, der andere antwortet ruhig und konkret. Zuhörer: „Ich habe deine Entscheidung gehört…“ Dann Rollen wechseln und anderen Fall nehmen.'."\n\n".$section(19, 4)."\n\n".
+    '6. Mein nächster Schritt für die Woche'."\n".'Echten oder erfundenen Fall wählen. Blatt bleibt bei dir. Freiwillig einen Satz ohne persönliche Details lesen.'."\n".'Wenn man mich zu einer Handlung gegen das Gewissen auffordert: __________'."\n".'Meine Entscheidung — welche Handlung ich ablehne: __________'."\n".'Mein kurzer Satz zum Nein: __________'."\n".'Welche gute Handlung ich anbieten kann: __________'."\n".'Wer mich unterstützt oder hilft, den Druck zu stoppen: __________'."\n".'Mein erster Schritt und wann ich ihn tue: __________'."\n\n".
+    'Herr, wenn es mir schwerfällt, gegen die Gruppe zu handeln, hilf mir, Dir treu zu bleiben. Lass mich ruhig das Böse ablehnen, den unterstützen, der es schwer hat, und Hilfe annehmen. Amen.'."\n".'Selbst verfasstes Gebet. Du darfst still zuhören.';

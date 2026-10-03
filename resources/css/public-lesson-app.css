@@ -526,3 +526,28 @@
 @media (max-width: 850px) {
     .conducting-app.conducting-app.theme-copper .focus-stage:has(.presentation-table) { grid-template-columns: minmax(0, 1fr); }
 }
+
+.conducting-app.conducting-app.theme-indigo { --ink: #30395f; --muted: #65708a; --paper: #f0f2f9; --card: #fbfcff; --border: #6878b339; --accent: #6878b3; --olive: #586b9e; --scene-dark: #30395f; --scene-deep: #202945; --scene-soft: #e1e7f5; --scene-success: #e8edf8; }
+.conducting-app.conducting-app.theme-indigo .focus-stage { background: linear-gradient(135deg, #fbfcff, #e1e7f5); }
+.conducting-app.conducting-app.theme-indigo .focus-stage.focus-stage-cover .focus-stage-visual::after { background: linear-gradient(90deg, #202945e8, #30395f88 48%, #30395f00); }
+.conducting-app.conducting-app.theme-indigo .finished-lesson { background: radial-gradient(circle at 55% 30%, #8298d455, transparent 50%), linear-gradient(135deg, #202945, #586b9e); }
+/* Preserve every source word while leaving room for the paired exit answers. */
+.conducting-app.conducting-app.theme-indigo .focus-stage:has(.interactive-free-response) .scene-description { white-space: normal; }
+.conducting-app.conducting-app.theme-indigo .focus-stage:has(.interactive-free-response) .interactive-free-response legend { font-size: clamp(1.3rem, min(2.2vw, 3.7dvh), 2rem); line-height: 1.15; }
+.conducting-app.conducting-app.theme-indigo .focus-stage-cover .scene-title { font-size: clamp(2.5rem, min(6vw, 7dvh), 5.5rem); }
+.conducting-app.conducting-app.theme-indigo .focus-stage:has(.interactive-sequence) .scene-description { white-space: normal; }
+.conducting-app.conducting-app.theme-indigo .focus-stage:has(.interactive-sequence) .focus-stage-copy { padding-block: 18px; }
+/* The four illustrated event cards and their review remain readable together. */
+@media (min-width: 901px) {
+    .conducting-app.conducting-app.theme-indigo .focus-stage-journey .focus-stage-copy { padding: 12px 24px; }
+    .conducting-app.conducting-app.theme-indigo .focus-stage-journey .scene-title { font-size: clamp(1.6rem, 4dvh, 2.2rem); margin-bottom: 8px; }
+    .conducting-app.conducting-app.theme-indigo .focus-stage-journey .scene-description { font-size: 1rem; line-height: 1.35; margin-bottom: 8px; }
+    .conducting-app.conducting-app.theme-indigo .focus-stage-journey .sequence-tile { padding: 6px 10px; min-height: 40px; font-size: .85rem; }
+    .conducting-app.conducting-app.theme-indigo .focus-stage-journey .sequence-road { min-height: 210px; padding-block: 25px; }
+    .conducting-app.conducting-app.theme-indigo .focus-stage-journey .sequence-slot:nth-child(odd) { transform: translateY(-22px); }
+    .conducting-app.conducting-app.theme-indigo .focus-stage-journey .sequence-slot:nth-child(even) { transform: translateY(22px); }
+    .conducting-app.conducting-app.theme-indigo .focus-stage-journey .sequence-actions { margin: 6px 0 4px; }
+    .conducting-app.conducting-app.theme-indigo .focus-stage-journey .interactive-sequence legend { margin-bottom: 6px; }
+    .conducting-app.conducting-app.theme-indigo .focus-stage-journey .block-state { margin-block: 4px; }
+    .conducting-app.conducting-app.theme-indigo .focus-stage-journey .presentation-revealed { margin: 8px 0 0; padding: 6px 12px; font-size: .9rem; line-height: 1.3; }
+}
