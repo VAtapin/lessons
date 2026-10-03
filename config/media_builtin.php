@@ -305,4 +305,19 @@ $builtins[] = ['assetId' => 'builtin-peter-12', 'versionId' => 'builtin-peter-12
 $builtins[] = ['assetId' => 'builtin-peter-13', 'versionId' => 'builtin-peter-13-v1', 'file' => 'assets/library/peter/13.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_13'];
 $builtins[] = ['assetId' => 'builtin-peter-14', 'versionId' => 'builtin-peter-14-v1', 'file' => 'assets/library/peter/14.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_14'];
 
+$builtins[] = ['assetId' => 'builtin-truth-1', 'versionId' => 'builtin-truth-1-v1', 'file' => 'assets/library/truth/01.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_1'];
+$builtins[] = ['assetId' => 'builtin-truth-2', 'versionId' => 'builtin-truth-2-v1', 'file' => 'assets/library/truth/02.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_2'];
+$builtins[] = ['assetId' => 'builtin-truth-3', 'versionId' => 'builtin-truth-3-v1', 'file' => 'assets/library/truth/03.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_3'];
+$builtins[] = ['assetId' => 'builtin-truth-4', 'versionId' => 'builtin-truth-4-v1', 'file' => 'assets/library/truth/04.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_4'];
+$builtins[] = ['assetId' => 'builtin-truth-5', 'versionId' => 'builtin-truth-5-v1', 'file' => 'assets/library/truth/05.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_5'];
+$builtins[] = ['assetId' => 'builtin-truth-6', 'versionId' => 'builtin-truth-6-v1', 'file' => 'assets/library/truth/06.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_6'];
+$builtins[] = ['assetId' => 'builtin-truth-7', 'versionId' => 'builtin-truth-7-v1', 'file' => 'assets/library/truth/07.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_7'];
+$builtins[] = ['assetId' => 'builtin-truth-8', 'versionId' => 'builtin-truth-8-v1', 'file' => 'assets/library/truth/08.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_8'];
+$builtins[] = ['assetId' => 'builtin-truth-9', 'versionId' => 'builtin-truth-9-v1', 'file' => 'assets/library/truth/09.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_9'];
+$builtins[] = ['assetId' => 'builtin-truth-10', 'versionId' => 'builtin-truth-10-v1', 'file' => 'assets/library/truth/10.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_10'];
+$builtins[] = ['assetId' => 'builtin-truth-11', 'versionId' => 'builtin-truth-11-v1', 'file' => 'assets/library/truth/11.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_11'];
+$builtins[] = ['assetId' => 'builtin-truth-12', 'versionId' => 'builtin-truth-12-v1', 'file' => 'assets/library/truth/12.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_12'];
+$builtins[] = ['assetId' => 'builtin-truth-13', 'versionId' => 'builtin-truth-13-v1', 'file' => 'assets/library/truth/13.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_13'];
+$builtins[] = ['assetId' => 'builtin-truth-14', 'versionId' => 'builtin-truth-14-v1', 'file' => 'assets/library/truth/14.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_14'];
+
 return $builtins;
