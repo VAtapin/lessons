@@ -551,3 +551,49 @@
     .conducting-app.conducting-app.theme-indigo .focus-stage-journey .block-state { margin-block: 4px; }
     .conducting-app.conducting-app.theme-indigo .focus-stage-journey .presentation-revealed { margin: 8px 0 0; padding: 6px 12px; font-size: .9rem; line-height: 1.3; }
 }
+
+.conducting-app.conducting-app.theme-rose { --ink: #633c50; --muted: #896e7b; --paper: #f8f0f3; --card: #fffafd; --border: #af718e39; --accent: #af718e; --olive: #956781; --scene-dark: #633c50; --scene-deep: #432a3b; --scene-soft: #f1dfe7; --scene-success: #f5e8ee; }
+.conducting-app.conducting-app.theme-rose .focus-stage { background: linear-gradient(135deg, #fffafd, #f1dfe7); }
+.conducting-app.conducting-app.theme-rose .focus-stage.focus-stage-cover .focus-stage-visual::after { background: linear-gradient(90deg, #432a3be8, #633c5088 48%, #633c5000); }
+.conducting-app.conducting-app.theme-rose .finished-lesson { background: radial-gradient(circle at 55% 30%, #d79ab455, transparent 50%), linear-gradient(135deg, #432a3b, #956781); }
+/* Preserve every source word while leaving room for the paired exit answers. */
+.conducting-app.conducting-app.theme-rose .focus-stage:has(.interactive-free-response) .scene-description { white-space: normal; }
+.conducting-app.conducting-app.theme-rose .focus-stage:has(.interactive-free-response) .interactive-free-response legend { font-size: clamp(1.3rem, min(2.2vw, 3.7dvh), 2rem); line-height: 1.15; }
+.conducting-app.conducting-app.theme-rose .focus-stage-cover .scene-title { font-size: clamp(2.5rem, min(6vw, 7dvh), 5.5rem); }
+.conducting-app.conducting-app.theme-rose .focus-stage:has(.interactive-sequence) .scene-description { white-space: normal; }
+.conducting-app.conducting-app.theme-rose .focus-stage:has(.interactive-sequence) .focus-stage-copy { padding-block: 18px; }
+/* The four illustrated event cards and their review remain readable together. */
+@media (min-width: 901px) {
+    .conducting-app.conducting-app.theme-rose .focus-stage-journey .focus-stage-copy { padding: 12px 24px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage-journey .scene-title { font-size: clamp(1.6rem, 4dvh, 2.2rem); margin-bottom: 8px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage-journey .scene-description { font-size: 1rem; line-height: 1.35; margin-bottom: 8px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage-journey .sequence-tile { padding: 6px 10px; min-height: 40px; font-size: .85rem; }
+    .conducting-app.conducting-app.theme-rose .focus-stage-journey .sequence-road { min-height: 180px; padding-block: 15px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage-journey .sequence-slot:nth-child(odd) { transform: translateY(-22px); }
+    .conducting-app.conducting-app.theme-rose .focus-stage-journey .sequence-slot:nth-child(even) { transform: translateY(22px); }
+    .conducting-app.conducting-app.theme-rose .focus-stage-journey .sequence-actions { margin: 6px 0 4px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage-journey .interactive-sequence legend { margin-bottom: 6px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage-journey .block-state { margin-block: 4px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage-journey .presentation-revealed { margin: 8px 0 0; padding: 6px 12px; font-size: .9rem; line-height: 1.3; }
+}
+
+/* Keep all four story frames and seven revealed roles beside the full verse excerpts. */
+@media (min-width: 901px) {
+    .conducting-app.conducting-app.theme-rose .focus-stage:has(.interactive-roles) { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+    .conducting-app.conducting-app.theme-rose .focus-stage:has(.interactive-roles) .focus-stage-copy { padding: 14px 24px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage:has(.interactive-roles) .scene-title { font-size: clamp(1.5rem, 3.5dvh, 2rem); margin-bottom: 8px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage:has(.interactive-roles) .scene-description { font-size: 1rem; line-height: 1.35; white-space: normal; margin-bottom: 8px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage:has(.interactive-roles) .stage-blocks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 8px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage:has(.interactive-roles) .render-block { margin: 0; }
+    .conducting-app.conducting-app.theme-rose .focus-stage:has(.interactive-roles) .render-block[data-presentation-kind='scene'],
+    .conducting-app.conducting-app.theme-rose .focus-stage:has(.interactive-roles) .render-block:has(.interactive-roles) { grid-column: 1 / -1; }
+    .conducting-app.conducting-app.theme-rose .focus-stage .role-reveal-board { padding: 8px 12px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage .role-current { font-size: 1.4rem; margin-bottom: 4px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage .revealed-role-list { gap: 4px; margin-bottom: 4px; }
+    .conducting-app.conducting-app.theme-rose .focus-stage .revealed-role-list > span { padding: 4px 8px; background: var(--scene-soft); }
+    .conducting-app.conducting-app.theme-rose .focus-stage .interactive-roles legend { margin-bottom: 6px; }
+}
+
+.conducting-app.conducting-app.theme-rose .focus-stage-journey .sequence-slot.filled .sequence-number { background: var(--scene-dark); color: #fff; }
+.conducting-app.conducting-app.theme-rose .focus-stage-journey .sequence-feedback { background: var(--scene-dark); }
+.conducting-app.conducting-app.theme-rose .focus-stage-journey .sequence-tile::before { background: var(--scene-soft); }

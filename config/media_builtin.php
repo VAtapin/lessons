@@ -260,4 +260,19 @@ $builtins[] = ['assetId' => 'builtin-pressure-12', 'versionId' => 'builtin-press
 $builtins[] = ['assetId' => 'builtin-pressure-13', 'versionId' => 'builtin-pressure-13-v1', 'file' => 'assets/library/pressure/13.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_13'];
 $builtins[] = ['assetId' => 'builtin-pressure-14', 'versionId' => 'builtin-pressure-14-v1', 'file' => 'assets/library/pressure/14.png', 'mime' => 'image/png', 'labelKey' => 'media_pressure_14'];
 
+$builtins[] = ['assetId' => 'builtin-envy-1', 'versionId' => 'builtin-envy-1-v1', 'file' => 'assets/library/envy/01.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_1'];
+$builtins[] = ['assetId' => 'builtin-envy-2', 'versionId' => 'builtin-envy-2-v1', 'file' => 'assets/library/envy/02.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_2'];
+$builtins[] = ['assetId' => 'builtin-envy-3', 'versionId' => 'builtin-envy-3-v1', 'file' => 'assets/library/envy/03.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_3'];
+$builtins[] = ['assetId' => 'builtin-envy-4', 'versionId' => 'builtin-envy-4-v1', 'file' => 'assets/library/envy/04.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_4'];
+$builtins[] = ['assetId' => 'builtin-envy-5', 'versionId' => 'builtin-envy-5-v1', 'file' => 'assets/library/envy/05.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_5'];
+$builtins[] = ['assetId' => 'builtin-envy-6', 'versionId' => 'builtin-envy-6-v1', 'file' => 'assets/library/envy/06.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_6'];
+$builtins[] = ['assetId' => 'builtin-envy-7', 'versionId' => 'builtin-envy-7-v1', 'file' => 'assets/library/envy/07.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_7'];
+$builtins[] = ['assetId' => 'builtin-envy-8', 'versionId' => 'builtin-envy-8-v1', 'file' => 'assets/library/envy/08.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_8'];
+$builtins[] = ['assetId' => 'builtin-envy-9', 'versionId' => 'builtin-envy-9-v1', 'file' => 'assets/library/envy/09.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_9'];
+$builtins[] = ['assetId' => 'builtin-envy-10', 'versionId' => 'builtin-envy-10-v1', 'file' => 'assets/library/envy/10.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_10'];
+$builtins[] = ['assetId' => 'builtin-envy-11', 'versionId' => 'builtin-envy-11-v1', 'file' => 'assets/library/envy/11.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_11'];
+$builtins[] = ['assetId' => 'builtin-envy-12', 'versionId' => 'builtin-envy-12-v1', 'file' => 'assets/library/envy/12.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_12'];
+$builtins[] = ['assetId' => 'builtin-envy-13', 'versionId' => 'builtin-envy-13-v1', 'file' => 'assets/library/envy/13.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_13'];
+$builtins[] = ['assetId' => 'builtin-envy-14', 'versionId' => 'builtin-envy-14-v1', 'file' => 'assets/library/envy/14.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_14'];
+
 return $builtins;
