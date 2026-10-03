@@ -275,4 +275,19 @@ $builtins[] = ['assetId' => 'builtin-envy-12', 'versionId' => 'builtin-envy-12-v
 $builtins[] = ['assetId' => 'builtin-envy-13', 'versionId' => 'builtin-envy-13-v1', 'file' => 'assets/library/envy/13.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_13'];
 $builtins[] = ['assetId' => 'builtin-envy-14', 'versionId' => 'builtin-envy-14-v1', 'file' => 'assets/library/envy/14.png', 'mime' => 'image/png', 'labelKey' => 'media_envy_14'];
 
+$builtins[] = ['assetId' => 'builtin-anger-1', 'versionId' => 'builtin-anger-1-v1', 'file' => 'assets/library/anger/01.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_1'];
+$builtins[] = ['assetId' => 'builtin-anger-2', 'versionId' => 'builtin-anger-2-v1', 'file' => 'assets/library/anger/02.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_2'];
+$builtins[] = ['assetId' => 'builtin-anger-3', 'versionId' => 'builtin-anger-3-v1', 'file' => 'assets/library/anger/03.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_3'];
+$builtins[] = ['assetId' => 'builtin-anger-4', 'versionId' => 'builtin-anger-4-v1', 'file' => 'assets/library/anger/04.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_4'];
+$builtins[] = ['assetId' => 'builtin-anger-5', 'versionId' => 'builtin-anger-5-v1', 'file' => 'assets/library/anger/05.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_5'];
+$builtins[] = ['assetId' => 'builtin-anger-6', 'versionId' => 'builtin-anger-6-v1', 'file' => 'assets/library/anger/06.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_6'];
+$builtins[] = ['assetId' => 'builtin-anger-7', 'versionId' => 'builtin-anger-7-v1', 'file' => 'assets/library/anger/07.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_7'];
+$builtins[] = ['assetId' => 'builtin-anger-8', 'versionId' => 'builtin-anger-8-v1', 'file' => 'assets/library/anger/08.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_8'];
+$builtins[] = ['assetId' => 'builtin-anger-9', 'versionId' => 'builtin-anger-9-v1', 'file' => 'assets/library/anger/09.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_9'];
+$builtins[] = ['assetId' => 'builtin-anger-10', 'versionId' => 'builtin-anger-10-v1', 'file' => 'assets/library/anger/10.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_10'];
+$builtins[] = ['assetId' => 'builtin-anger-11', 'versionId' => 'builtin-anger-11-v1', 'file' => 'assets/library/anger/11.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_11'];
+$builtins[] = ['assetId' => 'builtin-anger-12', 'versionId' => 'builtin-anger-12-v1', 'file' => 'assets/library/anger/12.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_12'];
+$builtins[] = ['assetId' => 'builtin-anger-13', 'versionId' => 'builtin-anger-13-v1', 'file' => 'assets/library/anger/13.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_13'];
+$builtins[] = ['assetId' => 'builtin-anger-14', 'versionId' => 'builtin-anger-14-v1', 'file' => 'assets/library/anger/14.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_14'];
+
 return $builtins;

@@ -55,7 +55,7 @@ test('picture-count header follows the displayed mode without announcing the mis
 
 test('lesson palettes reach student and projector during the lesson and closing', async () => {
     const closing = { content: { title: 'Finished', text: 'Reflection' } };
-    for (const theme of ['slate', 'lavender', 'ocean', 'berry', 'cobalt', 'plum', 'copper', 'indigo', 'rose']) for (const mode of ['student', 'projector']) {
+    for (const theme of ['slate', 'lavender', 'ocean', 'berry', 'cobalt', 'plum', 'copper', 'indigo', 'rose', 'graphite']) for (const mode of ['student', 'projector']) {
         const stage = { id: 'stage', content: { title: 'Context' }, blocks: [], config: { theme } };
         for (const status of ['running', 'finished']) {
             const html = await render(mode, 0, { stage, status, closing });
