@@ -320,4 +320,19 @@ $builtins[] = ['assetId' => 'builtin-truth-12', 'versionId' => 'builtin-truth-12
 $builtins[] = ['assetId' => 'builtin-truth-13', 'versionId' => 'builtin-truth-13-v1', 'file' => 'assets/library/truth/13.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_13'];
 $builtins[] = ['assetId' => 'builtin-truth-14', 'versionId' => 'builtin-truth-14-v1', 'file' => 'assets/library/truth/14.png', 'mime' => 'image/png', 'labelKey' => 'media_truth_14'];
 
+$builtins[] = ['assetId' => 'builtin-vineyard-1', 'versionId' => 'builtin-vineyard-1-v1', 'file' => 'assets/library/vineyard/01.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_1'];
+$builtins[] = ['assetId' => 'builtin-vineyard-2', 'versionId' => 'builtin-vineyard-2-v1', 'file' => 'assets/library/vineyard/02.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_2'];
+$builtins[] = ['assetId' => 'builtin-vineyard-3', 'versionId' => 'builtin-vineyard-3-v1', 'file' => 'assets/library/vineyard/03.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_3'];
+$builtins[] = ['assetId' => 'builtin-vineyard-4', 'versionId' => 'builtin-vineyard-4-v1', 'file' => 'assets/library/vineyard/04.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_4'];
+$builtins[] = ['assetId' => 'builtin-vineyard-5', 'versionId' => 'builtin-vineyard-5-v1', 'file' => 'assets/library/vineyard/05.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_5'];
+$builtins[] = ['assetId' => 'builtin-vineyard-6', 'versionId' => 'builtin-vineyard-6-v1', 'file' => 'assets/library/vineyard/06.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_6'];
+$builtins[] = ['assetId' => 'builtin-vineyard-7', 'versionId' => 'builtin-vineyard-7-v1', 'file' => 'assets/library/vineyard/07.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_7'];
+$builtins[] = ['assetId' => 'builtin-vineyard-8', 'versionId' => 'builtin-vineyard-8-v1', 'file' => 'assets/library/vineyard/08.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_8'];
+$builtins[] = ['assetId' => 'builtin-vineyard-9', 'versionId' => 'builtin-vineyard-9-v1', 'file' => 'assets/library/vineyard/09.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_9'];
+$builtins[] = ['assetId' => 'builtin-vineyard-10', 'versionId' => 'builtin-vineyard-10-v1', 'file' => 'assets/library/vineyard/10.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_10'];
+$builtins[] = ['assetId' => 'builtin-vineyard-11', 'versionId' => 'builtin-vineyard-11-v1', 'file' => 'assets/library/vineyard/11.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_11'];
+$builtins[] = ['assetId' => 'builtin-vineyard-12', 'versionId' => 'builtin-vineyard-12-v1', 'file' => 'assets/library/vineyard/12.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_12'];
+$builtins[] = ['assetId' => 'builtin-vineyard-13', 'versionId' => 'builtin-vineyard-13-v1', 'file' => 'assets/library/vineyard/13.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_13'];
+$builtins[] = ['assetId' => 'builtin-vineyard-14', 'versionId' => 'builtin-vineyard-14-v1', 'file' => 'assets/library/vineyard/14.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_14'];
+
 return $builtins;

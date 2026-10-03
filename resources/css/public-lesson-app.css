@@ -761,3 +761,69 @@
     .conducting-app.conducting-app.theme-steel .focus-stage:not(.focus-stage-journey):has(.render-block[data-presentation-kind='reveal']) .render-block:has(.prompt-block),
     .conducting-app.conducting-app.theme-steel .focus-stage:not(.focus-stage-journey):has(.render-block[data-presentation-kind='reveal']) .render-block:has(.presentation-revealed) { grid-column: 1 / -1; }
 }
+
+.conducting-app.conducting-app.theme-wine { --ink: #63364a; --muted: #856876; --paper: #f5edf1; --card: #fff9fb; --border: #ac5d7a39; --accent: #ac5d7a; --olive: #936b7d; --scene-dark: #63364a; --scene-deep: #402434; --scene-soft: #eddae2; --scene-success: #f1e2e8; }
+.conducting-app.conducting-app.theme-wine .focus-stage { background: linear-gradient(135deg, #fff9fb, #eddae2); }
+.conducting-app.conducting-app.theme-wine .focus-stage.focus-stage-cover .focus-stage-visual::after { background: linear-gradient(90deg, #402434e8, #63364a88 48%, #63364a00); }
+.conducting-app.conducting-app.theme-wine .finished-lesson { background: radial-gradient(circle at 55% 30%, #cf94ad55, transparent 50%), linear-gradient(135deg, #402434, #63364a); }
+/* Preserve every source word while leaving room for the paired exit answers. */
+.conducting-app.conducting-app.theme-wine .focus-stage:has(.interactive-free-response) .scene-description { white-space: normal; }
+.conducting-app.conducting-app.theme-wine .focus-stage:has(.interactive-free-response) .interactive-free-response legend { font-size: clamp(1.3rem, min(2.2vw, 3.7dvh), 2rem); line-height: 1.15; }
+.conducting-app.conducting-app.theme-wine .focus-stage-cover .scene-title { font-size: clamp(2.5rem, min(6vw, 7dvh), 5.5rem); }
+.conducting-app.conducting-app.theme-wine .focus-stage:has(.interactive-sequence) .scene-description { white-space: normal; }
+.conducting-app.conducting-app.theme-wine .focus-stage:has(.interactive-sequence) .focus-stage-copy { padding-block: 18px; }
+/* The four illustrated event cards and their review remain readable together. */
+@media (min-width: 901px) {
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .focus-stage-copy { padding: 12px 24px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey:has(.interactive-sequence) .focus-stage-copy { padding-block: 8px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .scene-title { font-size: clamp(1.6rem, 4dvh, 2.2rem); margin-bottom: 8px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .scene-description { font-size: 1rem; line-height: 1.35; margin-bottom: 8px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .sequence-tile { padding: 6px 10px; min-height: 40px; font-size: .85rem; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .sequence-road { min-height: 180px; padding-block: 15px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .sequence-layout:not(:has(.sequence-tile:not(.sequence-tile-used))) { grid-template-columns: minmax(0, 1fr); }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .sequence-layout:not(:has(.sequence-tile:not(.sequence-tile-used))) .sequence-pool { display: none; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .sequence-layout:not(:has(.sequence-tile:not(.sequence-tile-used))) .sequence-road { padding-block: 4px; min-height: 165px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .sequence-layout:not(:has(.sequence-tile:not(.sequence-tile-used))) .sequence-number { width: 44px; height: 44px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .sequence-slot:nth-child(odd) { transform: translateY(-22px); }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .sequence-slot:nth-child(even) { transform: translateY(22px); }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .sequence-actions { margin: 6px 0 4px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .interactive-sequence legend { margin-bottom: 6px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .block-state { margin-block: 4px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .presentation-revealed { margin: 8px 0 0; padding: 6px 12px; font-size: .9rem; line-height: 1.3; }
+}
+
+/* Managed roles remain compact beside the source verse excerpts. */
+@media (min-width: 901px) {
+    .conducting-app.conducting-app.theme-wine .focus-stage .role-reveal-board { padding: 8px 12px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage .role-current { font-size: 1.4rem; margin-bottom: 4px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage .revealed-role-list { gap: 4px; margin-bottom: 4px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage .revealed-role-list > span { padding: 4px 8px; background: var(--scene-soft); }
+    .conducting-app.conducting-app.theme-wine .focus-stage .interactive-roles legend { margin-bottom: 6px; }
+}
+
+.conducting-app.conducting-app.theme-wine .focus-stage-journey .sequence-slot.filled .sequence-number { background: var(--scene-dark); color: #fff; }
+.conducting-app.conducting-app.theme-wine .focus-stage-journey .sequence-feedback { background: var(--scene-dark); }
+.conducting-app.conducting-app.theme-wine .focus-stage-journey .sequence-tile::before { background: var(--scene-soft); }
+
+/* Six scene controls and the paired cases share the available width. */
+@media (min-width: 901px) {
+    .conducting-app.conducting-app.theme-wine .focus-stage:not(.focus-stage-journey):has(.render-block[data-presentation-kind='reveal']) { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+    .conducting-app.conducting-app.theme-wine .focus-stage:not(.focus-stage-journey):has(.render-block[data-presentation-kind='reveal']) .focus-stage-copy { padding: 12px 24px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage:not(.focus-stage-journey):has(.render-block[data-presentation-kind='reveal']) .scene-title { font-size: clamp(1.5rem, 3.5dvh, 2rem); margin-bottom: 8px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage:not(.focus-stage-journey):has(.render-block[data-presentation-kind='reveal']) .scene-description { font-size: .95rem; line-height: 1.3; white-space: normal; margin-bottom: 8px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage:not(.focus-stage-journey):has(.render-block[data-presentation-kind='reveal']) .stage-blocks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 8px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage:not(.focus-stage-journey):has(.render-block[data-presentation-kind='reveal']) .render-block { margin: 0; }
+    .conducting-app.conducting-app.theme-wine .focus-stage:not(.focus-stage-journey):has(.render-block[data-presentation-kind='reveal']) .render-block[data-presentation-kind='scene'],
+    .conducting-app.conducting-app.theme-wine .focus-stage:not(.focus-stage-journey):has(.render-block[data-presentation-kind='reveal']) .render-block:has(.interactive-roles),
+    .conducting-app.conducting-app.theme-wine .focus-stage:not(.focus-stage-journey):has(.render-block[data-presentation-kind='reveal']) .render-block:has(.prompt-block),
+    .conducting-app.conducting-app.theme-wine .focus-stage:not(.focus-stage-journey):has(.render-block[data-presentation-kind='reveal']) .render-block:has(.presentation-revealed) { grid-column: 1 / -1; }
+}
+
+@media (min-width: 901px) {
+    .conducting-app.conducting-app.theme-wine .focus-stage:has(.render-block[data-presentation-kind="reveal"]) .presentation-revealed { background: var(--scene-soft); border-color: var(--accent); font-size: .95rem; line-height: 1.35; white-space: normal; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey:has(.interactive-free-response) .stage-blocks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey:has(.interactive-free-response) .render-block { margin: 0; grid-column: 1 / -1; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey:has(.interactive-free-response) .render-block:has(.interactive-free-response) { grid-column: auto; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .interactive-free-response { padding: 8px 12px; }
+    .conducting-app.conducting-app.theme-wine .focus-stage-journey .interactive-free-response legend { font-size: 1rem; line-height: 1.2; }
+}
