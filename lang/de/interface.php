@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'social_locale' => 'de_DE',
     'any_filter' => 'Alle',
     'sign_in' => 'Anmelden',
     'my_workspace' => 'Mein Bereich',

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'social_locale' => 'ru_RU',
     'any_filter' => 'Все',
     'sign_in' => 'Войти',
     'my_workspace' => 'Мой кабинет',

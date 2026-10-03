@@ -196,10 +196,12 @@ final readonly class CatalogService
     {
         $meta = $entry->metadata;
         $cover = isset($meta['cover']) ? $this->media->resolve($meta['cover']['assetId'], $meta['cover']['versionId'])['url'] : null;
+        $size = isset($meta['cover']) ? getimagesize($this->media->resolve($meta['cover']['assetId'], $meta['cover']['versionId'])['path']) : null;
 
         return ['slug' => $entry->slug, 'versionId' => $entry->lesson_version_id,
             'title' => $meta['translations'][$locale]['title'], 'description' => $meta['translations'][$locale]['description'],
             'locales' => $document->locales, 'age' => $meta['age'], 'topic' => $meta['topic'], 'audience' => $meta['audience'],
-            'format' => $meta['format'], 'durationMinutes' => $meta['durationMinutes'], 'coverUrl' => $cover];
+            'format' => $meta['format'], 'durationMinutes' => $meta['durationMinutes'], 'coverUrl' => $cover,
+            'coverWidth' => $size[0] ?? null, 'coverHeight' => $size[1] ?? null];
     }
 }

@@ -12,11 +12,14 @@ final class HomeController extends Controller
     {
         abort_unless(in_array($locale, config('lessons.ui_locales'), true), 404);
         App::setLocale($locale);
-        if ($slug !== null) {
-            $catalog->detail($slug, $locale);
-        }
+        $filters = request()->validate(['q' => ['sometimes', 'string', 'max:200'], 'age' => ['sometimes', 'string', 'max:80'],
+            'topic' => ['sometimes', 'string', 'max:80'], 'audience' => ['sometimes', 'string', 'max:80'],
+            'format' => ['sometimes', 'string', 'max:80'], 'duration' => ['sometimes', 'in:short,standard,long'],
+            'page' => ['sometimes', 'integer', 'min:1', 'max:100000']]);
+        $publicContent = $slug !== null ? $catalog->detail($slug, $locale) : $catalog->listing($locale, $filters);
 
-        return view('home', ['locale' => $locale, 'page' => 'catalog', 'context' => ['slug' => $slug],
+        return view('home', ['locale' => $locale, 'page' => 'catalog', 'context' => ['slug' => $slug, 'initialCatalog' => $publicContent],
+            'publicContent' => $publicContent,
             'messages' => trans('interface'), 'studioMessages' => array_merge(trans('studio'), trans('wave'))]);
     }
 

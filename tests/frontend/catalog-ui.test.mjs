@@ -16,7 +16,7 @@ function evaluate(source, dependencies = {}) {
     const exports = {};
     const code = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
     vm.runInNewContext(code, { exports, URLSearchParams, AbortController, DOMException, window: { location }, require: name => {
-        if (name.endsWith('.png')) return { __esModule: true, default: '/test-image.png' };
+        if (name.endsWith('.png') || name.endsWith('.webp')) return { __esModule: true, default: '/test-image.png' };
         assert.ok(name in dependencies, `Unexpected dependency: ${name}`);
         return dependencies[name];
     } });

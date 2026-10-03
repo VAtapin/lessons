@@ -1,23 +1,25 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { defineAsyncComponent, onMounted } from 'vue';
 import { api } from './studio/api';
 import { accountState, acceptAccount } from './studio/identity';
 import type { Account } from './studio/types';
 import type { InterfaceMessages } from './app';
-import CatalogPage from './catalog/CatalogPage.vue';
+const CatalogPage = defineAsyncComponent(() => import('./catalog/CatalogPage.vue'));
 import PublicIcon from './catalog/PublicIcon.vue';
 import { catalogLink } from './catalog/filters';
-import hero from '../../UI-Design/1.png';
-import landscape from '../../UI-Design/2.png';
-import logo from '../../UI-Design/logo_kl.png';
-import school from '../../UI-Design/3.png';
-import sunday from '../../UI-Design/4.png';
-import children from '../../UI-Design/5.png';
-import adults from '../../UI-Design/6.png';
-import bible from '../../UI-Design/19.png';
-import reading from '../../UI-Design/22.png';
-import mercy from '../../UI-Design/15.png';
-const props = defineProps<{ locale: string; messages: InterfaceMessages; page?: string; studioMessages?: InterfaceMessages; context?: { slug?: string } }>();
+import type { CatalogEntry, CatalogList } from './catalog/types';
+import type { ProjectedStage } from './studio/types';
+import hero from '../images/public/1.webp';
+import landscape from '../images/public/2.webp';
+import logo from '../images/public/logo_kl.webp';
+import school from '../images/public/3.webp';
+import sunday from '../images/public/4.webp';
+import children from '../images/public/5.webp';
+import adults from '../images/public/6.webp';
+import bible from '../images/public/19.webp';
+import reading from '../images/public/22.webp';
+import mercy from '../images/public/15.webp';
+const props = defineProps<{ locale: string; locales?: string[]; messages: InterfaceMessages; page?: string; studioMessages?: InterfaceMessages; context?: { slug?: string; initialCatalog?: CatalogList | { entry: CatalogEntry; preview: { stages: ProjectedStage[] } } } }>();
 onMounted(async () => { try { acceptAccount(await api<Account>('/api/account')); } catch { /* Sign-in remains available when account lookup fails. */ } });
 const audiences = [{ key: 'school', image: school }, { key: 'sunday-school', image: sunday }, { key: 'children', image: children }, { key: 'adults', image: adults }];
 const topics = [{ key: 'bible', image: bible }, { key: 'holidays', image: reading }, { key: 'parables', image: landscape }, { key: 'family', image: sunday }, { key: 'prayer', image: adults }, { key: 'mercy', image: mercy }];
@@ -36,7 +38,7 @@ const languageLink = (locale: string) => `/${locale}${props.page === 'catalog' ?
             <a class="header-search" :href="page === 'catalog' && !context?.slug ? '#find-materials' : `${catalogLink(locale)}#find-materials`" :aria-label="messages.search_label"><PublicIcon name="search" /></a>
             <a class="public-button header-choose" :href="catalogLink(locale)">{{ messages.choose_lesson }}</a>
             <a class="public-button secondary header-account" :href="`/${locale}/${accountState?.user ? 'studio?view=overview' : 'login'}`">{{ messages[accountState?.user ? 'my_workspace' : 'sign_in'] }}</a>
-            <nav class="public-languages" :aria-label="messages.language"><a v-for="language in ['ru', 'de']" :key="language" :href="languageLink(language)" :lang="language" :aria-current="locale === language ? 'page' : undefined">{{ language.toUpperCase() }}</a></nav>
+            <nav class="public-languages" :aria-label="messages.language"><a v-for="language in locales || ['ru', 'de']" :key="language" :href="languageLink(language)" :lang="language" :aria-current="locale === language ? 'page' : undefined">{{ language.toUpperCase() }}</a></nav>
         </header>
         <main id="main-content">
             <template v-if="page !== 'catalog'">
@@ -56,7 +58,7 @@ const languageLink = (locale: string) => `/${locale}${props.page === 'catalog' ?
                 <section class="landscape-cta" :style="{ backgroundImage: `url(${landscape})` }"><div><h2>{{ messages.cta_title }}</h2><p>{{ messages.cta_text }}</p><a class="public-button" :href="catalogLink(locale)">{{ messages.open_catalog }}<PublicIcon name="arrow" /></a></div><p class="cta-handwriting" aria-hidden="true">{{ messages.tagline }} ♡</p></section>
                 <section id="about" class="home-about public-content"><div><h2>{{ messages.nav_about }}</h2><p>{{ messages.about_text }}</p></div><div class="public-actions"><a class="public-button" :href="catalogLink(locale)">{{ messages.start_guest }}</a><a class="public-button secondary" :href="`/${locale}/studio`">{{ messages.create_own }}</a><a :href="`/${locale}/join`">{{ messages.join_session }}</a></div></section>
             </template>
-            <CatalogPage v-else :locale="locale" :messages="messages" :slug="context?.slug" :studio-messages="studioMessages" />
+            <CatalogPage v-else :locale="locale" :messages="messages" :slug="context?.slug" :initial="context?.initialCatalog" :studio-messages="studioMessages" />
         </main>
         <footer id="contact" class="public-footer"><div class="footer-main"><a class="public-brand" :href="`/${locale}`"><img :src="logo" alt="" width="64" height="58" /><span><strong>lessons.atapin.de</strong><small>{{ messages.tagline }}</small></span></a><nav :aria-label="messages.nav_contact"><a v-for="key in navigation" :key="key" :href="homeAnchor(key)">{{ messages[`nav_${key}`] }}</a></nav><a href="mailto:info@atapin.de">info@atapin.de</a><a :href="`/${locale}/studio`">{{ messages.open_studio }}</a></div><div class="footer-bottom"><span>© {{ new Date().getFullYear() }} lessons.atapin.de</span><span>{{ messages.eyebrow }}</span></div></footer>
         <a class="public-back-to-top" href="#page-top" :aria-label="messages.back_to_top" :title="messages.back_to_top"><PublicIcon name="arrow" /></a>

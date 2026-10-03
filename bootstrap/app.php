@@ -5,6 +5,7 @@ use App\Application\Shared\ApiProblem;
 use App\Application\Studio\EditorProblem;
 use App\Http\Middleware\AccountSession;
 use App\Http\Middleware\LessonJsonMaps;
+use App\Http\Middleware\SearchIndexing;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(append: [AccountSession::class, LessonJsonMaps::class]);
+        $middleware->web(append: [AccountSession::class, LessonJsonMaps::class, SearchIndexing::class]);
         // The domain validates authored JSON; optional empty captions/notes and
         // deliberate text whitespace must survive the standard form transforms.
         $authoredDocument = fn (Request $request) => $request->isMethod('POST') && $request->is('api/studio/lessons')
@@ -34,6 +35,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->convertEmptyStringsToNull(except: [$authInput, $authoredDocument, $runtimeCommand, $runtimeAnswer, $historyNotes, $libraryContent]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(function (ApiProblem $problem, Request $request) {
+            if ($problem->status === 404 && ! $request->is('api/*') && ! $request->expectsJson()) {
+                return response()->view('errors.404', [], 404, ['X-Robots-Tag' => 'noindex, follow']);
+            }
+        });
         $exceptions->render(fn (CollaborationConflict $problem) => response()->json(['error' => ['code' => $problem->problemCode]] + $problem->state, 409));
         $exceptions->render(fn (EditorProblem $problem) => response()->json($problem->payload(), $problem->status));
         $exceptions->render(fn (ApiProblem $problem) => response()->json(

@@ -2,10 +2,15 @@
 
 use App\Application\Shared\MediaCatalogue;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\SocialImageController;
 use App\Http\Controllers\WorkspacePageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('/sitemap.xml', SitemapController::class);
+Route::get('/social-cover.jpg', SocialImageController::class);
+Route::get('/social/builtin/{versionId}.jpg', SocialImageController::class)->where('versionId', '[a-zA-Z0-9-]+');
 Route::get('/{locale}', HomeController::class)
     ->where('locale', implode('|', config('lessons.ui_locales')))
     ->name('home.localized');
