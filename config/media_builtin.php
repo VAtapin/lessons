@@ -335,4 +335,19 @@ $builtins[] = ['assetId' => 'builtin-vineyard-12', 'versionId' => 'builtin-viney
 $builtins[] = ['assetId' => 'builtin-vineyard-13', 'versionId' => 'builtin-vineyard-13-v1', 'file' => 'assets/library/vineyard/13.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_13'];
 $builtins[] = ['assetId' => 'builtin-vineyard-14', 'versionId' => 'builtin-vineyard-14-v1', 'file' => 'assets/library/vineyard/14.png', 'mime' => 'image/png', 'labelKey' => 'media_vineyard_14'];
 
+$builtins[] = ['assetId' => 'builtin-joseph-1', 'versionId' => 'builtin-joseph-1-v1', 'file' => 'assets/library/joseph/01.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_1'];
+$builtins[] = ['assetId' => 'builtin-joseph-2', 'versionId' => 'builtin-joseph-2-v1', 'file' => 'assets/library/joseph/02.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_2'];
+$builtins[] = ['assetId' => 'builtin-joseph-3', 'versionId' => 'builtin-joseph-3-v1', 'file' => 'assets/library/joseph/03.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_3'];
+$builtins[] = ['assetId' => 'builtin-joseph-4', 'versionId' => 'builtin-joseph-4-v1', 'file' => 'assets/library/joseph/04.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_4'];
+$builtins[] = ['assetId' => 'builtin-joseph-5', 'versionId' => 'builtin-joseph-5-v1', 'file' => 'assets/library/joseph/05.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_5'];
+$builtins[] = ['assetId' => 'builtin-joseph-6', 'versionId' => 'builtin-joseph-6-v1', 'file' => 'assets/library/joseph/06.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_6'];
+$builtins[] = ['assetId' => 'builtin-joseph-7', 'versionId' => 'builtin-joseph-7-v1', 'file' => 'assets/library/joseph/07.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_7'];
+$builtins[] = ['assetId' => 'builtin-joseph-8', 'versionId' => 'builtin-joseph-8-v1', 'file' => 'assets/library/joseph/08.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_8'];
+$builtins[] = ['assetId' => 'builtin-joseph-9', 'versionId' => 'builtin-joseph-9-v1', 'file' => 'assets/library/joseph/09.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_9'];
+$builtins[] = ['assetId' => 'builtin-joseph-10', 'versionId' => 'builtin-joseph-10-v1', 'file' => 'assets/library/joseph/10.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_10'];
+$builtins[] = ['assetId' => 'builtin-joseph-11', 'versionId' => 'builtin-joseph-11-v1', 'file' => 'assets/library/joseph/11.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_11'];
+$builtins[] = ['assetId' => 'builtin-joseph-12', 'versionId' => 'builtin-joseph-12-v1', 'file' => 'assets/library/joseph/12.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_12'];
+$builtins[] = ['assetId' => 'builtin-joseph-13', 'versionId' => 'builtin-joseph-13-v1', 'file' => 'assets/library/joseph/13.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_13'];
+$builtins[] = ['assetId' => 'builtin-joseph-14', 'versionId' => 'builtin-joseph-14-v1', 'file' => 'assets/library/joseph/14.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_14'];
+
 return $builtins;
