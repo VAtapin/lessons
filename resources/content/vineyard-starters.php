@@ -37,4 +37,4 @@ foreach ($cards as $i => [$title, $text, $titleDe, $textDe, $stageIndex]) {
     $templates[] = ['slug' => $id, 'locales' => ['ru', 'de'], 'defaultLocale' => 'ru', 'block' => $block, 'labels' => $labels, 'attribution' => ['title' => $title, 'tags' => ['vineyard', $group ? 'distributed-condition' : 'pair-card']]];
 }
 
-return ['id' => 'vineyard-starter-v1', 'sourceRevision' => 'vineyard-ru-de-starters-2026-10-03-v1', 'templates' => $templates];
+return ['id' => 'vineyard-starter-v2', 'sourceRevision' => 'vineyard-ru-de-starters-2026-10-04-v2', 'templates' => $templates];

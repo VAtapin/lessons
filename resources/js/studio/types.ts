@@ -12,7 +12,7 @@ export interface Block {
     solution?: AnswerValue | null; teacherNotes?: Record<string, string>;
     origin?: { templateId: string; versionId: string } | null;
 }
-export interface Stage { id: string; content: Record<string, { title: string; notes?: string }>; config: { theme?: 'green' | 'terracotta' | 'slate' | 'lavender' | 'ocean' | 'berry' | 'cobalt' | 'plum' | 'copper' | 'indigo' | 'rose' | 'graphite' | 'sand' | 'steel' | 'wine' | 'umber' | 'azure'; layout?: string; durationSeconds?: number; openTasks?: boolean; sequentialTasks?: boolean; closeOnTimer?: boolean; answerSeconds?: number }; blocks: Block[] }
+export interface Stage { id: string; content: Record<string, { title: string; notes?: string }>; config: { theme?: 'green' | 'terracotta' | 'slate' | 'lavender' | 'ocean' | 'berry' | 'cobalt' | 'plum' | 'copper' | 'indigo' | 'rose' | 'graphite' | 'sand' | 'steel' | 'wine' | 'umber' | 'azure' | 'ochre'; layout?: string; durationSeconds?: number; openTasks?: boolean; sequentialTasks?: boolean; closeOnTimer?: boolean; answerSeconds?: number }; blocks: Block[] }
 export interface DocumentationFile { fileId: string; kind: 'plan' | 'presentation'; locale: string; url?: string; bytes?: number; label?: string }
 export interface TeacherDocumentation { schemaVersion: 1; content: Record<string, { plan: string }>; files: DocumentationFile[]; video?: { id: string; locale: string } }
 export interface ProjectedDocumentation { plan: string | null; files: DocumentationFile[]; video: { id: string; locale: string } | null }

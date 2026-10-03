@@ -365,4 +365,34 @@ $builtins[] = ['assetId' => 'builtin-loaves-12', 'versionId' => 'builtin-loaves-
 $builtins[] = ['assetId' => 'builtin-loaves-13', 'versionId' => 'builtin-loaves-13-v1', 'file' => 'assets/library/loaves/13.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_13'];
 $builtins[] = ['assetId' => 'builtin-loaves-14', 'versionId' => 'builtin-loaves-14-v1', 'file' => 'assets/library/loaves/14.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_14'];
 
+$builtins[] = ['assetId' => 'builtin-generosity-1', 'versionId' => 'builtin-generosity-1-v1', 'file' => 'assets/library/generosity/01.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_1'];
+$builtins[] = ['assetId' => 'builtin-generosity-2', 'versionId' => 'builtin-generosity-2-v1', 'file' => 'assets/library/generosity/02.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_2'];
+$builtins[] = ['assetId' => 'builtin-generosity-3', 'versionId' => 'builtin-generosity-3-v1', 'file' => 'assets/library/generosity/03.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_3'];
+$builtins[] = ['assetId' => 'builtin-generosity-4', 'versionId' => 'builtin-generosity-4-v1', 'file' => 'assets/library/generosity/04.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_4'];
+$builtins[] = ['assetId' => 'builtin-generosity-5', 'versionId' => 'builtin-generosity-5-v1', 'file' => 'assets/library/generosity/05.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_5'];
+$builtins[] = ['assetId' => 'builtin-generosity-6', 'versionId' => 'builtin-generosity-6-v1', 'file' => 'assets/library/generosity/06.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_6'];
+$builtins[] = ['assetId' => 'builtin-generosity-7', 'versionId' => 'builtin-generosity-7-v1', 'file' => 'assets/library/generosity/07.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_7'];
+$builtins[] = ['assetId' => 'builtin-generosity-8', 'versionId' => 'builtin-generosity-8-v1', 'file' => 'assets/library/generosity/08.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_8'];
+$builtins[] = ['assetId' => 'builtin-generosity-9', 'versionId' => 'builtin-generosity-9-v1', 'file' => 'assets/library/generosity/09.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_9'];
+$builtins[] = ['assetId' => 'builtin-generosity-10', 'versionId' => 'builtin-generosity-10-v1', 'file' => 'assets/library/generosity/10.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_10'];
+$builtins[] = ['assetId' => 'builtin-generosity-11', 'versionId' => 'builtin-generosity-11-v1', 'file' => 'assets/library/generosity/11.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_11'];
+$builtins[] = ['assetId' => 'builtin-generosity-12', 'versionId' => 'builtin-generosity-12-v1', 'file' => 'assets/library/generosity/12.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_12'];
+$builtins[] = ['assetId' => 'builtin-generosity-13', 'versionId' => 'builtin-generosity-13-v1', 'file' => 'assets/library/generosity/13.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_13'];
+$builtins[] = ['assetId' => 'builtin-generosity-14', 'versionId' => 'builtin-generosity-14-v1', 'file' => 'assets/library/generosity/14.png', 'mime' => 'image/png', 'labelKey' => 'media_generosity_14'];
+
+$builtins[] = ['assetId' => 'builtin-lazarus-1', 'versionId' => 'builtin-lazarus-1-v1', 'file' => 'assets/library/lazarus/01.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_1'];
+$builtins[] = ['assetId' => 'builtin-lazarus-2', 'versionId' => 'builtin-lazarus-2-v1', 'file' => 'assets/library/lazarus/02.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_2'];
+$builtins[] = ['assetId' => 'builtin-lazarus-3', 'versionId' => 'builtin-lazarus-3-v1', 'file' => 'assets/library/lazarus/03.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_3'];
+$builtins[] = ['assetId' => 'builtin-lazarus-4', 'versionId' => 'builtin-lazarus-4-v1', 'file' => 'assets/library/lazarus/04.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_4'];
+$builtins[] = ['assetId' => 'builtin-lazarus-5', 'versionId' => 'builtin-lazarus-5-v1', 'file' => 'assets/library/lazarus/05.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_5'];
+$builtins[] = ['assetId' => 'builtin-lazarus-6', 'versionId' => 'builtin-lazarus-6-v1', 'file' => 'assets/library/lazarus/06.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_6'];
+$builtins[] = ['assetId' => 'builtin-lazarus-7', 'versionId' => 'builtin-lazarus-7-v1', 'file' => 'assets/library/lazarus/07.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_7'];
+$builtins[] = ['assetId' => 'builtin-lazarus-8', 'versionId' => 'builtin-lazarus-8-v1', 'file' => 'assets/library/lazarus/08.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_8'];
+$builtins[] = ['assetId' => 'builtin-lazarus-9', 'versionId' => 'builtin-lazarus-9-v1', 'file' => 'assets/library/lazarus/09.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_9'];
+$builtins[] = ['assetId' => 'builtin-lazarus-10', 'versionId' => 'builtin-lazarus-10-v1', 'file' => 'assets/library/lazarus/10.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_10'];
+$builtins[] = ['assetId' => 'builtin-lazarus-11', 'versionId' => 'builtin-lazarus-11-v1', 'file' => 'assets/library/lazarus/11.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_11'];
+$builtins[] = ['assetId' => 'builtin-lazarus-12', 'versionId' => 'builtin-lazarus-12-v1', 'file' => 'assets/library/lazarus/12.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_12'];
+$builtins[] = ['assetId' => 'builtin-lazarus-13', 'versionId' => 'builtin-lazarus-13-v1', 'file' => 'assets/library/lazarus/13.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_13'];
+$builtins[] = ['assetId' => 'builtin-lazarus-14', 'versionId' => 'builtin-lazarus-14-v1', 'file' => 'assets/library/lazarus/14.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_14'];
+
 return $builtins;

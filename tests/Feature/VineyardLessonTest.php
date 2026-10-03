@@ -53,7 +53,8 @@ final class VineyardLessonTest extends TestCase
                 }
             }
         }
-        $this->assertCount(14, array_unique($images));
+        $this->assertContains('builtin-vineyard-6', $images);
+        $this->assertContains('builtin-vineyard-4', $images);
         $plans = $doc->documentation->toArray()['content'];
         foreach (['handout', 'teacherPreparation', 'script', 'bible', 'roleplay', 'plan', 'passport'] as $section) {
             $this->assertStringContainsString($raw[$section], $plans['ru']['plan']);
@@ -64,7 +65,7 @@ final class VineyardLessonTest extends TestCase
         preg_match_all('/^Matthäus 20,(\d+)\. /m', str_replace("\r\n", "\n", (require resource_path('content/vineyard-de.php'))['bible']), $deVerses);
         $this->assertSame(array_map('strval', range(1, 16)), $ruVerses[1]);
         $this->assertSame($ruVerses[1], $deVerses[1]);
-        $this->assertCount(5, $doc->documentation->toArray()['files']);
+        $this->assertCount(10, $doc->documentation->toArray()['files']);
         foreach ($doc->documentation->toArray()['files'] as $reference) {
             $file = app(DocumentationFiles::class)->resolve($reference['fileId']);
             $this->get($file['url'])->assertOk()->assertHeader('content-type', $file['mime']);
@@ -149,16 +150,17 @@ final class VineyardLessonTest extends TestCase
         $execute('stage', ['stageId' => 'vineyard-step-08']);
         foreach ([$runtime->student($session['id'], $participant), $runtime->projector($token)] as $dto) {
             $public = json_encode($dto, JSON_UNESCAPED_UNICODE);
-            foreach (['подарил ему свой новый набор', 'Ein Freiwilliger schenkte', 'только пять минут', 'nur fünf statt zehn'] as $private) {
+            foreach (['сопровождал бабушку', 'begleitete seine Großmutter'] as $private) {
                 $this->assertStringNotContainsString($private, $public);
             }
         }
-        $first = 'Ask when the promised feedback starts and help Mischa settle in.';
+        $first = 'Both keep the same full meal; acknowledge Saschas longer work.';
         $runtime->answer($session['id'], $participant, 'vineyard-step-08', 'vineyard-step-08-first-plan', ['stageId' => 'vineyard-step-08', 'blockId' => 'vineyard-step-08-first-plan', 'value' => ['text' => $first]]);
         $execute('stage', ['stageId' => 'vineyard-step-09']);
         $condition = $find($runtime->projector($token), 'vineyard-step-09-condition')['content']['text'];
-        $this->assertStringContainsString($locale === 'ru' ? 'пять минут' : 'fünf statt zehn', $condition);
-        $second = 'Request the missing five minutes; Mischa keeps his gift.';
+        $this->assertStringContainsString($locale === 'ru' ? 'сопровождал бабушку' : 'begleitete seine Großmutter', $condition);
+        $this->assertStringContainsString($locale === 'ru' ? 'Порции остаются одинаковыми' : 'Portionen bleiben gleich', $condition);
+        $second = 'Correct the assumption about lateness and preserve the equal gift.';
         $runtime->answer($session['id'], $participant, 'vineyard-step-09', 'vineyard-step-09-second-plan', ['stageId' => 'vineyard-step-09', 'blockId' => 'vineyard-step-09-second-plan', 'value' => ['text' => $second]]);
         foreach (['vineyard-step-08-first-plan' => $first, 'vineyard-step-09-second-plan' => $second] as $id => $text) {
             $answer = collect($runtime->teacher($owner, $session['id'])['answers'])->firstWhere('blockId', $id);

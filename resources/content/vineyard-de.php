@@ -2,142 +2,166 @@
 
 declare(strict_types=1);
 
-return ['title' => 'Warum bekommt er mehr als ich?', 'description' => 'Die Arbeiter im Weinberg: Zusage, Erwartung und Großzügigkeit unterscheiden, eigene Bedürfnisse ruhig aussprechen und sich über Hilfe für andere freuen. Matthäus 20,1–16; 12–15 Jahre, 45 Minuten.', 'slides' => [['title' => 'Warum bekommt er mehr als ich?', 'text' => 'Gerechtigkeit
-und Großzügigkeit
-Sich mit anderen
-vergleichen
-12–15 Jahre · 45 Minuten', 'source' => 'Matthäus 20,1–16'], ['title' => 'Die Arbeiter im Weinberg', 'text' => 'Matthäus 20,1–16.
-Früh am Morgen.
-Dritte Stunde.
-Sechste Stunde.
-Neunte Stunde.
-Elfte Stunde.
-Wir lesen das ganze Gleichnis.
-Sofort nach allen sechzehn Versen folgt das Rollenspiel.'], ['title' => 'Ein Denar für jeden', 'text' => 'Fünf Einladungen.
-Auszahlung von den Letzten an.
-Ein Denar für jeden.
-Die Ersten erwarten mehr.
-Die Antwort des Hausherrn.
-Sieben Rollen. Besprechung nach dem Ende.'], ['title' => 'Zusage und Erwartung', 'text' => 'Was wurde mir versprochen?
-Was habe ich bekommen?
-Was begann ich zu erwarten?
-„Ich tue dir kein Unrecht“.
-„Ich bin gütig“.
-Matthäus 20,13.15.
-Der Hausherr erfüllte die Vereinbarung und zeigte Großzügigkeit.'], ['title' => 'Die Reihenfolge der Ereignisse', 'text' => 'Vereinbarung am Morgen.
-Neue Einladungen.
-Auszahlung von den Letzten an.
-Murren und Antwort.
-„Niemand hat uns eingestellt“.
-Wo entstand eine Erwartung?
-Vier Karten und zwei Schreibfelder.'], ['title' => 'Großzügigkeit oder gebrochene Zusage', 'text' => 'Zusage gebrochen.
-Hilfe oder Geschenk.
-Nachfragen nötig.
-Sechs Fälle.
-Welche Bedingung verändert unseren Schluss?
-Hilfe für andere beweist für sich allein kein Unrecht.'], ['title' => 'Ein Gespräch ohne Vorwurf', 'text' => '„Ich brauche…“
-„Wir hatten vereinbart…“
-„Darf ich nachfragen…“
-Der Partner wiederholt, wie er die Antwort verstanden hat.
-Mein Bedürfnis verlangt nicht, einem anderen sein Geschenk wegzunehmen.'], ['title' => 'Ein neuer Malkasten für den Neuen', 'text' => 'Mischa hat einen neuen Malkasten.
-Sascha hat einen gewöhnlichen.
-Wer schenkte den Malkasten?
-Was wurde Sascha versprochen?
-Was steht noch aus?
-Hört alle vier Informationen.
-Erster Plan. Die neue Bedingung kommt später.'], ['title' => 'Wenn die Zusage nicht erfüllt wurde', 'text' => 'Sascha wurden 10 Minuten versprochen.
-Er bekam nur 5.
-Der Unterricht ist vorbei.
-Wie um die übrigen 5 Minuten bitten?
-Muss man Mischa sein Geschenk wegnehmen?
-Ersten Plan behalten. Einen zweiten ergänzen.'], ['title' => 'Meine Bitte und die Freude des anderen', 'text' => '„Wir hatten zehn Minuten vereinbart. Ich bekam fünf. Wann können wir fertig werden?“
-Meine Bitte an die Lehrkraft.
-Mein freundliches Wort zum Freund.
-Meine Hilfe.
-Bitte um Gerechtigkeit und freundliche Haltung sind vereinbar.'], ['title' => 'Mein nächster Schritt', 'text' => 'Mein Gefühl und Bedürfnis.
-Zusage und Ergebnis.
-Gutes für andere und Unbekanntes.
-Ruhige Bitte.
-Dankbarkeit.
-Gute Tat und Zeitpunkt.
-Herr Jesus Christus, vergib meinen Neid und mein Murren.'], ['title' => 'Barmherzigkeit und mein Wert', 'text' => '„Der erste Arbeiter bekam…“
-„Wenn einem anderen geholfen wurde, kann ich…“
-Nenne deinen nächsten Schritt.
-Gottes Barmherzigkeit gibt auch spät Gekommenen einen Platz.']], 'screens' => [['title' => 'Warum bekommt er mehr als ich?', 'notes' => '1. Warum bekommt er mehr als ich? — 2 Minuten.
-Worte: Ein anderer bekam einen neuen Malkasten. Ich schaue auf meinen und denke: Warum bekommt er mehr? Was weiß ich, was vermute ich? Hören wir eine Geschichte, in der die ersten Arbeiter mehr erwarteten.
-Durchführung: Erfundenes Beispiel eines Geschenks nennen. Jeder bemerkt still sein erstes Gefühl. Keine persönlichen Bekenntnisse sammeln; zum Lesen übergehen.
-Frage: Denke ich zuerst an mein Bedürfnis oder an das, was ein anderer bekam?
-Orientierung: Gefühl bemerken. Der Schluss „Ich werde weniger geschätzt“ muss geprüft werden. Heute geht es um Zusagen, Großzügigkeit und Vergleiche.
-Rhythmus: 1 Minute Beispiel; 1 Minute persönliche Wahl und Übergang.'], ['title' => 'Die Arbeiter im Weinberg', 'notes' => '2. Die Arbeiter im Weinberg — 3 Minuten.
-Worte: Wir lesen Matthäus 20,1–16 vollständig. Hören wir alle fünf Ausgänge des Hausherrn und die Auszahlungsreihenfolge. Sofort danach spielen wir das Gleichnis.
-Durchführung: Alle 16 Verse ohne Zwischenbesprechung lesen. Sieben Teilnehmende erhalten vorher Rollen. Die Lehrkraft liest Erzähler und Schlussworte Christi. Danach sofort beginnen.
-Auftrag: Vereinbarung, Antwort der späten Arbeiter und Reihenfolge merken.
-Orientierung: Früh am Morgen ein Denar; dann dritte, sechste, neunte, elfte Stunde. Niemand stellte die Letzten ein. Abends Auszahlung von den Letzten an.
-Rhythmus: 2,5 Minuten Lesen; 30 Sekunden Übergang.'], ['title' => 'Ein Denar für jeden', 'notes' => '3. Ein Denar für jeden — 7 Minuten.
-Worte: Der Hausherr ruft zu verschiedenen Zeiten. Der Verwalter bezahlt von den Letzten an. Die Ersten erwarten mehr, obwohl sie einen Denar vereinbart hatten. Bis zur Antwort des Hausherrn und den Schlussworten Christi spielen.
-Durchführung: Hausherr, Verwalter, fünf Vertreter der Einstellungszeiten. Alle Einladungen, Auszahlung, Murren und Antwort nach dem vollständigen Text spielen. Fünf Vertreter stehen für Gruppen; der Text nennt keine Gesamtzahl. Besprechung erst nach dem Schluss.
-Beobachtung: Was wurde den Ersten versprochen, wie änderte fremder Lohn ihre Erwartung?
-Orientierung: Jeder Vertreter bekommt einen gleichen Spielstein. Der vereinbarte Lohn des Ersten wurde nicht gekürzt. Der Letzte bekam gleich viel. Keine Versöhnung oder Strafe hinzuerfinden.
-Rhythmus: 3 Minuten fünf Einladungen; 2 Minuten Auszahlung; 2 Minuten Murren, Antwort und Schluss.'], ['title' => 'Zusage und Erwartung', 'notes' => '4. Zusage und Erwartung — 3 Minuten.
-Worte: Der Letzte bekam nicht mehr Münzen: jeder einen Denar. Die Ersten arbeiteten länger. Was wurde versprochen, was erhielten sie, was erwarteten sie nach dem fremden Lohn?
-Durchführung: Zwei Antworten mit Versbeleg hören; Verse 13–15 lesen. Den Anfang „Himmelreich“ erklären: Gottes Barmherzigkeit lässt sich nicht als Überlegenheit über andere beanspruchen.
-Frage: Änderte sich die Zusage des Hausherrn oder die Erwartung des Ersten?
-Orientierung: Die Zusage wurde erfüllt. Die Ersten dachten nun, mehr zu bekommen. Der Hausherr ist zu den Letzten gütig. Gottes Barmherzigkeit annehmen, ohne über Gutes für andere zu murren.
-Rhythmus: 1 Minute Antworten; 1 Minute Verse; 1 Minute Bedeutung.'], ['title' => 'Die Reihenfolge der Ereignisse', 'notes' => '5. Die Reihenfolge der Ereignisse — 4 Minuten.
-Worte: Vier Karten legen. An jeder Stelle Fakt und Erwartung benennen. Warum „Niemand hat uns eingestellt“ merken?
-Durchführung: Paare bekommen gemischte Karten. Reihenfolge legen; in zwei Feldern ursprüngliche Zusage und neue Erwartung festhalten. Ein Paar erklärt das Ende.
-Frage: Können wir die späten Arbeiter nach diesem Text faul nennen?
-Orientierung: Sie erklären, dass niemand sie einstellte. Keine erfundenen Gründe. Reihenfolge: Vereinbarung am Morgen; neue Einladungen; Auszahlung von den Letzten an; Murren und Antwort.
-Rhythmus: 2 Minuten Ordnung; 1 Minute Schreiben; 1 Minute Erklärung.'], ['title' => 'Großzügigkeit oder gebrochene Zusage', 'notes' => '6. Großzügigkeit oder gebrochene Zusage — 4 Minuten.
-Worte: Nicht jeder Unterschied bedeutet Unrecht. Eine gebrochene Zusage ruhig klären. Sechs Fälle nach „Zusage gebrochen“, „Hilfe oder Geschenk“, „Nachfragen nötig“ ordnen.
-Durchführung: Bedingungen lesen, Gruppe wählen, wenigstens einen Fall erklären. Bei fehlenden Informationen eine notwendige Frage nennen.
-Frage: Wie „Ich bekam das Versprochene nicht“ von „Ein anderer bekam etwas Gutes“ unterscheiden?
-Orientierung: Konkrete Vereinbarung und eigenes Ergebnis prüfen. Fremde Hilfe oder Geschenk allein beweisen kein Unrecht gegen mich. Erfüllung einer gebrochenen Zusage ohne Angriff auf andere verlangen.
-Rhythmus: 2 Minuten Sortieren; 2 Minuten zwei Erklärungen.'], ['title' => 'Ein Gespräch ohne Vorwurf', 'notes' => '7. Ein Gespräch ohne Vorwurf — 4 Minuten.
-Worte: Statt „Er wird mehr geliebt“ mein Bedürfnis nennen. Gebrochene Zusage benennen; über Geschenk für einen Freund freuen und separat um das Eigene bitten.
-Durchführung: Zwei Fälle von Seite 4 wählen. Einer antwortet dem vergleichenden Jugendlichen; dann Rollen wechseln. Zuhörer wiederholt verstandene Bitte, Glückwunsch oder Faktenfrage.
-Frage: Wie um Nötiges bitten, ohne fremdes Geschenk wegzunehmen?
-Orientierung: „Ich brauche brauchbare Farben. Können wir besprechen, wie ich sie bekomme?“ Oder „Wir vereinbarten zehn Minuten, ich bekam fünf. Wann können wir fertig werden?“ Fremdes Geschenk bleibt.
-Rhythmus: 2 Minuten erste Übung; 2 Minuten Rollenwechsel.'], ['title' => 'Ein neuer Malkasten für den Neuen', 'notes' => '8. Ein neuer Malkasten für den Neuen — 6 Minuten.
-Worte: Mischa bekam in der Werkstatt einen neuen Malkasten, Sascha einen gewöhnlichen. Sascha: „Dann werde ich weniger geschätzt“. Jeder hat eine Information. Alle hören, ersten Plan erstellen.
-Durchführung: Vierergruppen lesen getrennte Informationen auf Seite 5. Bekanntes, Unbekanntes, Frage an Lehrkraft und gute Tat schreiben. Vertreter stellt Plan vor. Neue Bedingung bleibt bei der Lehrkraft.
-Frage: Welche Informationen verhindern den voreiligen Schluss „Er wird mehr geliebt“?
-Orientierung: Brauchbarer Basiskasten und zehn Minuten Rückmeldung jedem versprochen. Saschas Kasten ist brauchbar, sein Termin steht noch aus. Ein Freiwilliger schenkte Mischa separat einen neuen. Eigene Zeit noch erhalten; Reihenfolge klären.
-Rhythmus: 1 Minute Informationen; 3 Minuten erster Plan; 2 Minuten Bericht und Klärung.'], ['title' => 'Wenn die Zusage nicht erfüllt wurde', 'notes' => '9. Wenn die Zusage nicht erfüllt wurde — 3 Minuten.
-Worte: Neue Bedingung: Am Ende bekam Sascha nur fünf statt zehn Minuten Rückmeldung. Lehrkraft sagte: Für heute ist Schluss. Muss er schweigend dulden? Muss Mischa sein Geschenk verlieren?
-Durchführung: Ersten Plan behalten; zweiten im letzten Feld ergänzen. Konkrete gebrochene Zusage liegt jetzt vor. Ruhige Bitte um fehlende Zeit formulieren, Mischas Geschenk lassen.
-Frage: Wie verändert der neue Fakt den Plan?
-Orientierung: „Wir hatten zehn Minuten vereinbart. Ich bekam fünf. Wann bekomme ich die übrigen fünf?“ Die berechtigte Bitte nicht bloß als Neid abtun; fremde Farben nicht wegnehmen.
-Rhythmus: 2 Minuten neuer Plan; 1 Minute zwei Antworten.'], ['title' => 'Meine Bitte und die Freude des anderen', 'notes' => '10. Meine Bitte und die Freude des anderen — 4 Minuten.
-Worte: Erfüllung des Versprechens verlangen und Mischa freundlich begegnen. Bitte an Lehrkraft sagen, dann freundlicher Satz oder Hilfe für Freund.
-Durchführung: Im Paar spricht einer die Bitte, anderer antwortet und wiederholt ihren Sinn. Rollen wechseln. Jeder nennt am Ende Satz an Mischa oder machbare Hilfe in der Werkstatt.
-Frage: Warum darf Bitte um Gerechtigkeit kein Kampf gegen Gutes für andere werden?
-Orientierung: Mein Bedürfnis ist real; fremdes Geschenk verursacht es nicht. Fehlende fünf Minuten verlangen und Mischa beim Ankommen helfen. Keine sofortige Lösung versprechen; bei Bedarf Vereinbarung nochmals klären.
-Rhythmus: 2 Minuten Bitten im Paar; 2 Minuten freundliche Antwort und Hilfe.'], ['title' => 'Mein nächster Schritt', 'notes' => '11. Mein nächster Schritt — 3 Minuten.
-Worte: Echten oder erfundenen Fall wählen. Was brauche ich, was wurde versprochen, was bekam ein anderer? Welche Frage, Dankbarkeit oder Hilfe folgt?
-Durchführung: Sechs Felder des persönlichen Blatts ausfüllen. Nur gewählten Satz nennen ist möglich. Kurze Stille und eigens verfasstes Gebet. Blatt bleibt beim Jugendlichen.
-Frage: Was kann ich tun, auch wenn das Vergleichsgefühl bleibt?
-Orientierung: Fakten prüfen, Bedürfnis nennen, Zusage einfordern, danken, sich über andere freuen oder helfen. Gott um Hilfe gegen Neid bitten, ohne sich selbst abzuwerten.
-Rhythmus: 2 Minuten persönliches Blatt; 1 Minute Stille und Gebet.'], ['title' => 'Barmherzigkeit und mein Wert', 'notes' => '12. Barmherzigkeit und mein Wert — 2 Minuten.
-Worte: Zwei Sätze abschließen: „Der erste Arbeiter bekam…“ und „Wenn einem anderen geholfen wurde, kann ich…“. Welche Tat beim nächsten Vergleich?
-Durchführung: Zwei kurze Antworten hören. Jeder wählt ersten Schritt und Zeitpunkt. Nächstes Treffen freiwillig von Versuch und Schwierigkeiten erzählen.
-Frage: Was lehrt das Gleichnis über Gott und den Nächsten?
-Orientierung: Gottes Barmherzigkeit ohne Anspruch auf Überlegenheit annehmen. Der Hausherr erfüllte die Vereinbarung und war großzügig. Freude über fremdes Gutes und ruhige Bitte um eigenes Bedürfnis verbinden.
-Rhythmus: 1 Minute Antworten; 1 Minute Schritt und Abschluss.']], 'preparation' => 'Vorbereitung
-1. Zwölf Folien und Moderationsnotizen öffnen. Ganzes Matthäus 20,1–16 vorbereiten. Sofort nach dem Lesen spielen, danach besprechen.
-2. Seiten 1–2 pro Gruppe, 3–4 pro Paar, 5 pro Viererteam, 6 pro Person drucken. Schreibfelder auf Seiten 3 und 5 nicht zerschneiden. Alle Karten illustriert; Graustufen möglich.
-3. Fünf gleiche Spielsteine oder Knöpfe: jeder ein Denar. Requisiten, keine Teilnehmerbelohnung. Sieben Rollen auswählen; Lehrkraft liest Erzählung und Christi Schlussworte.
-4. Paare und Viererteams bilden. Bei kleinerem Team liest einer zwei Informationen. Neue Bedingung über fünf Minuten bis Phase 9 zurückhalten. Ersten Plan nicht löschen.
-5. Stifte und gegebenenfalls Werkstattmaterial vorbereiten. Persönliches Blatt bleibt beim Jugendlichen; erfundene Fälle zulässig.
-Hinweise
-1. Im Gleichnis bekommt der Letzte gleich viel wie der Erste. Titel beschreibt Vergleichsgefühl. Nicht zwei Münzen gegen eine erzählen. Jeder einen Denar; Zusage an Erste erfüllt.
-2. Fünf Einladungszeiten, Auszahlung von den Letzten an erhalten. Sieben Rollen sind Bühnenwahl, fünf Vertreter sind Gruppen, keine Evangelien-Gesamtzahl. Niemand stellte die Letzten ein; nicht faul nennen.
-3. Anfang vom Himmelreich bestimmt Bedeutung. Gottes Barmherzigkeit nicht als Lohn für Überlegenheit beanspruchen. Theophylakt sieht Möglichkeit, auch spät durch Umkehr ins Reich zu kommen. Nicht folgern, gute Taten aufzuschieben: Eingeladene arbeiten. Quelle: https://azbyka.ru/otechnik/Feofilakt_Bolgarskij/tolkovanie-na-evangelie-ot-matfeja/20.
-4. Keine universelle Lohn-, Noten- oder Wettbewerbsregel. Im Alltag Zusage, Regeln und wirklichen Bedarf prüfen. Ruhige Bitte um Korrektur und gute Haltung zu anderen vereinbar.
-5. Reihenfolge Seite 3: 2,4,1,3 von links oben. Seite 4: Zusage gebrochen 1,6; Hilfe/Geschenk 2,3; Nachfragen 4,5. Anderer Kontext kann Schluss ändern.
-6. Erster Plan: Saschas Termin steht noch aus. Zweiter: fünf statt zehn Minuten, Zusage gebrochen. Nicht jede Bitte Neid nennen. Zeit klären; Geschenk bleibt.
-7. Vergleich kann echtes Bedürfnis zeigen. Es benennen, nicht „undankbar“ oder „schlechter“ urteilen. Fremder Erfolg bestimmt meinen Wert vor Gott nicht. Dank und Bitte zusammen.
-8. Keine sofortige Freude oder öffentliche Neidbeichte verlangen. Freundlichen Satz und Tat anbieten, auch wenn Gefühl bleibt. Gebet eigens verfasst, stilles Zuhören möglich. Bei Fragen zu Umkehr und Beichte Gespräch mit Priester anbieten.', 'roleplay' => 'Anfang und morgendliche Vereinbarung: Sieben Rollen: Hausherr, Verwalter und fünf Vertreter der Einstellungszeiten. Jeder Arbeiter vertritt eine Gruppe; Gesamtzahl nicht zählen. Moderation liest Erzählung. Früh am Morgen vereinbart der Hausherr mit dem Ersten einen Denar pro Tag und schickt ihn in den Weinberg. Der Erste nimmt an und beginnt.
+return ['title' => 'Warum bekommt er genauso viel wie ich?', 'description' => 'Gleicher Denar bei verschiedener Arbeitszeit: Murren der Ersten und Gottes Güte für spät Gekommene. Vollständiges Matthäus 20,1–16, Rollenspiel, Aufgaben über gemeinsame Gabe und persönlicher Schritt. 12–15 Jahre, 45 Minuten.', 'slides' => [['title' => 'Warum bekommt er genauso viel wie ich?', 'text' => 'Verschiedene Arbeitszeit
+Gleicher Lohn
+Matthäus 20,1–16', 'source' => 'Matthäus 20,1–16'], ['title' => 'Die Arbeiter im Weinberg', 'text' => 'Fünf Einladungen
+Vereinbarung am Morgen
+Auszahlung von den Letzten an
+Lesung, dann Rollenspiel', 'source' => ''], ['title' => 'Verschiedene Arbeitszeit und ein Denar', 'text' => 'Der Erste arbeitete den ganzen Tag
+Der Letzte arbeitete eine Stunde
+Ein Denar für jeden', 'source' => ''], ['title' => 'Was löste das Murren aus', 'text' => 'Du hast sie uns gleichgestellt
+Ich tue dir nicht unrecht
+Ich bin gütig', 'source' => ''], ['title' => 'Vereinbarung und neue Erwartung', 'text' => 'Versprochen: ein Denar
+Erhalten: ein Denar
+Danach mehr erwartet', 'source' => ''], ['title' => 'Gleiche Gabe oder verletzte Regel', 'text' => 'Gemeinsame Gabe
+Regel verletzt
+Nachfragen nötig
+Sechs Fälle', 'source' => ''], ['title' => 'Die Worte des ersten Arbeiters', 'text' => 'Ich arbeitete länger
+Er bekam genauso viel
+Was antwortete der Hausherr?', 'source' => ''], ['title' => 'Ein Tisch für alle', 'text' => 'Sascha half seit dem Morgen
+Mischa kam am Ende
+Gleiches Essen für alle
+Vier Informationen', 'source' => ''], ['title' => 'Auch der Letzte ist eingeladen', 'text' => 'Mischa begleitete seine Großmutter
+Die Portionen bleiben gleich
+Was ändert sich an unserer Antwort?', 'source' => ''], ['title' => 'Antwort ohne Anspruch auf Vorrang', 'text' => 'Saschas Arbeit anerkennen
+Mischas volle Portion bewahren
+Ihn an den Tisch einladen', 'source' => ''], ['title' => 'Meine Antwort auf Barmherzigkeit', 'text' => 'Was bekam ich?
+Was erwartete ich?
+Wie antworte ich auf Güte?', 'source' => ''], ['title' => 'Die Großzügigkeit des Hausherrn', 'text' => 'Bei verschiedener Arbeitszeit
+bekamen alle …
+Die Güte des Hausherrn
+lehrt mich …', 'source' => '']], 'screens' => [['title' => 'Warum bekommt er genauso viel wie ich?', 'notes' => '1. Warum bekommt er genauso viel wie ich? — 2 Minuten.
+
+Worte: Ein Arbeiter arbeitete seit dem Morgen, ein anderer nur eine Stunde. Am Abend bekommt jeder einen Denar. Der Erste fragt: Warum bekommt er genauso viel wie ich?
+
+Durchführung: Zeige zwei gleiche Spielsteine. Jeder bemerkt still seine erste Reaktion. Vor der Lesung nicht über den Hausherrn abstimmen.
+
+Frage: Wer bekam mehr Münzen?
+
+Orientierung: Niemand. Arbeitszeit verschieden, Lohn gleich. Die Ersten ärgern sich über die Gleichstellung. Wir hören das ganze Gleichnis vom Reich der Himmel.
+
+Rhythmus: 1+1 Minuten in der Reihenfolge der Schritte.'], ['title' => 'Die Arbeiter im Weinberg', 'notes' => '2. Die Arbeiter im Weinberg — 3 Minuten.
+
+Worte: Wir lesen Matthäus 20,1–16 vollständig. Achtet auf die Vereinbarung, fünf Einladungen, Auszahlung und Antwort.
+
+Durchführung: Alle sechzehn Verse ohne Unterbrechung lesen. Sieben Rollen vorher verteilen. Sofort danach Rollenspiel, Besprechung erst nach dem Ende.
+
+Frage: Was wurde den Ersten versprochen und was bekamen die Letzten?
+
+Orientierung: Ein Denar für den Tag wurde vereinbart. Die Letzten bekamen einen Denar, die Ersten ebenso. Niemand hatte die Letzten eingestellt.
+
+Rhythmus: 2,5+0,5 Minuten in der Reihenfolge der Schritte.'], ['title' => 'Verschiedene Arbeitszeit und ein Denar', 'notes' => '3. Verschiedene Arbeitszeit und ein Denar — 7 Minuten.
+
+Worte: Wir spielen den ganzen Tag und Abend. Jeder Vertreter bekommt einen gleichen Spielstein. Die Ersten erwarteten mehr, doch der Hausherr erfüllte die Vereinbarung.
+
+Durchführung: Sieben Rollen: Hausherr, Verwalter und fünf Vertreter der Einstellungszeiten. Leitung liest Erzähler und Christi Schluss. Alle Einladungen und Auszahlung von den Letzten an bewahren. Kein erfundenes Ende.
+
+Frage: Wann erwarten die Ersten mehr?
+
+Orientierung: Nach der Auszahlung an die Letzten. Sie murren wegen der Gleichstellung. Ihr versprochener Denar wurde nicht gekürzt.
+
+Rhythmus: 3+2+2 Minuten in der Reihenfolge der Schritte.'], ['title' => 'Was löste das Murren aus', 'notes' => '4. Was löste das Murren aus — 3 Minuten.
+
+Worte: Lest Verse 10 und 12–15 nochmals. Die Ersten nennen Last und Hitze des Tages und sagen: Du hast sie uns gleichgestellt. Der Hausherr erinnert an Vereinbarung und Güte.
+
+Durchführung: Zwei Personen finden gleichen Lohn und verschiedene Arbeit. Dann Vers 1 lesen: Reich der Himmel. Text und eigene Vermutungen unterscheiden.
+
+Frage: Fehlt versprochener Lohn oder lehnen sie die gleiche Gabe ab?
+
+Orientierung: Sie bekamen alles Versprochene. Sie ärgern sich über gleichen Lohn für die Letzten. Christus zeigt Gottes Güte: Barmherzigkeit für spät Gekommene nimmt den Ersten nichts weg und richtet sich nicht nach unserem Anspruch auf Vorrang.
+
+Rhythmus: 1+1+1 Minuten in der Reihenfolge der Schritte.'], ['title' => 'Vereinbarung und neue Erwartung', 'notes' => '5. Vereinbarung und neue Erwartung — 4 Minuten.
+
+Worte: Vier Ereignisse ordnen. Versprochen: ein Denar. Erhalten: ein Denar. Nach fremder Auszahlung erwartet: mehr. Was änderte sich?
+
+Durchführung: Paare ordnen gemischte Karten und füllen zwei Felder aus. Ein Paar erklärt den Übergang zur neuen Erwartung.
+
+Frage: Wer änderte die Erwartung, wer die Vereinbarung?
+
+Orientierung: Die Ersten änderten ihre Erwartung. Der Hausherr änderte die Vereinbarung nicht. Die Letzten sagten: Niemand hat uns eingestellt. Keine Faulheit unterstellen.
+
+Rhythmus: 2+1+1 Minuten in der Reihenfolge der Schritte.'], ['title' => 'Gleiche Gabe oder verletzte Regel', 'notes' => '6. Gleiche Gabe oder verletzte Regel — 4 Minuten.
+
+Worte: Prüft jeden Fall: gemeinsame Gabe oder Bezahlung nach vorher vereinbarter Regel? Unser Hauptfall ist gleiche Gabe bei verschieden langer Teilnahme.
+
+Durchführung: Sechs Karten sortieren: Gemeinsame Gabe, Regel verletzt, Nachfragen nötig. Zuerst zwei Fälle gleicher Gabe erklären. Verletzungen dienen zur Abgrenzung gegen falsche Lohn- oder Notenregeln.
+
+Frage: Wann ärgert gleiche Gabe trotz erfüllter Zusage?
+
+Orientierung: Ein langjähriger Teilnehmer kann Vorrang verlangen. Das ähnelt dem Murren. Wenn Stundenlohn versprochen, aber nicht gezahlt wurde, muss der Fehler korrigiert werden. Das Gleichnis erlaubt keinen Betrug und keine Ausbeutung.
+
+Rhythmus: 2+2 Minuten in der Reihenfolge der Schritte.'], ['title' => 'Die Worte des ersten Arbeiters', 'notes' => '7. Die Worte des ersten Arbeiters — 4 Minuten.
+
+Worte: Der Erste sagt: Ich habe länger gearbeitet. Warum bekam er genauso viel? Eine Person sagt dies, die andere antwortet mit Vereinbarung und Güte.
+
+Durchführung: Verse 13–15 nutzen. Dann Rollen wechseln. Die tatsächliche Arbeit des Ersten anerkennen und den Letzten nicht erniedrigen.
+
+Frage: Wie Arbeit anerkennen und Güte zum Letzten bewahren?
+
+Orientierung: Du hast tatsächlich länger gearbeitet und den versprochenen Denar bekommen. Der Hausherr wollte dem Letzten genauso viel geben. Seine Güte macht deine Arbeit nicht wertlos. Dies ist unsere Erklärung, kein erfundenes Ende des Gleichnisses.
+
+Rhythmus: 2+2 Minuten in der Reihenfolge der Schritte.'], ['title' => 'Ein Tisch für alle', 'notes' => '8. Ein Tisch für alle — 6 Minuten.
+
+Worte: Nach einer freiwilligen Werkstatt sind alle zum Essen eingeladen. Sascha half seit dem Morgen, Mischa erst am Ende. Jeder bekommt ein gleiches vollständiges Abendessen. Sascha verlangt eine kleinere Portion für Mischa. Hört vier Informationen und antwortet.
+
+Durchführung: Viererteam mit getrennten Informationen. Gemeinsame Gabe, Teilnahmezeit, Zusage und Antwort aufschreiben. Kein Stundenpreis. Neue Information bleibt zunächst bei der Leitung.
+
+Frage: Wie passt der Fall zum gleichen Lohn im Gleichnis?
+
+Orientierung: Das Essen ist eine vorher angekündigte Gabe für alle, kein Stundenlohn. Sascha bekam die vollständige Portion. Seine Arbeit kann anerkannt werden, ohne Mischas Portion zu kürzen. Grund für späte Ankunft unbekannt.
+
+Rhythmus: 1+3+2 Minuten in der Reihenfolge der Schritte.'], ['title' => 'Auch der Letzte ist eingeladen', 'notes' => '9. Auch der Letzte ist eingeladen — 3 Minuten.
+
+Worte: Neue Information: Mischa begleitete vorher seine Großmutter, die schlecht gehen kann. Er kam spät und half sofort. Die Portionen bleiben gleich. Wie antwortet ihr jetzt?
+
+Durchführung: Erste Antwort behalten. Zweite ergänzen: Welche Vermutung musste geändert werden, was bleibt gleich? Keine gebrochene Zusage einführen.
+
+Frage: Braucht die Güte erst eine Rechtfertigung für den Letzten?
+
+Orientierung: Die Information schützt vor vorschnellem Urteil. Die gemeinsame Gabe verlangt aber keine Rechtfertigung: Einladung und volle Portion galten allen. Im Gleichnis heißt es: Niemand hat uns eingestellt. Mischas Grund gehört nur zum erfundenen Beispiel.
+
+Rhythmus: 2+1 Minuten in der Reihenfolge der Schritte.'], ['title' => 'Antwort ohne Anspruch auf Vorrang', 'notes' => '10. Antwort ohne Anspruch auf Vorrang — 4 Minuten.
+
+Worte: Sascha kann sagen: Der Tag war anstrengend und ich wollte Anerkennung. Ich bekam das Versprochene. Mischa ist ebenfalls eingeladen. Führt das Gespräch weiter.
+
+Durchführung: Paare sprechen und hören ohne Beschuldigung. Rollen wechseln. Wie kann Saschas Hilfe gewürdigt werden, während alle das gleiche Essen behalten?
+
+Frage: Kann ich Anerkennung wünschen, ohne eine kleinere Gabe für andere zu verlangen?
+
+Orientierung: Ja. Für Saschas Hilfe danken und seine Müdigkeit hören. Anerkennung gibt kein Recht, fremde Gabe zu kürzen. Mischa an den Tisch einladen oder zusammen aufräumen.
+
+Rhythmus: 2+2 Minuten in der Reihenfolge der Schritte.'], ['title' => 'Meine Antwort auf Barmherzigkeit', 'notes' => '11. Meine Antwort auf Barmherzigkeit — 3 Minuten.
+
+Worte: Wähle einen echten oder erfundenen Fall gleicher Gabe bei verschieden langer Teilnahme. Was bekam ich? Was erwartete ich zusätzlich? Wie antworte ich auf Güte zu anderen?
+
+Durchführung: Sechs persönliche Felder. Blatt bleibt bei dir. Keine öffentlichen Bekenntnisse verlangen. Stille und freiwilliges, eigens verfasstes Gebet.
+
+Frage: Welcher Schritt geht, auch wenn Murren noch da ist?
+
+Orientierung: Arbeit und Gefühl nennen, Erhaltenes erinnern, keine Kürzung fremder Güte verlangen, danken oder den anderen willkommen heißen. Gottes Barmherzigkeit ist kein exklusiver Vorrang.
+
+Rhythmus: 2+1 Minuten in der Reihenfolge der Schritte.'], ['title' => 'Die Großzügigkeit des Hausherrn', 'notes' => '12. Die Großzügigkeit des Hausherrn — 2 Minuten.
+
+Worte: Ergänzt: Bei verschiedener Arbeitszeit bekamen alle … und Die Güte des Hausherrn lehrt mich … Nennt einen passenden Vers.
+
+Durchführung: Zwei unabhängige Antworten vor dem Abschluss annehmen. Verse 1 und 13–16 aufgreifen. Freiwilligen Schritt für die Woche wählen.
+
+Frage: Was zeigt das Gleichnis über Gottes Barmherzigkeit?
+
+Orientierung: Jeder bekam einen Denar. Gott ruft und nimmt auch spät Gekommene an. Die Ersten sollen über seine Güte nicht murren. Kein Aufschieben empfehlen: Eingeladene gehen arbeiten. Keine allgemeine Regel für gleiche Löhne oder Noten ableiten.
+
+Rhythmus: 1+1 Minuten in der Reihenfolge der Schritte.']], 'preparation' => 'Vorbereitung: Vollständiges Matthäus 20,1–16, fünf gleiche Spielsteine und sieben Rollen. Fünf Vertreter stehen für Gruppen, Gesamtzahl nicht zählen. Lesung, sofort Rollenspiel, erst dann Gespräch. Seiten 3–4 für Paare, 5 für Viererteams, 6 persönlich. Ersten Plan behalten.
+
+Sinn: Jeder bekommt einen Denar. Erste arbeiteten länger, Letzte eine Stunde. Vereinbarung erfüllt, Murren wegen Gleichstellung. Der Letzte bekam nicht mehr. Reich der Himmel: Gottes Güte zu spät Gekommenen richtet sich nicht nach einem Anspruch auf Vorrang. Arbeit bleibt wichtig: Eingeladene gehen arbeiten. Umkehr nicht aufschieben.
+
+Theophylakt verbindet das Gleichnis mit Aufnahme spät Umkehrender. Quelle: https://azbyka.ru/otechnik/Feofilakt_Bolgarskij/tolkovanie-na-evangelie-ot-matfeja/20
+
+Keine universelle Lohn-, Noten- oder Wettbewerbsregel. Stundenlohn muss nach Vertrag gezahlt werden, keine Ausbeutung. Im Gleichnis lautet der Grund: Niemand hat uns eingestellt. Mischas Grund gehört nur zum erfundenen Beispiel. Neue Information verändert keine Portionen und führt keine gebrochene Zusage ein.
+
+Schlüssel: Vereinbarung, neue Einladungen, Auszahlung, Murren und Antwort. Fälle: gemeinsame Gabe 1–3; Regel verletzt 4–5; nachfragen 6. Zuerst Hauptfälle behandeln.
+
+Keine sofortige Freude und keine öffentlichen Bekenntnisse verlangen. Persönliches Blatt bleibt beim Jugendlichen, Gebet freiwillig und eigens verfasst. Aufrichtige Umkehr anderer nicht beurteilen. Persönliche Fragen können mit einem Priester besprochen werden.
+', 'roleplay' => 'Anfang und morgendliche Vereinbarung: Sieben Rollen: Hausherr, Verwalter und fünf Vertreter der Einstellungszeiten. Jeder Arbeiter vertritt eine Gruppe; Gesamtzahl nicht zählen. Moderation liest Erzählung. Früh am Morgen vereinbart der Hausherr mit dem Ersten einen Denar pro Tag und schickt ihn in den Weinberg. Der Erste nimmt an und beginnt.
 
 Dritte, sechste und neunte Stunde: Um die dritte Stunde ruft der Hausherr den nächsten: „Geht auch ihr in meinen Weinberg; was recht ist, werde ich euch geben“. Arbeiter schließt sich an. Moderation nennt sechste, dann neunte Stunde: Hausherr tut dasselbe, entsprechender Vertreter beginnt. Tagesverlauf zeigen, keine Zwischenbesprechung.
 
@@ -163,4 +187,4 @@ Matthäus 20,12. und sagten: „Diese Letzten haben eine Stunde gearbeitet, und 
 Matthäus 20,13. Er antwortete einem: „Freund, ich tue dir kein Unrecht; hast du nicht einen Denar mit mir vereinbart?
 Matthäus 20,14. Nimm das Deine und geh; ich will diesem Letzten genauso viel geben wie dir.
 Matthäus 20,15. Darf ich mit dem Meinen nicht tun, was ich will? Oder ist dein Auge neidisch, weil ich gütig bin?“
-Matthäus 20,16. So werden die Letzten Erste sein und die Ersten Letzte; denn viele sind berufen, aber wenige auserwählt.', 'prayer' => 'Herr Jesus Christus, vergib meinen Neid und mein Murren. Hilf mir, Deine Barmherzigkeit zu sehen, für das Empfangene zu danken und mich über Gutes für andere zu freuen. Lehre mich, ruhig über wirkliches Unrecht zu sprechen und selbst dem Nächsten zu helfen. Amen.'];
+Matthäus 20,16. So werden die Letzten Erste sein und die Ersten Letzte; denn viele sind berufen, aber wenige auserwählt.', 'prayer' => 'Herr Jesus Christus, ich danke Dir für Deine Barmherzigkeit. Vergib mein Murren, wenn Du einen anderen ebenso gütig annimmst. Hilf mir, mit Liebe zu arbeiten, keinen Vorrang zu verlangen und mich über die Umkehr meines Nächsten zu Dir zu freuen. Amen.'];

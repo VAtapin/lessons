@@ -2,138 +2,127 @@
 
 declare(strict_types=1);
 
-return '1. Rollen — Anfang
+return 'Rollen — Anfang
 
-Ein Satz Seiten 1–2 pro Gruppe. Am Punktstrich schneiden. Fünf Vertreter sind Gruppen, keine Gesamtzahl. Sofort nach dem Lesen spielen; vollständige Worte im Lehrerheft.
+Sieben Rollen pro Gruppe. Karten ausschneiden, vollständiges Rollenspiel im Lehrerheft.
 
 Hausherr
-
 Rufe früh am Morgen, zur dritten, sechsten, neunten und elften Stunde. Abends Auszahlung von den Letzten an anordnen. Erstem nach Versen 13–15 antworten. Vollständige Worte im Lehrerheft.
 
 Verwalter
-
 Abends Vertreter rufen: elfte, neunte, sechste, dritte Stunde, früher Morgen. Jedem gleichen Spielstein als Denar geben.
 
 Früher Morgen
-
 Einen Denar für den Tag vereinbaren, zuerst arbeiten. Bei Auszahlung mehr erwarten, aber einen bekommen. Murren nach Vers 12 sprechen.
 
 Dritte Stunde
-
 Nach Einladung um dritte Stunde beginnen. Abends als Vorletzter einen Spielstein bekommen.
 
-2. Rollen — Fortsetzung
+Rollen — Fortsetzung
 
-Lehrkraft liest Erzähler und Christi Schlussworte. Jeder der fünf Vertreter bekommt einen gleichen Spielstein. Auszahlung von den Letzten an.
+Jeder Arbeiter ein gleicher Spielstein. Auszahlung von den Letzten an, Gespräch nach dem Ende.
 
 Sechste Stunde
-
 Nach Einladung um sechste Stunde beginnen. Bei Auszahlung als Dritter einen Spielstein bekommen.
 
 Neunte Stunde
-
 Nach Einladung um neunte Stunde beginnen. Bei Auszahlung als Zweiter einen Spielstein bekommen.
 
 Elfte Stunde
-
 Auf Frage antworten: „Niemand hat uns eingestellt“. Im Weinberg arbeiten. Bei Auszahlung als Erster einen Spielstein bekommen.
 
-3. Wie sich die Erwartung änderte
+Vereinbarung und Erwartung
 
-Vier Karten pro Paar ausschneiden, mischen, ordnen. Schreibfelder ganz lassen. Welche Worte erklären das Murren?
+Vier Karten mischen und ordnen. Schreibfelder ganz lassen.
 
 Auszahlung von den Letzten an
-
 Abends beginnt Verwalter bei den Letzten. Späte bekommen einen Denar; Erste denken, mehr zu erhalten.
 
 Vereinbarung am Morgen
-
 Früh am Morgen vereinbart Hausherr mit Arbeitern einen Denar für den Tag. Sie gehen in den Weinberg.
 
 Murren und Antwort
-
 Erste bekommen ebenfalls einen Denar und murren. Hausherr erinnert an Vereinbarung und spricht von Güte. Letzte werden Erste.
 
 Neue Einladungen
-
 Hausherr ruft dritte, sechste, neunte, elfte Stunde. Letzte sagen: „Niemand hat uns eingestellt“.
 
-Was wurde den Ersten versprochen, was bekamen sie:
+Was wurde versprochen und erhalten:
+_____________________________________________
 
-Was erwarteten sie nach dem fremden Lohn:
+Was erwarteten die Ersten danach:
+_____________________________________________
 
-4. Was geschah
+Gleiche Gabe und Regeln
 
-Sechs Fälle pro Paar. Zusage gebrochen; Hilfe oder Geschenk; Nachfragen nötig. Bedingungen lesen. Zwei Fälle für Gespräch wählen, Rollen wechseln. Fakt, Bedürfnis und ruhige Bitte nennen; Zuhörer wiederholt verstandene Antwort.
+Gemeinsame Gabe, Regel verletzt, Nachfragen nötig. Fälle 1–3 zuerst. Danach Paargespräch und Rollenwechsel.
 
-Versprochene Minuten
+Ein Tisch
+Du halfst seit morgens, der Neue erst am Ende. Allen wurde dasselbe Essen zugesagt, jeder bekam die volle Portion. Du willst seine kürzen. Wie ähnelt das dem Murren?
 
-Lehrkraft versprach dir zehn Minuten Rückmeldung, gab fünf und beendete Unterricht. Ein anderer bekam zehn. Was wurde verletzt, worum bitten?
+Willkommen in der Gruppe
+Du kommst seit Jahren, ein anderer erstmals. Beide werden herzlich eingeladen. Dir wurde keine Zusage verweigert. Warum kann gleiches Willkommen den Wunsch nach Vorrang wecken?
 
-Hilfe für den Neuen
+Späte Umkehr
+Du bemühst dich schon lange um ein christliches Leben. Ein anderer bittet erst jetzt um Vergebung und will sich Gott zuwenden. Darfst du seine Ablehnung wünschen, weil er spät kommt?
 
-Jeder bekam versprochenes Material und Zeit. Danach hilft Pädagoge zusätzlich dem Neuen. Deine Hilfe wurde nicht gekürzt. Warum fremde Hilfe nicht beenden?
+Stundenlohn
+Arbeitgeber versprach Bezahlung pro Stunde. Einer arbeitete acht Stunden, anderer eine. Beide wurden nur für eine bezahlt. Welche Zusage wurde verletzt, warum anderer Vertrag als im Gleichnis?
 
-Neue Schuhe
+Note nach Regeln
+Lehrkraft kündigte Bewertung nach richtigen Lösungen an, gab aber allen dieselbe Note ohne Prüfung. Welche Regel klären? Legt das Gleichnis Schulnoten fest?
 
-Bruder bekam Schuhe, weil alte zu klein. Deine passen und sind heil. Gleichzeitiger Kauf nicht versprochen. Eigenen Wunsch ohne „Er wird mehr geliebt“ äußern.
+Teilnehmerabzeichen
+Früher und später Teilnehmer bekommen gleiches Abzeichen. Unbekannt: Gabe für alle oder Preis nach Stunden? Welche Frage vor einem Urteil stellen?
 
-Neuer Malkasten
+Ein Tisch für alle
 
-Freund bekam Farben. Du siehst Geschenk, weißt aber nicht von wem, warum, mit welchen Vereinbarungen. Welchen Fakt vor Schluss klären?
+Vier Informationen pro Team. Zuerst erste Antwort, neue Information nur von Leitung, dann zweite Antwort.
 
-Die Arbeit des anderen
+1. Einladung
+Vorher angekündigt: Nach freiwilliger Werkstatt bekommt jeder Teilnehmer dasselbe vollständige Essen. Gemeinsame Gabe, kein Stundenlohn.
 
-Freund bekam Lob für Bild. Du keinen Kommentar, weißt aber nicht, ob Lehrkraft dein Bild bereits ansah. Wie ruhig um Rückmeldung bitten?
+2. Saschas Arbeit
+Sascha half seit morgens, ist müde und wünscht Anerkennung. Volles zugesagtes Essen erhalten. Er verlangt kleinere Portion für Mischa, der spät kam.
 
-Material fehlt
+3. Später Teilnehmer
+Mischa kam am Ende und half sofort. Grund für späte Ankunft noch unbekannt. Keine Faulheit oder erfundene Erklärung unterstellen.
 
-Jedem brauchbarer Basiskasten versprochen. Du bekamst trockene Farben und sollst damit arbeiten, anderer brauchbare. Zusage einfordern, ohne fremden Kasten zu beschädigen.
+4. Antwort des Teams
+Antwort an Sascha: Arbeit anerkennen, erhaltene Zusage nennen, gemeinsame Gabe für Mischa bewahren. Unbekanntes gesondert notieren.
 
-5. Geschenk und Vereinbarung
+Erste Antwort: gemeinsame Gabe, verschiedene Arbeit, Erhaltenes:
+_____________________________________________
 
-Viererteam, eine Information pro Person. Planfelder ganz lassen. Alle hören, ersten Plan notieren, zweiten nach neuer Bedingung ergänzen. Neue Bedingung von Lehrkraft; ersten Plan nicht löschen.
+Was noch unbekannt ist:
+_____________________________________________
 
-1. Gemeinsame Zusage
+Arbeit anerkennen und Gabe für andere bewahren:
+_____________________________________________
 
-In Werkstatt versprach Lehrkraft jedem brauchbaren Basismalkasten und zehn Minuten Rückmeldung bis Unterrichtsende.
+Zweite Antwort nach neuer Information:
+_____________________________________________
 
-2. Was Sascha hat
+Meine Antwort auf Güte
 
-Sascha hat brauchbaren gewöhnlichen Kasten. Sein Zehn-Minuten-Termin steht noch aus, Lehrkraft hielt Platz frei. Neuer Kasten bei Mischa weckt „Ich werde weniger geschätzt“. Zeit noch erhalten.
+Erfundener Fall möglich. Blatt bleibt bei dir, Gebet freiwillig.
 
-3. Woher das Geschenk kam
+Mein Gefühl bei gleicher Gabe:
+_____________________________________________
 
-Mischa kam erstmals in Werkstatt. Seine Farben sind trocken. Ein Freiwilliger schenkte ihm separat seinen neuen Kasten, ohne anderen Material wegzunehmen.
+Meine Arbeit und Teilnahme:
+_____________________________________________
 
-4. Was man tun kann
+Was ich bereits bekam:
+_____________________________________________
 
-Saschas Termin klären, eigenes Bild weiter malen, Mischa beim Ankommen helfen. Fremdes Geschenk bestimmt Saschas Wert nicht. Für gebrochene Zusage braucht es konkrete Fakten.
+Welchen Vorrang ich erwartete:
+_____________________________________________
 
-Was bekannt ist und noch geklärt werden muss:
+Meine Antwort auf Güte zum anderen:
+_____________________________________________
 
-Mein Bedürfnis und meine Frage an die Lehrkraft:
+Mein guter Schritt und Zeitpunkt:
+_____________________________________________
 
-Freundlicher Satz zum Freund oder machbare Hilfe:
-
-Zweiter Plan: Welche Zusage wurde gebrochen, worum bitten:
-
-6. Mein nächster Schritt
-
-Echten oder erfundenen Fall wählen. Blatt bleibt bei dir. Nur gewählten Satz nennen ist möglich.
-
-Was ich fühle und wirklich brauche:
-
-Was mir versprochen wurde und was ich bekam:
-
-Was ein anderer bekam; was ich noch nicht weiß:
-
-Meine ruhige Frage oder Bitte:
-
-Wofür ich danke; wie ich mich für andere freue:
-
-Meine gute Tat und Zeitpunkt des ersten Schritts:
-
-Herr Jesus Christus, vergib meinen Neid und mein Murren. Hilf mir, Deine Barmherzigkeit zu sehen, für das Empfangene zu danken und mich über Gutes für andere zu freuen. Lehre mich, ruhig über wirkliches Unrecht zu sprechen und selbst dem Nächsten zu helfen. Amen.
-
-Eigens verfasstes Gebet. Still zuhören ist möglich.';
+Herr Jesus Christus, ich danke Dir für Deine Barmherzigkeit. Vergib mein Murren, wenn Du einen anderen ebenso gütig annimmst. Hilf mir, mit Liebe zu arbeiten, keinen Vorrang zu verlangen und mich über die Umkehr meines Nächsten zu Dir zu freuen. Amen.';

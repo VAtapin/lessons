@@ -1068,7 +1068,7 @@ return [
             'mime' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
         ],
         'german-vineyard-notes-docx-20261003' => [
-            'path' => 'assets/lessons/pochemu-emu-bolshe-chem-mne/de/Unterrichtsplan.docx',
+            'path' => 'assets/lessons/_versions/vineyard-v1/de/Unterrichtsplan.docx',
             'sha256' => '72576912ab88106080d94b7d1ee2fccaf4ad7526ca908c3b0b4ca3b7196b417c',
             'downloadName' => 'pochemu-emu-bolshe-chem-mne-Unterrichtsplan.docx',
             'locale' => 'de',
@@ -1078,7 +1078,7 @@ return [
             'mime' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         ],
         'german-vineyard-notes-pdf-20261003' => [
-            'path' => 'assets/lessons/pochemu-emu-bolshe-chem-mne/de/Unterrichtsplan.pdf',
+            'path' => 'assets/lessons/_versions/vineyard-v1/de/Unterrichtsplan.pdf',
             'sha256' => '8c4c465bfb5315ab13671e53ec52534ed34050cd5f0bb26ceb075d9b16875404',
             'downloadName' => 'pochemu-emu-bolshe-chem-mne-Unterrichtsplan.pdf',
             'locale' => 'de',
@@ -1088,7 +1088,7 @@ return [
             'mime' => 'application/pdf',
         ],
         'german-vineyard-worksheet-docx-20261003' => [
-            'path' => 'assets/lessons/pochemu-emu-bolshe-chem-mne/de/Arbeitsmaterial.docx',
+            'path' => 'assets/lessons/_versions/vineyard-v1/de/Arbeitsmaterial.docx',
             'sha256' => '304e3e60af97f33575e9a7e59c9b7f49c36eef341566615aece7664809a82950',
             'downloadName' => 'pochemu-emu-bolshe-chem-mne-Arbeitsmaterial.docx',
             'locale' => 'de',
@@ -1098,7 +1098,7 @@ return [
             'mime' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         ],
         'german-vineyard-worksheet-pdf-20261003' => [
-            'path' => 'assets/lessons/pochemu-emu-bolshe-chem-mne/de/Arbeitsmaterial.pdf',
+            'path' => 'assets/lessons/_versions/vineyard-v1/de/Arbeitsmaterial.pdf',
             'sha256' => '32323f087ed0c9fce330855456958a4f7952775f10527e590dafe4f9e44d1c62',
             'downloadName' => 'pochemu-emu-bolshe-chem-mne-Arbeitsmaterial.pdf',
             'locale' => 'de',
@@ -1108,7 +1108,7 @@ return [
             'mime' => 'application/pdf',
         ],
         'german-vineyard-presentation-pptx-20261003' => [
-            'path' => 'assets/lessons/pochemu-emu-bolshe-chem-mne/de/Präsentation.pptx',
+            'path' => 'assets/lessons/_versions/vineyard-v1/de/Präsentation.pptx',
             'sha256' => '03d0f1009bdc2aa87f4f6512f158ac5b428f3ea9ce0ed9d27ad67ccf63db544f',
             'downloadName' => 'pochemu-emu-bolshe-chem-mne-Präsentation.pptx',
             'locale' => 'de',

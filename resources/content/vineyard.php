@@ -5,7 +5,7 @@ declare(strict_types=1);
 $raw = json_decode(file_get_contents(__DIR__.'/vineyard-source.json'), true, flags: JSON_THROW_ON_ERROR);
 $de = require __DIR__.'/vineyard-de.php';
 $cards = require __DIR__.'/vineyard-cards.php';
-$version = 'd100a419-3038-4092-9d8b-e72a0a84bf41';
+$version = 'd200a419-3038-4092-9d8b-e72a0a84bf42';
 $base = ['kind' => 'scene', 'reviewBlockId' => null, 'sourceBlockIds' => [], 'maxItems' => 8];
 $make = static fn ($id, $type, $ru, $german, $config = [], $solution = null) => array_filter(['id' => $id, 'type' => 'core.'.$type, 'schemaVersion' => 1, 'content' => ['ru' => $type === 'presentation' ? $ru + ['modes' => []] : $ru, 'de' => $type === 'presentation' ? $german + ['modes' => []] : $german], 'config' => $config, 'solution' => $solution], static fn ($v) => $v !== null);
 $free = static fn ($id, $ru, $german) => $make($id, 'free-response', ['question' => $ru, 'label' => 'Ваш ответ', 'placeholder' => 'Напишите одну фразу', 'submitLabel' => 'Отправить'], ['question' => $german, 'label' => 'Deine Antwort', 'placeholder' => 'Schreibe einen Satz', 'submitLabel' => 'Senden'], ['allowRepeat' => true, 'maxLength' => 500]);
@@ -30,7 +30,7 @@ foreach ($raw['screens'] as $i => $screen) {
     $german = $de['slides'][$i];
     $blocks = [$make($id.'-scene', 'presentation', $ru, $german, $base + ['scene' => $n === 1 ? 'cover' : 'story'])];
     $picture = $make($id.'-image', 'image', ['alt' => $ru['title'], 'caption' => ''], ['alt' => $german['title'], 'caption' => ''], ['fit' => 'contain']);
-    $picture['media'] = $image($n);
+    $picture['media'] = $image([6, 2, 4, 5, 3, 6, 5, 9, 10, 12, 11, 4][$i]);
     $blocks[] = $picture;
     if ($n === 2) {
         // Two consecutive pages preserve all sixteen verses without shrinking the projection.
@@ -61,33 +61,33 @@ foreach ($raw['screens'] as $i => $screen) {
         $blocks[] = $free($id.'-promise', 'Что первым обещали и что они получили:', 'Was wurde den Ersten versprochen, was bekamen sie:');
         $blocks[] = $free($id.'-expectation', 'Чего они стали ждать, увидев чужую плату:', 'Was erwarteten sie nach dem fremden Lohn:');
     } elseif ($n === 6) {
-        $blocks[] = $make($id.'-pair', 'prompt', ['text' => 'Шесть случаев на пару. Группы: «Обещание нарушено», «Помощь или подарок», «Надо уточнить». Читайте условия. Затем выберите два случая для разговора и смените роли.'], ['text' => 'Sechs Fälle pro Paar. Gruppen: „Zusage gebrochen“, „Hilfe oder Geschenk“, „Nachfragen nötig“. Bedingungen lesen. Dann zwei Fälle für Gespräch wählen und Rollen wechseln.'], ['kind' => 'instruction', 'target' => 'pair']);
+        $blocks[] = $make($id.'-pair', 'prompt', ['text' => 'Шесть случаев на пару: «Общий дар», «Нарушенное правило», «Нужно уточнить». Сначала обсудите три случая одинакового дара. Нарушения правил — граница применения притчи.'], ['text' => 'Sechs Fälle: Gemeinsame Gabe, Regel verletzt, Nachfragen nötig. Zuerst drei Fälle gleicher Gabe. Regelverletzungen zeigen die Grenze der Anwendung.'], ['kind' => 'instruction', 'target' => 'pair']);
         foreach (range(11, 16) as $j) {
             $blocks[] = $reveal($id.'-case-'.($j - 10), $cards[$j][0], $cards[$j][2], $cards[$j][1], $cards[$j][3]);
         }
         $blocks[] = $free($id.'-reason', 'Какое условие меняет наш вывод?', 'Welche Bedingung verändert unseren Schluss?');
     } elseif ($n === 7) {
-        $blocks[] = $make($id.'-pair', 'prompt', ['text' => 'Назови факт, свою нужду и спокойную просьбу. Слушатель повторяет, как понял ответ. Выберите два случая со страницы 4; затем смена ролей.'], ['text' => 'Fakt, eigenes Bedürfnis und ruhige Bitte nennen. Zuhörer wiederholt verstandene Antwort. Zwei Fälle von Seite 4 wählen; dann Rollen wechseln.'], ['kind' => 'instruction', 'target' => 'pair']);
-        foreach ([12 => 13, 16 => 14] as $j => $pictureNumber) {
+        $blocks[] = $make($id.'-pair', 'prompt', ['text' => 'Первый говорит: «Я трудился дольше. Почему ему столько же?» Второй отвечает по Мф. 20:13–15, признавая труд первого. Затем смена ролей.'], ['text' => 'Erster: Ich arbeitete länger. Warum bekam er genauso viel? Zweiter antwortet nach Matthäus 20,13–15 und erkennt die Arbeit an. Rollen wechseln.'], ['kind' => 'instruction', 'target' => 'pair']);
+        foreach ([11 => 6, 13 => 5] as $j => $pictureNumber) {
             $frame = $reveal($id.'-case-'.$j, $cards[$j][0], $cards[$j][2], $cards[$j][1], $cards[$j][3]);
             $frame['media'] = $image($pictureNumber);
             $blocks[] = $frame;
         }
-        $blocks[] = $free($id.'-request', 'Как попросить нужное, не требуя забрать чужое?', 'Wie um Nötiges bitten, ohne fremdes Geschenk wegzunehmen?');
+        $blocks[] = $free($id.'-request', 'Как признать труд первого и сохранить одинаковый дар последнему?', 'Wie die Arbeit des Ersten anerkennen und gleiche Gabe für den Letzten bewahren?');
     } elseif ($n === 8) {
-        $blocks[] = $free($id.'-first-plan', 'Что известно и что ещё надо уточнить: Моя нужда и вопрос учителю: Добрая фраза другу или посильная помощь:', 'Was bekannt ist und noch geklärt werden muss: Mein Bedürfnis und Frage an Lehrkraft: Freundlicher Satz zum Freund oder machbare Hilfe:');
+        $blocks[] = $free($id.'-first-plan', 'Первый ответ: что обещано всем, чем различается участие, что получил Саша и как сохранить полный ужин Мише?', 'Erste Antwort: Zusage für alle, verschiedene Teilnahme, was bekam Sascha, wie Mischas volle Portion bewahren?');
     } elseif ($n === 9) {
-        $blocks[] = $make($id.'-condition', 'prompt', ['text' => 'Новое условие: в конце Саше дали только пять минут обратной связи вместо обещанных десяти. Учитель сказал, что на сегодня всё. Нужно ли теперь молча терпеть? Нужно ли отнимать подарок у Миши? Сохраните первый план.'], ['text' => 'Neue Bedingung: Am Ende bekam Sascha nur fünf statt zehn versprochenen Minuten Rückmeldung. Lehrkraft sagte: Für heute ist Schluss. Muss er schweigend dulden? Muss Mischa sein Geschenk verlieren? Ersten Plan behalten.'], ['kind' => 'instruction', 'target' => 'group']);
-        $blocks[] = $free($id.'-second-plan', 'Второй план: какое обещание нарушено и о чём попросить:', 'Zweiter Plan: Welche Zusage wurde gebrochen, worum bitten:');
+        $blocks[] = $make($id.'-condition', 'prompt', ['text' => 'Новое сведение: Миша сопровождал бабушку, которой трудно ходить. Он пришёл поздно и сразу включился. Порции остаются одинаковыми. Сохраните первый ответ; допишите второй. Почему общий дар не требует оправдания позднего участника?'], ['text' => 'Neue Information: Mischa begleitete seine Großmutter, die schlecht gehen kann. Er kam spät und half sofort. Portionen bleiben gleich. Erste Antwort behalten, zweite ergänzen. Warum braucht die gemeinsame Gabe keine Rechtfertigung des späten Teilnehmers?'], ['kind' => 'instruction', 'target' => 'group']);
+        $blocks[] = $free($id.'-second-plan', 'Второй ответ: какое предположение изменилось и почему одинаковый дар сохраняется:', 'Zweite Antwort: Welche Vermutung änderte sich, warum bleibt die Gabe gleich:');
     } elseif ($n === 10) {
-        $blocks[] = $free($id.'-request', 'Моя просьба учителю', 'Meine Bitte an die Lehrkraft');
-        $blocks[] = $free($id.'-kindness', 'Моё доброе слово другу или посильная помощь', 'Mein freundliches Wort zum Freund oder machbare Hilfe');
+        $blocks[] = $free($id.'-request', 'Как признать труд Саши, не уменьшая дар Мише', 'Saschas Arbeit anerkennen, ohne Mischas Gabe zu kürzen');
+        $blocks[] = $free($id.'-kindness', 'Моё приглашение позднему участнику или общее доброе действие', 'Meine Einladung an den späten Teilnehmer oder gemeinsame Hilfe');
     } elseif ($n === 11) {
         $blocks[] = $make($id.'-personal', 'prompt', ['text' => 'Выбери настоящий или вымышленный случай. Лист остаётся у тебя. Можно назвать только выбранную фразу.'], ['text' => 'Echten oder erfundenen Fall wählen. Blatt bleibt bei dir. Nur gewählten Satz nennen ist möglich.'], ['kind' => 'reflection', 'target' => 'class']);
         $blocks[] = $reveal($id.'-prayer', 'Молитва', 'Gebet', $raw['prayer']."\nАвторская молитва. Можно молча слушать.", $de['prayer']."\nEigens verfasstes Gebet. Still zuhören ist möglich.");
     } elseif ($n === 12) {
-        $blocks[] = $free($id.'-promise', 'Первый работник получил…', 'Der erste Arbeiter bekam…');
-        $blocks[] = $free($id.'-kindness', 'Если другому помогли, я могу…', 'Wenn einem anderen geholfen wurde, kann ich…');
+        $blocks[] = $free($id.'-promise', 'При разном времени труда все получили…', 'Bei verschiedener Arbeitszeit bekamen alle …');
+        $blocks[] = $free($id.'-kindness', 'Доброта хозяина учит меня…', 'Die Güte des Hausherrn lehrt mich …');
         $blocks[] = $make($id.'-closing', 'presentation', ['title' => $ru['title'], 'text' => 'Божья милость даёт место и пришедшим поздно.', 'source' => 'Мф. 20:1–16'], ['title' => $german['title'], 'text' => 'Gottes Barmherzigkeit gibt auch spät Gekommenen einen Platz.', 'source' => 'Matthäus 20,1–16'], array_replace($base, ['kind' => 'closing']));
     }
     $stageCards = array_filter($cards, static fn ($card) => $card[4] === $i);
@@ -99,16 +99,16 @@ foreach ($raw['screens'] as $i => $screen) {
 }
 $files = [];
 foreach (config('lesson-files') as $id => $file) {
-    if (str_starts_with($id, 'vineyard-file-')) {
-        $files[] = ['fileId' => $id, 'kind' => $file['kind'], 'locale' => 'ru'];
+    if (str_starts_with($id, 'vineyard-file-') && str_ends_with($id, '-v2')) {
+        $files[] = ['fileId' => $id, 'kind' => $file['kind'], 'locale' => $file['locale']];
     }
 }
 $ruPlan = $raw['passport']."\n\n".$raw['plan']."\n\n".$raw['script']."\n\n".$raw['teacherPreparation']."\n\n".$raw['handout'];
-$dePlan = $de['title']."\n12–15 Jahre · 45 Minuten · 8–24 Teilnehmende, Paare und Viererteams.\nZiel: Zusage, Erwartung und Großzügigkeit unterscheiden; eigene Bedürfnisse ruhig nennen und Gutes für andere annehmen.\n".implode("\n\n", array_map(static fn ($s) => $s['title']."\n".$s['notes'], $de['screens']))."\n\n".$de['preparation']."\n\n".$de['roleplay']."\n\n".$de['bible']."\n\n".(require __DIR__.'/vineyard-handout-de.php');
+$dePlan = $de['title']."\n12–15 Jahre · 45 Minuten · 8–24 Teilnehmende, Paare und Viererteams.\nZiel: Gleicher Denar bei verschiedener Arbeitszeit, Murren der Ersten und Gottes Güte verstehen.\n".implode("\n\n", array_map(static fn ($s) => $s['title']."\n".$s['notes'], $de['screens']))."\n\n".$de['preparation']."\n\n".$de['roleplay']."\n\n".$de['bible']."\n\n".(require __DIR__.'/vineyard-handout-de.php');
 
 return [
-    'sourceRevision' => 'vineyard-ru-de-2026-10-03-v1', 'materialId' => 'c100a419-3038-4092-9d8b-e72a0a84bf41', 'versionId' => $version, 'ownerKey' => 'e100a419-3038-4092-9d8b-e72a0a84bf41', 'slug' => 'pochemu-emu-bolshe-chem-mne',
-    'metadata' => ['translations' => ['ru' => ['title' => $raw['title'], 'description' => trim($raw['description'])], 'de' => ['title' => $de['title'], 'description' => $de['description']]], 'age' => ['11-14', '15+'], 'topic' => ['bible'], 'audience' => ['sunday-school', 'school', 'group', 'family'], 'format' => ['lesson', 'interactive'], 'durationMinutes' => 45, 'cover' => $image(1)['image'],
-        'details' => ['ru' => ['goals' => ['Различать обещание, ожидание и щедрость; спокойно просить о своей нужде и радоваться добру для другого.'], 'materials' => ['Мф. 20:1–16, презентация, шесть страниц раздатки, ручки, пять одинаковых жетонов.', 'Семь ролей, четыре события, шесть случаев, четыре командных сведения, личный лист.'], 'devices' => 'Пары и команды работают на бумаге. Устройства необязательны; короткие ответы по Enter.', 'conditions' => '12–15 лет. 45 минут. Полное чтение, сразу сценка, затем обсуждение. Пять представителей означают группы. Личный лист остаётся у подростка; молитва добровольна.'], 'de' => ['goals' => ['Zusage, Erwartung und Großzügigkeit unterscheiden; eigene Bedürfnisse ruhig nennen und sich über Gutes für andere freuen.'], 'materials' => ['Matthäus 20,1–16, Präsentation, sechs Seiten Arbeitsmaterial, Stifte, fünf gleiche Spielsteine.', 'Sieben Rollen, vier Ereignisse, sechs Fälle, vier Teaminformationen, persönliches Blatt.'], 'devices' => 'Paare und Teams arbeiten auf Papier. Geräte freiwillig; kurze Antworten mit Enter.', 'conditions' => '12–15 Jahre. 45 Minuten. Vollständige Lesung, sofort Rollenspiel, danach Besprechung. Fünf Vertreter stehen für Gruppen. Persönliches Blatt bleibt beim Jugendlichen; Gebet freiwillig.']]],
+    'sourceRevision' => 'vineyard-ru-de-2026-10-04-v2', 'materialId' => 'c100a419-3038-4092-9d8b-e72a0a84bf41', 'versionId' => $version, 'ownerKey' => 'e100a419-3038-4092-9d8b-e72a0a84bf41', 'slug' => 'pochemu-emu-bolshe-chem-mne',
+    'metadata' => ['translations' => ['ru' => ['title' => $raw['title'], 'description' => trim($raw['description'])], 'de' => ['title' => $de['title'], 'description' => $de['description']]], 'age' => ['11-14', '15+'], 'topic' => ['bible'], 'audience' => ['sunday-school', 'school', 'group', 'family'], 'format' => ['lesson', 'interactive'], 'durationMinutes' => 45, 'cover' => $image(6)['image'],
+        'details' => ['ru' => ['goals' => ['Объяснить ропот при одинаковой плате за разное время труда и ответить на Божью милость к поздно пришедшему без требования преимущества.'], 'materials' => ['Мф. 20:1–16, презентация, шесть страниц раздатки, ручки, пять одинаковых жетонов.', 'Семь ролей, четыре события, шесть случаев, четыре командных сведения, личный лист.'], 'devices' => 'Пары и команды работают на бумаге. Устройства необязательны; короткие ответы по Enter.', 'conditions' => '12–15 лет. 45 минут. Полное чтение, сразу сценка, затем обсуждение. Пять представителей означают группы. Личный лист остаётся у подростка; молитва добровольна.'], 'de' => ['goals' => ['Murren bei gleichem Lohn und verschiedener Arbeitszeit erklären und Gottes Güte zu spät Gekommenen ohne Anspruch auf Vorrang annehmen.'], 'materials' => ['Matthäus 20,1–16, Präsentation, sechs Seiten Arbeitsmaterial, Stifte, fünf gleiche Spielsteine.', 'Sieben Rollen, vier Ereignisse, sechs Fälle, vier Teaminformationen, persönliches Blatt.'], 'devices' => 'Paare und Teams arbeiten auf Papier. Geräte freiwillig; kurze Antworten mit Enter.', 'conditions' => '12–15 Jahre. 45 Minuten. Vollständige Lesung, sofort Rollenspiel, danach Besprechung. Fünf Vertreter stehen für Gruppen. Persönliches Blatt bleibt beim Jugendlichen; Gebet freiwillig.']]],
     'document' => ['id' => $version, 'schemaVersion' => 1, 'defaultLocale' => 'ru', 'locales' => ['ru', 'de'], 'content' => ['ru' => ['title' => $raw['title']], 'de' => ['title' => $de['title']]], 'stages' => $stages, 'documentation' => ['schemaVersion' => 1, 'content' => ['ru' => ['plan' => $ruPlan], 'de' => ['plan' => $dePlan]], 'files' => $files]],
 ];
