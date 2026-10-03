@@ -977,4 +977,15 @@ return [
     'documentation_german_worksheet_docx' => 'Раздаточные материалы на немецком DOCX',
     'documentation_german_worksheet_pdf' => 'Раздаточные материалы на немецком PDF',
     'documentation_german_presentation_pptx' => 'Презентация на немецком PPTX',
+
+    'doc_loaves_lesson_docx' => 'Полный урок Word · русский',
+    'doc_loaves_lesson_pdf' => 'Полный урок PDF · русский',
+    'doc_loaves_slides' => 'PowerPoint: 12 слайдов · русский',
+    'doc_loaves_handout_docx' => 'Раздатка Word · русский',
+    'doc_loaves_handout_pdf' => 'Раздатка PDF · русский',
+    'doc_loaves_lesson_docx_de' => 'Полный урок Word · немецкий',
+    'doc_loaves_lesson_pdf_de' => 'Полный урок PDF · немецкий',
+    'doc_loaves_slides_de' => 'PowerPoint: 12 слайдов · немецкий',
+    'doc_loaves_handout_docx_de' => 'Раздатка Word · немецкий',
+    'doc_loaves_handout_pdf_de' => 'Раздатка PDF · немецкий',
 ];

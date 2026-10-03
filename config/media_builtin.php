@@ -350,4 +350,19 @@ $builtins[] = ['assetId' => 'builtin-joseph-12', 'versionId' => 'builtin-joseph-
 $builtins[] = ['assetId' => 'builtin-joseph-13', 'versionId' => 'builtin-joseph-13-v1', 'file' => 'assets/library/joseph/13.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_13'];
 $builtins[] = ['assetId' => 'builtin-joseph-14', 'versionId' => 'builtin-joseph-14-v1', 'file' => 'assets/library/joseph/14.png', 'mime' => 'image/png', 'labelKey' => 'media_joseph_14'];
 
+$builtins[] = ['assetId' => 'builtin-loaves-1', 'versionId' => 'builtin-loaves-1-v1', 'file' => 'assets/library/loaves/01.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_1'];
+$builtins[] = ['assetId' => 'builtin-loaves-2', 'versionId' => 'builtin-loaves-2-v1', 'file' => 'assets/library/loaves/02.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_2'];
+$builtins[] = ['assetId' => 'builtin-loaves-3', 'versionId' => 'builtin-loaves-3-v1', 'file' => 'assets/library/loaves/03.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_3'];
+$builtins[] = ['assetId' => 'builtin-loaves-4', 'versionId' => 'builtin-loaves-4-v1', 'file' => 'assets/library/loaves/04.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_4'];
+$builtins[] = ['assetId' => 'builtin-loaves-5', 'versionId' => 'builtin-loaves-5-v1', 'file' => 'assets/library/loaves/05.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_5'];
+$builtins[] = ['assetId' => 'builtin-loaves-6', 'versionId' => 'builtin-loaves-6-v1', 'file' => 'assets/library/loaves/06.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_6'];
+$builtins[] = ['assetId' => 'builtin-loaves-7', 'versionId' => 'builtin-loaves-7-v1', 'file' => 'assets/library/loaves/07.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_7'];
+$builtins[] = ['assetId' => 'builtin-loaves-8', 'versionId' => 'builtin-loaves-8-v1', 'file' => 'assets/library/loaves/08.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_8'];
+$builtins[] = ['assetId' => 'builtin-loaves-9', 'versionId' => 'builtin-loaves-9-v1', 'file' => 'assets/library/loaves/09.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_9'];
+$builtins[] = ['assetId' => 'builtin-loaves-10', 'versionId' => 'builtin-loaves-10-v1', 'file' => 'assets/library/loaves/10.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_10'];
+$builtins[] = ['assetId' => 'builtin-loaves-11', 'versionId' => 'builtin-loaves-11-v1', 'file' => 'assets/library/loaves/11.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_11'];
+$builtins[] = ['assetId' => 'builtin-loaves-12', 'versionId' => 'builtin-loaves-12-v1', 'file' => 'assets/library/loaves/12.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_12'];
+$builtins[] = ['assetId' => 'builtin-loaves-13', 'versionId' => 'builtin-loaves-13-v1', 'file' => 'assets/library/loaves/13.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_13'];
+$builtins[] = ['assetId' => 'builtin-loaves-14', 'versionId' => 'builtin-loaves-14-v1', 'file' => 'assets/library/loaves/14.png', 'mime' => 'image/png', 'labelKey' => 'media_loaves_14'];
+
 return $builtins;
