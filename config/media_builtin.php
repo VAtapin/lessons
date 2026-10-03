@@ -290,4 +290,19 @@ $builtins[] = ['assetId' => 'builtin-anger-12', 'versionId' => 'builtin-anger-12
 $builtins[] = ['assetId' => 'builtin-anger-13', 'versionId' => 'builtin-anger-13-v1', 'file' => 'assets/library/anger/13.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_13'];
 $builtins[] = ['assetId' => 'builtin-anger-14', 'versionId' => 'builtin-anger-14-v1', 'file' => 'assets/library/anger/14.png', 'mime' => 'image/png', 'labelKey' => 'media_anger_14'];
 
+$builtins[] = ['assetId' => 'builtin-peter-1', 'versionId' => 'builtin-peter-1-v1', 'file' => 'assets/library/peter/01.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_1'];
+$builtins[] = ['assetId' => 'builtin-peter-2', 'versionId' => 'builtin-peter-2-v1', 'file' => 'assets/library/peter/02.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_2'];
+$builtins[] = ['assetId' => 'builtin-peter-3', 'versionId' => 'builtin-peter-3-v1', 'file' => 'assets/library/peter/03.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_3'];
+$builtins[] = ['assetId' => 'builtin-peter-4', 'versionId' => 'builtin-peter-4-v1', 'file' => 'assets/library/peter/04.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_4'];
+$builtins[] = ['assetId' => 'builtin-peter-5', 'versionId' => 'builtin-peter-5-v1', 'file' => 'assets/library/peter/05.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_5'];
+$builtins[] = ['assetId' => 'builtin-peter-6', 'versionId' => 'builtin-peter-6-v1', 'file' => 'assets/library/peter/06.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_6'];
+$builtins[] = ['assetId' => 'builtin-peter-7', 'versionId' => 'builtin-peter-7-v1', 'file' => 'assets/library/peter/07.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_7'];
+$builtins[] = ['assetId' => 'builtin-peter-8', 'versionId' => 'builtin-peter-8-v1', 'file' => 'assets/library/peter/08.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_8'];
+$builtins[] = ['assetId' => 'builtin-peter-9', 'versionId' => 'builtin-peter-9-v1', 'file' => 'assets/library/peter/09.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_9'];
+$builtins[] = ['assetId' => 'builtin-peter-10', 'versionId' => 'builtin-peter-10-v1', 'file' => 'assets/library/peter/10.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_10'];
+$builtins[] = ['assetId' => 'builtin-peter-11', 'versionId' => 'builtin-peter-11-v1', 'file' => 'assets/library/peter/11.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_11'];
+$builtins[] = ['assetId' => 'builtin-peter-12', 'versionId' => 'builtin-peter-12-v1', 'file' => 'assets/library/peter/12.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_12'];
+$builtins[] = ['assetId' => 'builtin-peter-13', 'versionId' => 'builtin-peter-13-v1', 'file' => 'assets/library/peter/13.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_13'];
+$builtins[] = ['assetId' => 'builtin-peter-14', 'versionId' => 'builtin-peter-14-v1', 'file' => 'assets/library/peter/14.png', 'mime' => 'image/png', 'labelKey' => 'media_peter_14'];
+
 return $builtins;
