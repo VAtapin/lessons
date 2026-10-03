@@ -3,7 +3,7 @@ export const filterOptions = {
     age: ['5-7', '8-10', '11-14', '15+', 'adults'],
     audience: ['school', 'sunday-school', 'family', 'group', 'children', 'adults'],
     topic: ['bible', 'parables', 'holidays', 'mercy', 'family', 'prayer'],
-    format: ['lesson', 'presentation', 'game', 'worksheet', 'interactive', 'notes', 'questions'],
+    format: ['lesson', 'presentation', 'game', 'worksheet', 'interactive', 'notes'],
     duration: ['short', 'standard', 'long'],
 } as const;
 export type FilterKey = keyof typeof filterOptions;

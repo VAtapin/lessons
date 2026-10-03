@@ -18,6 +18,7 @@ final readonly class TaxonomyService
     public function listing(?string $locale = null): array
     {
         $query = CatalogTerm::query()->orderBy('kind')->orderBy('key');
+        $query->where(fn ($query) => $query->where('kind', '!=', 'format')->orWhere('key', '!=', 'questions'));
         if ($locale !== null) {
             $query->where('active', true);
         }
@@ -28,6 +29,9 @@ final readonly class TaxonomyService
     public function save(User $actor, array $data, ?string $id = null, ?int $revision = null): array
     {
         $this->access->require($actor);
+        if (($data['kind'] ?? null) === 'format' && ($data['key'] ?? null) === 'questions') {
+            throw new ApiProblem('invalid_catalog_entry', 422);
+        }
         if (! in_array($data['kind'] ?? null, ['age', 'topic', 'audience', 'format'], true)
             || ! is_string($data['key'] ?? null) || ! preg_match('/^[a-z0-9+-]{1,80}$/D', $data['key']) || ! is_bool($data['active'] ?? null)) {
             throw new ApiProblem('invalid_catalog_entry', 422);
@@ -82,6 +86,9 @@ final readonly class TaxonomyService
     {
         $data = ['id' => $term->id, 'kind' => $term->kind, 'key' => $term->key, 'revision' => $term->revision, 'active' => $term->active];
 
-        return $locale === null ? $data + ['labels' => $term->labels] : $data + ['label' => $term->labels[$locale]];
+        $label = $locale !== null && $term->kind === 'format' && $term->key === 'notes' && ($term->labels[$locale] ?? '') === 'Entwurf'
+            ? __('interface.format_notes', [], $locale) : ($term->labels[$locale] ?? '');
+
+        return $locale === null ? $data + ['labels' => $term->labels] : $data + ['label' => $label];
     }
 }

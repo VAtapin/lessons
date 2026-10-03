@@ -971,4 +971,10 @@ return [
     'doc_joseph_slides' => 'PowerPoint-Präsentation (Russisch)',
     'doc_joseph_handout_docx' => 'Illustriertes Arbeitsblatt DOCX (Russisch)',
     'doc_joseph_handout_pdf' => 'Illustriertes Arbeitsblatt PDF (Russisch)',
+
+    'documentation_german_notes_docx' => 'Unterrichtsplan DOCX',
+    'documentation_german_notes_pdf' => 'Unterrichtsplan PDF',
+    'documentation_german_worksheet_docx' => 'Arbeitsmaterial DOCX',
+    'documentation_german_worksheet_pdf' => 'Arbeitsmaterial PDF',
+    'documentation_german_presentation_pptx' => 'Präsentation PPTX',
 ];

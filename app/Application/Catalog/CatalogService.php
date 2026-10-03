@@ -85,7 +85,7 @@ final readonly class CatalogService
             }
             $matches = true;
             foreach (['age', 'topic', 'audience', 'format'] as $field) {
-                if ($field === 'format' && in_array($filters[$field] ?? '', ['game', 'questions'], true)) {
+                if ($field === 'format' && in_array($filters[$field] ?? '', ['game'], true)) {
                     continue;
                 }
                 if (isset($filters[$field]) && ! in_array($filters[$field], $card[$field], true)) {
@@ -99,7 +99,7 @@ final readonly class CatalogService
             if ($matches) {
                 if (in_array($filters['format'] ?? '', ['notes', 'presentation', 'worksheet'], true)) {
                     $candidates = $this->materials->cards($card, $this->documentation->forVersion($entry->version, $document), $locale, $filters['format']);
-                } elseif (in_array($filters['format'] ?? '', ['game', 'questions'], true)) {
+                } elseif (in_array($filters['format'] ?? '', ['game'], true)) {
                     $candidates = $this->materials->activities($card, $document, $locale, $filters['format']);
                 } else {
                     $candidates = [$card];
@@ -208,15 +208,14 @@ final readonly class CatalogService
         $meta = $entry->metadata;
         $cover = isset($meta['cover']) ? $this->media->resolve($meta['cover']['assetId'], $meta['cover']['versionId'])['url'] : null;
         $size = isset($meta['cover']) ? getimagesize($this->media->resolve($meta['cover']['assetId'], $meta['cover']['versionId'])['path']) : null;
-        $formats = $meta['format'];
+        $formats = array_values(array_diff($meta['format'], ['questions']));
         $documentation = $this->documentation->forVersion($entry->version, $document);
         if ($documentation !== null) {
             $materials = $documentation->project($locale);
             if (trim($materials['plan'] ?? '') !== '') {
                 $formats[] = 'notes';
             }
-            foreach ($materials['files'] as $reference) {
-                // Downloads explicitly show their language, including original-language files.
+            foreach ($this->documentationFiles->localizedReferences($documentation, $locale) as $reference) {
                 $file = $this->documentationFiles->resolve($reference['fileId']);
                 $formats[] = CatalogMaterials::format($file);
             }

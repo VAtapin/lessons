@@ -34,7 +34,7 @@ return [
     'age_5-7' => '5–7', 'age_8-10' => '8–10', 'age_11-14' => '11–14', 'age_15+' => '15+', 'age_adults' => 'Erwachsene',
     'audience_school' => 'Schule', 'audience_sunday-school' => 'Sonntagsschule', 'audience_family' => 'Familie', 'audience_group' => 'Gruppe', 'audience_children' => 'Kinder', 'audience_adults' => 'Erwachsene',
     'topic_bible' => 'Bibel', 'topic_parables' => 'Gleichnisse', 'topic_holidays' => 'Feiertage', 'topic_mercy' => 'Güte und Barmherzigkeit', 'topic_family' => 'Familie', 'topic_prayer' => 'Gebet',
-    'format_lesson' => 'Lektion', 'format_presentation' => 'Präsentation', 'format_game' => 'Spiel', 'format_worksheet' => 'Arbeitsblatt', 'format_interactive' => 'Interaktiv', 'format_notes' => 'Unterrichtsplan', 'format_questions' => 'Fragen',
+    'format_lesson' => 'Lektion', 'format_presentation' => 'Präsentation', 'format_game' => 'Spiel', 'format_worksheet' => 'Arbeitsblatt', 'format_interactive' => 'Interaktiv', 'format_notes' => 'Unterrichtsplan',
     'search_label' => 'Nach Titel suchen', 'search_placeholder' => 'Zum Beispiel: Wer ist mein Nächster?', 'show_materials' => 'Materialien anzeigen', 'reset_filters' => 'Filter zurücksetzen',
     'duration_short' => 'Bis 20 Minuten', 'duration_standard' => '21–60 Minuten', 'duration_long' => 'Über 60 Minuten', 'any_duration' => 'Beliebig',
     'audiences_title' => 'Für wen sind unsere Materialien?', 'audiences_intro' => 'Lektionen und Ideen für verschiedene Menschen und Situationen.',

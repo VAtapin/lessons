@@ -23,7 +23,7 @@ const props = defineProps<{ locale: string; locales?: string[]; messages: Interf
 onMounted(async () => { try { acceptAccount(await api<Account>('/api/account')); } catch { /* Sign-in remains available when account lookup fails. */ } });
 const audiences = [{ key: 'school', image: school }, { key: 'sunday-school', image: sunday }, { key: 'children', image: children }, { key: 'adults', image: adults }];
 const topics = [{ key: 'bible', image: bible }, { key: 'holidays', image: reading }, { key: 'parables', image: landscape }, { key: 'family', image: sunday }, { key: 'prayer', image: adults }, { key: 'mercy', image: mercy }];
-const formats = [{ key: 'presentation', icon: 'screen' }, { key: 'notes', icon: 'file' }, { key: 'game', icon: 'game' }, { key: 'questions', icon: 'question' }, { key: 'worksheet', icon: 'pencil' }, { key: 'interactive', icon: 'screen' }];
+const formats = [{ key: 'presentation', icon: 'screen' }, { key: 'notes', icon: 'file' }, { key: 'game', icon: 'game' }, { key: 'worksheet', icon: 'pencil' }, { key: 'interactive', icon: 'screen' }];
 const navigation = ['about', 'audiences', 'topics', 'formats', 'contact'];
 const homeAnchor = (key: string) => props.page === 'catalog' ? `/${props.locale}#${key}` : `#${key}`;
 const languageLink = (locale: string) => `/${locale}${props.page === 'catalog' ? `/catalog${props.context?.slug ? `/${encodeURIComponent(props.context.slug)}` : ''}` : ''}${window.location.search}`;

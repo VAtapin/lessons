@@ -38,7 +38,7 @@ return [
     'age_5-7' => '5–7', 'age_8-10' => '8–10', 'age_11-14' => '11–14', 'age_15+' => '15+', 'age_adults' => 'Взрослые',
     'audience_school' => 'Школа', 'audience_sunday-school' => 'Воскресная школа', 'audience_family' => 'Семья', 'audience_group' => 'Группа', 'audience_children' => 'Дети', 'audience_adults' => 'Взрослые',
     'topic_bible' => 'Библия', 'topic_parables' => 'Притчи', 'topic_holidays' => 'Праздники', 'topic_mercy' => 'Добро и милосердие', 'topic_family' => 'Семья', 'topic_prayer' => 'Молитва',
-    'format_lesson' => 'Урок', 'format_presentation' => 'Презентация', 'format_game' => 'Игра', 'format_worksheet' => 'Рабочий лист', 'format_interactive' => 'Интерактив', 'format_notes' => 'Конспект', 'format_questions' => 'Вопросы',
+    'format_lesson' => 'Урок', 'format_presentation' => 'Презентация', 'format_game' => 'Игра', 'format_worksheet' => 'Рабочий лист', 'format_interactive' => 'Интерактив', 'format_notes' => 'Конспект',
     'search_label' => 'Поиск по названию', 'search_placeholder' => 'Например, кто мой ближний', 'show_materials' => 'Показать материалы', 'reset_filters' => 'Сбросить фильтры',
     'duration_short' => 'До 20 минут', 'duration_standard' => '21–60 минут', 'duration_long' => 'Более 60 минут', 'any_duration' => 'Любая',
     'audiences_title' => 'Для кого наши материалы', 'audiences_intro' => 'Мы создаём уроки и пособия для разных людей и ситуаций служения.',

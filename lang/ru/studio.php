@@ -971,4 +971,10 @@ return [
     'doc_joseph_slides' => 'Презентация PowerPoint',
     'doc_joseph_handout_docx' => 'Иллюстрированная раздатка DOCX',
     'doc_joseph_handout_pdf' => 'Иллюстрированная раздатка PDF',
+
+    'documentation_german_notes_docx' => 'План урока на немецком DOCX',
+    'documentation_german_notes_pdf' => 'План урока на немецком PDF',
+    'documentation_german_worksheet_docx' => 'Раздаточные материалы на немецком DOCX',
+    'documentation_german_worksheet_pdf' => 'Раздаточные материалы на немецком PDF',
+    'documentation_german_presentation_pptx' => 'Презентация на немецком PPTX',
 ];

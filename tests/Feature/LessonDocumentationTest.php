@@ -57,7 +57,10 @@ final class LessonDocumentationTest extends TestCase
         foreach (['ru', 'de'] as $locale) {
             $detail = app(CatalogService::class)->detail('kto-moi-blizhnii', $locale);
             $this->assertSame($source['content'][$locale]['plan'], $detail['entry']['documentation']['plan']);
-            $this->assertSame('/lesson-files/neighbor-plan-de-v1', $detail['entry']['documentation']['files'][0]['url']);
+            foreach ($detail['entry']['documentation']['files'] as $file) {
+                $this->assertSame($locale, $file['locale']);
+                $this->get($file['url'])->assertOk();
+            }
             $owner = (string) Str::uuid();
             $session = app(CatalogService::class)->use('kto-moi-blizhnii', $locale, $owner, true)['session'];
             $this->assertSame($source['content'][$locale]['plan'], $session['document']['documentation']['plan']);

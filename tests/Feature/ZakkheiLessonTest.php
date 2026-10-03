@@ -104,7 +104,9 @@ final class ZakkheiLessonTest extends TestCase
         };
         $execute('begin');
         foreach ($session['document']['documentation']['files'] as $i => $file) {
-            $this->assertSame(__('studio.documentation_zakkhei_'.($i + 1), [], $locale), $file['label']);
+            $this->assertSame($locale, $file['locale']);
+            $manifest = app(DocumentationFiles::class)->resolve($file['fileId']);
+            $this->assertSame(__('studio.'.$manifest['labelKey'], [], $locale), $file['label']);
         }
         for ($i = 1; $i <= 12; $i++) {
             $id = 'zakkhei-step-'.str_pad((string) $i, 2, '0', STR_PAD_LEFT);

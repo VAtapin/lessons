@@ -12,7 +12,7 @@ final class DocumentationFiles
 {
     public function resolve(string $id): array
     {
-        $file = config('lesson-files.'.$id);
+        $file = config('lesson-files.'.$id) ?? config('german-lesson-files.files.'.$id);
         if (! is_array($file) || ! is_string($file['path'] ?? null)) {
             throw new ApiProblem('not_found', 404);
         }
@@ -46,8 +46,42 @@ final class DocumentationFiles
             }
 
             return [...$reference, 'url' => $file['url'], 'bytes' => $file['bytes'], ...isset($file['labelKey']) ? ['label' => __('studio.'.$file['labelKey'], [], $locale)] : []];
-        }, $result['files']);
+        }, $this->localizedReferences($documentation, $locale));
+        if ($locale === 'de' && $result['files'] !== []) {
+            $result['plan'] = $result['plan'] === null ? null : str_replace(
+                config('german-lesson-files.obsoleteDownloadNotice', ''), '', $result['plan']
+            );
+        }
 
         return $result;
+    }
+
+    /** Attach published translations without rewriting immutable lesson snapshots. */
+    public function localizedReferences(TeacherDocumentation $documentation, string $locale): array
+    {
+        $references = $documentation->toArray()['files'];
+        $translated = [];
+        $sets = [];
+        if ($locale === 'de') {
+            foreach ($references as $reference) {
+                $set = config('german-lesson-files.sourceFiles.'.$reference['fileId']);
+                if (is_string($set)) {
+                    $sets[$set] = true;
+                }
+            }
+            foreach (array_keys($sets) as $set) {
+                foreach (config('german-lesson-files.sets.'.$set, []) as $id) {
+                    $file = config('german-lesson-files.files.'.$id);
+                    $translated[$id] = ['fileId' => $id, 'kind' => $file['kind'], 'locale' => 'de'];
+                }
+            }
+        }
+        foreach ($references as $reference) {
+            if ($reference['locale'] === $locale && ! isset($sets[config('german-lesson-files.sourceFiles.'.$reference['fileId'], '')])) {
+                $translated[$reference['fileId']] = $reference;
+            }
+        }
+
+        return array_values($translated);
     }
 }

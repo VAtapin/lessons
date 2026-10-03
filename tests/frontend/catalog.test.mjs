@@ -20,6 +20,12 @@ test('invalid facets and unrelated URL parameters are not forwarded to catalog A
     assert.equal(filterQuery(filters), '');
     assert.equal(readFilters('?q=' + 'a'.repeat(200)).q.length, 120);
 });
+
+test('removed questions format is absent from fallback filters', () => {
+    assert.equal(readFilters('?format=questions').format, '');
+    assert.equal(readFilters('?format=presentation').format, 'presentation');
+    assert.equal(readFilters('?format=game').format, 'game');
+});
 test('empty filters and whitespace search produce a clean catalog URL', () => {
     assert.equal(filterQuery(readFilters('?q=%20%20')), '');
     const filters = readFilters('?q=%20Wer%20ist%20mein%20N%C3%A4chster%3F%20');

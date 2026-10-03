@@ -14,7 +14,7 @@ final readonly class CatalogMaterials
     public function cards(array $lesson, ?TeacherDocumentation $documentation, string $locale, string $format): array
     {
         $groups = [];
-        foreach ($documentation?->toArray()['files'] ?? [] as $reference) {
+        foreach ($documentation === null ? [] : $this->files->localizedReferences($documentation, $locale) as $reference) {
             $file = $this->files->resolve($reference['fileId']);
             if (self::format($file) !== $format) {
                 continue;
@@ -44,9 +44,9 @@ final readonly class CatalogMaterials
         $cards = [];
         foreach ($document->stages as $index => $stage) {
             foreach ($stage->blocks as $block) {
-                $matches = $format === 'questions'
-                    ? (in_array($block->type, ['core.free-response', 'core.poll'], true) || ($block->type === 'core.prompt' && in_array($block->config['kind'], ['discussion', 'reflection'], true)))
-                    : (in_array($block->type, ['core.sequence', 'core.matching', 'core.roles', 'core.signals', 'core.single-choice', 'core.multiple-choice'], true) || ($block->type === 'core.presentation' && ($block->config['kind'] ?? '') === 'picture-count'));
+                // Reviewed games only: counting the flock and finding the hidden sheep.
+                // Role plays, quizzes and sequencing exercises are not automatically games.
+                $matches = $format === 'game' && in_array($block->id, ['sheep-step-02-herd', 'sheep-step-04-scene'], true);
                 if (! $matches) {
                     continue;
                 }

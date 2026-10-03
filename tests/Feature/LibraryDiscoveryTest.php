@@ -24,18 +24,17 @@ final class LibraryDiscoveryTest extends TestCase
         app(NeighborDocumentationInstaller::class)->install();
         foreach (['ru', 'de'] as $locale) {
             foreach (['notes', 'presentation'] as $format) {
-                $this->getJson('/api/catalog?locale='.$locale.'&format='.$format)->assertOk()->assertJsonCount($format === 'notes' ? 3 : 2, 'entries');
+                $result = $this->getJson('/api/catalog?locale='.$locale.'&format='.$format)->assertOk()->assertJsonCount(2, 'entries');
+                foreach ($result->json('entries') as $card) {
+                    $this->assertSame([$locale], $card['locales']);
+                }
             }
         }
         $this->getJson('/api/catalog?format=worksheet')->assertOk()->assertJsonCount(1, 'entries')->assertJsonCount(2, 'entries.0.downloads');
         $this->getJson('/api/catalog')->assertOk()->assertJsonCount(2, 'entries')->assertJsonMissingPath('entries.0.materialId');
         $this->getJson('/api/catalog?format=interactive')->assertOk()->assertJsonCount(2, 'entries')->assertJsonMissingPath('entries.0.downloads');
-        foreach (['game', 'questions'] as $format) {
-            $result = $this->getJson('/api/catalog?format='.$format)->assertOk();
-            $this->assertNotEmpty($result->json('entries.0.materialId'));
-            $this->assertIsInt($result->json('entries.0.stageIndex'));
-            $result->assertJsonMissingPath('entries.0.solution')->assertJsonMissingPath('entries.0.teacherNotes');
-        }
+        $this->getJson('/api/catalog?format=game')->assertOk()->assertJsonCount(0, 'entries');
+        $this->getJson('/api/catalog?format=questions')->assertOk()->assertJsonCount(0, 'entries');
         foreach ($this->getJson('/api/catalog?format=presentation')->json('entries') as $card) {
             $this->assertSame('PPTX', $card['downloads'][0]['extension']);
             $this->get($card['downloads'][0]['url'])->assertOk();
