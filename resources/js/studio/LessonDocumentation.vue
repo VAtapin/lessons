@@ -20,7 +20,9 @@ const paragraphs = computed(() => props.documentation.plan?.split(/\n\s*\n/) ?? 
         <p v-if="documentation.video" class="documentation-hint">{{ messages.documentation_video_external }}</p>
         <details v-if="documentation.plan" class="documentation-plan" open>
             <summary>{{ messages.documentation_read_plan }}</summary>
-            <div class="documentation-plan-text"><p v-for="(paragraph, index) in paragraphs" :key="index">{{ paragraph }}</p></div>
+            <!-- planHtml is rendered and sanitized by DocumentationFiles on the server. -->
+            <div v-if="documentation.planHtml" class="documentation-plan-text" v-html="documentation.planHtml" />
+            <div v-else class="documentation-plan-text"><p v-for="(paragraph, index) in paragraphs" :key="index">{{ paragraph }}</p></div>
         </details>
         <p v-else>{{ messages.documentation_plan_unavailable }}</p>
     </section>
@@ -33,7 +35,5 @@ const paragraphs = computed(() => props.documentation.plan?.split(/\n\s*\n/) ?? 
 .documentation-files a { display: inline-flex; gap: 8px; align-items: center; padding: 9px 14px; border: 1px solid #b96525; border-radius: 7px; text-decoration: none; color: inherit; }
 .documentation-hint { font: .85rem/1.5 system-ui, sans-serif; color: #756249; }
 .documentation-plan summary { cursor: pointer; font-weight: 600; padding-block: 8px; }
-.documentation-plan-text { max-width: 76ch; margin-block: 14px; }
-.documentation-plan-text p { white-space: pre-line; line-height: 1.6; margin-bottom: 18px; overflow-wrap: anywhere; }
 @media(max-width: 550px) { .lesson-documentation { padding: 14px; } }
 </style>

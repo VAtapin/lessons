@@ -37,7 +37,7 @@
                 <section><h2>{{ $messages['lesson_content'] }}</h2><ol>@foreach ($lesson['stages'] as $stage)<li>{{ $stage['title'] }}</li>@endforeach</ol></section>
                 @if ($lesson['documentation']['plan'] ?? null)
                     <section><h2>{{ $studioMessages['documentation_title'] }}</h2>
-                    @foreach (preg_split('/\n\s*\n/', $lesson['documentation']['plan']) as $paragraph)<p style="white-space:pre-line">{{ $paragraph }}</p>@endforeach
+                    <div class="documentation-plan-text">{!! $lesson['documentation']['planHtml'] !!}</div>
                     @foreach ($lesson['documentation']['files'] as $file)<a href="{{ $file['url'] ?? '/lesson-files/'.$file['fileId'] }}">{{ $file['label'] ?? $studioMessages['documentation_'.$file['kind']] }} ({{ strtoupper($file['locale']) }})</a> @endforeach
                     </section>
                 @endif

@@ -6,6 +6,7 @@ namespace App\Application\Catalog;
 
 use App\Application\Shared\ApiProblem;
 use App\Domain\Lessons\TeacherDocumentation;
+use Illuminate\Support\Str;
 
 /** Explicit reusable files supplied for publication; no arbitrary paths or remote downloads. */
 final class DocumentationFiles
@@ -52,6 +53,13 @@ final class DocumentationFiles
                 config('german-lesson-files.obsoleteDownloadNotice', ''), '', $result['plan']
             );
         }
+
+        // Render only at the presentation boundary; immutable sources remain Markdown.
+        $result['planHtml'] = $result['plan'] === null ? null : Str::markdown($result['plan'], [
+            'html_input' => 'strip',
+            'allow_unsafe_links' => false,
+            'max_nesting_level' => 20,
+        ]);
 
         return $result;
     }

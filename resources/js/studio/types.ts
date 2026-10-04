@@ -15,7 +15,7 @@ export interface Block {
 export interface Stage { id: string; content: Record<string, { title: string; notes?: string }>; config: { theme?: 'green' | 'terracotta' | 'slate' | 'lavender' | 'ocean' | 'berry' | 'cobalt' | 'plum' | 'copper' | 'indigo' | 'rose' | 'graphite' | 'sand' | 'steel' | 'wine' | 'umber' | 'azure' | 'ochre'; layout?: string; durationSeconds?: number; openTasks?: boolean; sequentialTasks?: boolean; closeOnTimer?: boolean; answerSeconds?: number }; blocks: Block[] }
 export interface DocumentationFile { fileId: string; kind: 'plan' | 'presentation'; locale: string; url?: string; bytes?: number; label?: string }
 export interface TeacherDocumentation { schemaVersion: 1; content: Record<string, { plan: string }>; files: DocumentationFile[]; video?: { id: string; locale: string } }
-export interface ProjectedDocumentation { plan: string | null; files: DocumentationFile[]; video: { id: string; locale: string } | null }
+export interface ProjectedDocumentation { plan: string | null; planHtml?: string | null; files: DocumentationFile[]; video: { id: string; locale: string } | null }
 export interface LessonDocument { id: string; schemaVersion: number; defaultLocale: string; locales: string[]; content: Record<string, { title: string }>; stages: Stage[]; documentation?: TeacherDocumentation }
 export interface Lesson { id: string; revision: number; status: 'draft' | 'released'; versionId: string; document: LessonDocument }
 export interface EditorIssue { code: string; path: string; locale?: string; stageId?: string; blockId?: string }

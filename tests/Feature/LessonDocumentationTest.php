@@ -6,6 +6,7 @@ namespace Tests\Feature;
 
 use App\Application\Catalog\CatalogService;
 use App\Application\Catalog\DocumentationFiles;
+use App\Application\Catalog\ListeningLessonInstaller;
 use App\Application\Catalog\NeighborDocumentationInstaller;
 use App\Application\Catalog\NeighborInstaller;
 use App\Application\Catalog\NeighborUpgradeInstaller;
@@ -27,6 +28,35 @@ use Tests\TestCase;
 final class LessonDocumentationTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_markdown_is_formatted_without_changing_the_original_or_allowing_active_html(): void
+    {
+        $plan = "## План\n\n| Этап | 60 мин | 75 мин |\n| --- | --- | --- |\n| Начало | 00–03 (3) | 00–04 (4) |\n\n- **Слушать**\n- Проверять\n\n<script>alert(1)</script>\n\n<img src=x onerror=alert(1)>\n\n[Опасно](javascript:alert(1))\n\n[Источник](https://example.org)";
+        $documentation = TeacherDocumentation::fromArray(['schemaVersion' => 1, 'content' => ['ru' => ['plan' => $plan]], 'files' => []], ['ru', 'de']);
+        $projected = app(DocumentationFiles::class)->present($documentation, 'ru');
+        $this->assertSame($plan, $projected['plan']);
+        $html = $projected['planHtml'];
+        foreach (['<h2>План</h2>', '<table>', '<th>Этап</th>', '<td>00–03 (3)</td>', '<ul>', '<strong>Слушать</strong>', 'href="https://example.org"'] as $markup) {
+            $this->assertStringContainsString($markup, $html);
+        }
+        foreach (['<script', '<img', 'onerror', 'javascript:', '| --- |'] as $unsafe) {
+            $this->assertStringNotContainsString($unsafe, $html);
+        }
+        $this->assertNull(app(DocumentationFiles::class)->present($documentation, 'de')['planHtml']);
+    }
+
+    public function test_catalog_and_teacher_receive_formatted_plan_and_public_html_uses_it(): void
+    {
+        app(ListeningLessonInstaller::class)->install();
+        foreach (['ru', 'de'] as $locale) {
+            $slug = 'pochemu-my-ne-slyshim-drug-druga-suprugi';
+            $detail = app(CatalogService::class)->detail($slug, $locale)['entry']['documentation'];
+            $this->assertStringContainsString('<table>', $detail['planHtml']);
+            $session = app(CatalogService::class)->use($slug, $locale, (string) Str::uuid(), true)['session'];
+            $this->assertSame($detail['planHtml'], $session['document']['documentation']['planHtml']);
+            $this->get('/'.$locale.'/catalog/'.$slug)->assertOk()->assertSee('<table>', false)->assertSee('<thead>', false);
+        }
+    }
 
     public function test_legacy_documentation_can_be_installed_after_v2_upgrade_without_repinning_or_mutating_releases(): void
     {

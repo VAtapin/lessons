@@ -29,6 +29,14 @@ const { default: DocumentationEditor } = await import(`data:text/javascript;base
 const messages = { documentation_title: 'Materials', documentation_hint: 'Teacher materials', documentation_plan: 'Plan', documentation_presentation: 'Presentation', documentation_video: 'Video', documentation_video_external: 'External video', documentation_read_plan: 'Read plan', documentation_plan_unavailable: 'No plan in this language' };
 const render = documentation => renderToString(createSSRApp(LessonDocumentation, { documentation, messages }));
 
+test('catalog and teacher display the server-rendered Markdown table and headings', async () => {
+    const html = await render({ plan: '## План\n\n| Этап | 60 мин |', planHtml: '<h2>План</h2><table><thead><tr><th>Этап</th><th>60 мин</th></tr></thead><tbody><tr><td>Начало</td><td>00–03 (3)</td></tr></tbody></table>', files: [], video: null });
+    assert.match(html, /<h2>План<\/h2>/);
+    assert.match(html, /<table><thead>/);
+    assert.match(html, /<td>00–03 \(3\)<\/td>/);
+    assert.doesNotMatch(html, /## План|&lt;table/);
+});
+
 test('YouTube parser accepts IDs and official watch/share links, refuses lookalikes and unsafe URL forms', () => {
     for (const input of ['GZZkS1DThlg', 'https://www.youtube.com/watch?v=GZZkS1DThlg', 'https://youtube.com/watch?v=GZZkS1DThlg&t=30', 'https://youtu.be/GZZkS1DThlg?si=share']) {
         assert.equal(youtubeVideoId(input), 'GZZkS1DThlg');
