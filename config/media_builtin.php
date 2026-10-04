@@ -408,4 +408,15 @@ $builtins[] = ['assetId' => 'builtin-leadership-10', 'versionId' => 'builtin-lea
 $builtins[] = ['assetId' => 'builtin-leadership-11', 'versionId' => 'builtin-leadership-11-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/11_help.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_11'];
 $builtins[] = ['assetId' => 'builtin-leadership-12', 'versionId' => 'builtin-leadership-12-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/12_mission.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_12'];
 
+$builtins[] = ['assetId' => 'builtin-listening-1', 'versionId' => 'builtin-listening-1-v1', 'file' => 'assets/lessons/pochemu-my-ne-slyshim-drug-druga/images/01.png', 'mime' => 'image/png', 'labelKey' => 'media_listening_1'];
+$builtins[] = ['assetId' => 'builtin-listening-2', 'versionId' => 'builtin-listening-2-v1', 'file' => 'assets/lessons/pochemu-my-ne-slyshim-drug-druga/images/02.png', 'mime' => 'image/png', 'labelKey' => 'media_listening_2'];
+$builtins[] = ['assetId' => 'builtin-listening-3', 'versionId' => 'builtin-listening-3-v1', 'file' => 'assets/lessons/pochemu-my-ne-slyshim-drug-druga/images/03.png', 'mime' => 'image/png', 'labelKey' => 'media_listening_3'];
+$builtins[] = ['assetId' => 'builtin-listening-4', 'versionId' => 'builtin-listening-4-v1', 'file' => 'assets/lessons/pochemu-my-ne-slyshim-drug-druga/images/04.png', 'mime' => 'image/png', 'labelKey' => 'media_listening_4'];
+$builtins[] = ['assetId' => 'builtin-listening-5', 'versionId' => 'builtin-listening-5-v1', 'file' => 'assets/lessons/pochemu-my-ne-slyshim-drug-druga/images/05.png', 'mime' => 'image/png', 'labelKey' => 'media_listening_5'];
+$builtins[] = ['assetId' => 'builtin-listening-6', 'versionId' => 'builtin-listening-6-v1', 'file' => 'assets/lessons/pochemu-my-ne-slyshim-drug-druga/images/06.png', 'mime' => 'image/png', 'labelKey' => 'media_listening_6'];
+$builtins[] = ['assetId' => 'builtin-listening-7', 'versionId' => 'builtin-listening-7-v1', 'file' => 'assets/lessons/pochemu-my-ne-slyshim-drug-druga/images/07.png', 'mime' => 'image/png', 'labelKey' => 'media_listening_7'];
+$builtins[] = ['assetId' => 'builtin-listening-8', 'versionId' => 'builtin-listening-8-v1', 'file' => 'assets/lessons/pochemu-my-ne-slyshim-drug-druga/images/08.png', 'mime' => 'image/png', 'labelKey' => 'media_listening_8'];
+$builtins[] = ['assetId' => 'builtin-listening-9', 'versionId' => 'builtin-listening-9-v1', 'file' => 'assets/lessons/pochemu-my-ne-slyshim-drug-druga/images/09.png', 'mime' => 'image/png', 'labelKey' => 'media_listening_9'];
+$builtins[] = ['assetId' => 'builtin-listening-10', 'versionId' => 'builtin-listening-10-v1', 'file' => 'assets/lessons/pochemu-my-ne-slyshim-drug-druga/images/10.png', 'mime' => 'image/png', 'labelKey' => 'media_listening_10'];
+
 return $builtins;
