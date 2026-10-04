@@ -26,14 +26,28 @@ final class LessonCompletionTest extends TestCase
 
     public function test_vineyard_upgrade_keeps_original_version_copies_and_classes(): void
     {
-        $old = require resource_path('content/vineyard-v1.php');
+        $old = require resource_path('content/vineyard.php');
+        $old['versionId'] = (string) Str::uuid();
+        $old['sourceRevision'] = 'retired-test-release';
         $original = app(ReviewedLessonInstaller::class)->install($old);
         $snapshot = $original['entry']->version->document;
         $copy = app(CatalogService::class)->use($old['slug'], 'ru', (string) Str::uuid(), true);
         $session = TeachingSession::findOrFail($copy['session']['id']);
         $sessionSnapshot = $session->version->document;
 
-        $upgraded = app(VineyardLessonInstaller::class)->install();
+        $receipt = array_intersect_key($old, array_flip(['materialId', 'versionId', 'ownerKey', 'slug', 'sourceRevision']));
+        $receipt['sourceHash'] = $original['entry']->source_hash;
+        $receipt['documentHash'] = hash('sha256', json_encode($snapshot, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+        $receipt['metadataHash'] = hash('sha256', json_encode($original['entry']->metadata, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+        $invalidReceipt = array_replace($receipt, ['documentHash' => str_repeat('0', 64)]);
+        try {
+            app(ReviewedLessonInstaller::class)->upgradeRetired($invalidReceipt, require resource_path('content/vineyard.php'));
+            $this->fail('A modified retired document must not be upgraded.');
+        } catch (\RuntimeException $error) {
+            $this->assertStringContainsString('Retired source receipt differs', $error->getMessage());
+        }
+        $this->assertSame($old['versionId'], $original['entry']->fresh()->lesson_version_id);
+        $upgraded = app(ReviewedLessonInstaller::class)->upgradeRetired($receipt, require resource_path('content/vineyard.php'));
 
         $this->assertTrue($upgraded['created']);
         $this->assertNotSame($old['versionId'], $upgraded['entry']->lesson_version_id);
@@ -41,6 +55,24 @@ final class LessonCompletionTest extends TestCase
         $this->assertSame($sessionSnapshot, $session->fresh()->version->document);
         $this->assertSame('Почему ему столько же, сколько мне?', $upgraded['entry']->metadata['translations']['ru']['title']);
         $this->assertFalse(app(VineyardLessonInstaller::class)->install()['created']);
+    }
+
+    public function test_retired_vineyard_files_resolve_to_corrected_downloads(): void
+    {
+        $this->assertFileDoesNotExist(resource_path('content/vineyard-v1.php'));
+        $this->assertDirectoryDoesNotExist(base_path('assets/lessons/_versions/vineyard-v1'));
+        foreach (config('lesson-files') as $id => $file) {
+            if (str_starts_with($id, 'vineyard-file-') && str_ends_with($id, '-v1')) {
+                $resolved = app(DocumentationFiles::class)->resolve($id);
+                $this->assertStringContainsString('pochemu-emu-bolshe-chem-mne', $resolved['path']);
+                $this->assertSame($file['sha256'], hash_file('sha256', $resolved['path']));
+            }
+        }
+        foreach (config('german-lesson-files.sets.vineyard') as $id) {
+            $resolved = app(DocumentationFiles::class)->resolve($id);
+            $this->assertStringContainsString('pochemu-emu-bolshe-chem-mne', $resolved['path']);
+            $this->assertStringNotContainsString('_versions', $resolved['path']);
+        }
     }
 
     public function test_vineyard_tasks_keep_equal_gift_after_new_information(): void

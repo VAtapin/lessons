@@ -79,6 +79,31 @@ final readonly class ReviewedLessonInstaller
     {
         [$previous, $previousHash] = $this->source($old, $legacyNeighbor);
         [$document, $hash] = $this->source($source);
+
+        return $this->upgradeVerified($old, $source, $previous, $previousHash, $document, $hash);
+    }
+
+    /** Upgrade a retired built-in release without retaining its obsolete source files. */
+    public function upgradeRetired(array $receipt, array $source): array
+    {
+        return OwnerMutation::transaction([$source['ownerKey']], function () use ($receipt, $source): array {
+            $entry = CatalogEntry::query()->where('slug', $receipt['slug'])->lockForUpdate()->first();
+            $version = LessonVersion::query()->find($receipt['versionId']);
+            if ($entry === null || $version === null || $entry->source_hash !== $receipt['sourceHash']
+                || ! hash_equals($receipt['documentHash'], hash('sha256', json_encode($version->document, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR)))
+                || ! hash_equals($receipt['metadataHash'], hash('sha256', json_encode($entry->metadata, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR)))) {
+                throw new RuntimeException('Retired source receipt differs. Existing classes were preserved.');
+            }
+            $old = $receipt + ['document' => $version->document, 'metadata' => $entry->metadata];
+            $previous = LessonDocument::fromArray($version->document, $this->registry);
+            [$document, $hash] = $this->source($source);
+
+            return $this->upgradeVerified($old, $source, $previous, $receipt['sourceHash'], $document, $hash);
+        });
+    }
+
+    private function upgradeVerified(array $old, array $source, LessonDocument $previous, string $previousHash, LessonDocument $document, string $hash): array
+    {
         if ($old['materialId'] !== $source['materialId'] || $old['ownerKey'] !== $source['ownerKey'] || $old['slug'] !== $source['slug'] || $old['versionId'] === $source['versionId']) {
             throw new RuntimeException('Reviewed upgrade requires a new version of the same source material.');
         }
