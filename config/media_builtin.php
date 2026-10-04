@@ -395,4 +395,17 @@ $builtins[] = ['assetId' => 'builtin-lazarus-12', 'versionId' => 'builtin-lazaru
 $builtins[] = ['assetId' => 'builtin-lazarus-13', 'versionId' => 'builtin-lazarus-13-v1', 'file' => 'assets/library/lazarus/13.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_13'];
 $builtins[] = ['assetId' => 'builtin-lazarus-14', 'versionId' => 'builtin-lazarus-14-v1', 'file' => 'assets/library/lazarus/14.png', 'mime' => 'image/png', 'labelKey' => 'media_lazarus_14'];
 
+$builtins[] = ['assetId' => 'builtin-leadership-1', 'versionId' => 'builtin-leadership-1-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/01_cover.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_1'];
+$builtins[] = ['assetId' => 'builtin-leadership-2', 'versionId' => 'builtin-leadership-2-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/02_vote.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_2'];
+$builtins[] = ['assetId' => 'builtin-leadership-3', 'versionId' => 'builtin-leadership-3-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/03_bridge.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_3'];
+$builtins[] = ['assetId' => 'builtin-leadership-4', 'versionId' => 'builtin-leadership-4-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/04_surprise.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_4'];
+$builtins[] = ['assetId' => 'builtin-leadership-5', 'versionId' => 'builtin-leadership-5-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/05_reflection.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_5'];
+$builtins[] = ['assetId' => 'builtin-leadership-6', 'versionId' => 'builtin-leadership-6-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/06_washing.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_6'];
+$builtins[] = ['assetId' => 'builtin-leadership-7', 'versionId' => 'builtin-leadership-7-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/07_peter.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_7'];
+$builtins[] = ['assetId' => 'builtin-leadership-8', 'versionId' => 'builtin-leadership-8-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/08_example.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_8'];
+$builtins[] = ['assetId' => 'builtin-leadership-9', 'versionId' => 'builtin-leadership-9-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/09_scene.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_9'];
+$builtins[] = ['assetId' => 'builtin-leadership-10', 'versionId' => 'builtin-leadership-10-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/10_replay.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_10'];
+$builtins[] = ['assetId' => 'builtin-leadership-11', 'versionId' => 'builtin-leadership-11-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/11_help.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_11'];
+$builtins[] = ['assetId' => 'builtin-leadership-12', 'versionId' => 'builtin-leadership-12-v1', 'file' => 'assets/lessons/kto-samyi-glavnyi/images/12_mission.png', 'mime' => 'image/png', 'labelKey' => 'media_leadership_12'];
+
 return $builtins;
