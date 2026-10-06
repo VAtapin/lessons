@@ -1,0 +1,7 @@
+# Für die Leitung
+
+Bibeln, Timer, Stifte und fünf Plätze für das Spiel vorbereiten. Ein Kartenset je Vierergruppe und ein Arbeitsblatt pro Person drucken. Karten 5 und 6 erst zur passenden Zeit austeilen: Die neue Information soll das Gespräch verändern. Den gesamten Bibeltext vorher lesen und freiwillige Mitspielende einladen. Keine persönlichen Bekenntnisse, Namen oder Aussagen wie „Ich habe schon vergeben“ verlangen. Erfundenes und Nichtteilnahme erlauben. Die Gruppe darf nicht zum Tribunal über eine Familie werden. Bei berichteten Drohungen oder fortgesetzter Gewalt die öffentliche Besprechung beenden und persönliche Unterstützung sowie Hilfe zum Schutz anbieten. Die Verantwortung für Schaden liegt bei der handelnden Person. Bei Zeitmangel die Plenumsberichte kürzen, Bibellesung, beide Übungsrunden und stillen Abschluss erhalten.
+
+Petrus fragt nach Vergebung für seinen Bruder. Christus antwortet mit dem Gleichnis über unvergleichbar große Schulden: Empfangene Barmherzigkeit soll den Umgang mit anderen verändern. Das ernste Ende in Vers 35 gehört dazu. Das Gleichnis verlangt nicht, Schaden zu verbergen oder bedingungsloses Vertrauen automatisch wiederherzustellen.
+
+Herr Jesus Christus, Du schenkst mir Barmherzigkeit. Hilf mir, auf Vergeltung zu verzichten, die von mir verursachte Verletzung zu erkennen und ehrlich den Weg zum Frieden zu suchen. Gib mir Geduld, das Geschehene wiedergutzumachen. Amen.

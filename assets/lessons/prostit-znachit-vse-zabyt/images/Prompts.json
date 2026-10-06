@@ -1,0 +1,38 @@
+{
+  "method": "Built-in image generation",
+  "shared_style": "Wide 16:9 watercolor and gouache. Adult realism. Ivory paper, slate blue and ochre. Left 44 percent pale for editable text, scene on right. No text, letters, watermark. Single scene.",
+  "images": [
+    {
+      "file": "01.png",
+      "scene": "Two middle-aged friends at a kitchen table, hurt woman and listening man."
+    },
+    {
+      "file": "02.png",
+      "scene": "King forgiving debtor in a first-century palace."
+    },
+    {
+      "file": "03.png",
+      "scene": "Forgiven debtor confronting a poor fellow servant."
+    },
+    {
+      "file": "04.png",
+      "scene": "Four adults sorting blank cards."
+    },
+    {
+      "file": "05.png",
+      "scene": "Woman hurt after private message is shared."
+    },
+    {
+      "file": "06.png",
+      "scene": "Two women in a sincere apology conversation."
+    },
+    {
+      "file": "07.png",
+      "scene": "Hands repairing broken clay cup."
+    },
+    {
+      "file": "08.png",
+      "scene": "Reflective woman with notebook by open window."
+    }
+  ]
+}
