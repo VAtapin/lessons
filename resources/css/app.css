@@ -1,6 +1,7 @@
 @import './theme.css';
 @import './home.css';
 @import './documentation.css';
+@import './contact.css';
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: system-ui, sans-serif; }
 a { color: inherit; }

@@ -65,4 +65,12 @@ return [
     'use_lesson' => 'In meinen Bereich kopieren', 'start_lesson' => 'Diese Lektion durchführen', 'action_pending' => 'Wird vorbereitet…', 'action_error' => 'Die Lektion konnte nicht vorbereitet werden. Versuchen Sie es erneut.',
     'copy_hint' => 'Eine Kopie erscheint in Ihrem Bereich. Sie können sie bearbeiten und speichern. Eine Registrierung ist nicht erforderlich.', 'start_hint' => 'Das Leitungspult öffnet sich. Dort starten Sie die Lektion und laden Teilnehmende ein.',
     'prev_page' => 'Zurück', 'next_page' => 'Weiter', 'page' => 'Seite', 'home' => 'Startseite', 'not_found' => 'Das Material wurde nicht gefunden oder noch nicht veröffentlicht.',
+    'contact_title' => 'Kontakt und Support',
+    'contact_intro' => 'Lessons.atapin.de ist ein Projekt von atapin.de. Bei Fragen zu den Materialien oder zur Website wenden Sie sich an den Betreiber.',
+    'contact_support_hint' => 'Wählen Sie im Support-Formular das Projekt Lessons.atapin.de und beschreiben Sie kurz Ihr Anliegen. Bitte keine Passwörter, Zugangslinks zu Unterrichtssitzungen oder persönlichen Angaben von Teilnehmenden senden.',
+    'contact_support' => 'Support auf atapin.de',
+    'contact_operator' => 'Betreiber:',
+    'legal_imprint' => 'Impressum',
+    'legal_privacy' => 'Datenschutz',
+    'legal_navigation' => 'Rechtliche Informationen',
 ];

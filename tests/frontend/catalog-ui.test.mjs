@@ -30,6 +30,25 @@ const app = component('App.vue', { './studio/api': { api: async () => ({}) }, '.
 const picker = component('catalog/CatalogFilters.vue', { '../studio/api': { api: async () => ({ terms: [] }) }, './filters': filters, './PublicIcon.vue': stub });
 const messages = { any_filter: 'All', start_selection: 'Start selection', view_topics: 'View topics', sign_in: 'Sign in', my_workspace: 'Workspace' };
 
+test('contact section and legal links use the confirmed central operator in both languages', async () => {
+    for (const locale of ['ru', 'de']) {
+        const prefix = locale === 'ru' ? '/ru' : '';
+        const contact = { name: 'Volodymyr Atapin', email: 'atapin@gmail.com', phone: '+49 171 3517274', phoneHref: 'tel:+491713517274', address: 'Neuhofer Straße 7, 16278 Angermünde, Deutschland', parentUrl: 'https://atapin.de/', supportUrl: `https://atapin.de${prefix}/support`, imprintUrl: `https://atapin.de${locale === 'ru' ? '/ru/imprint' : '/impressum'}`, privacyUrl: `https://atapin.de${locale === 'ru' ? '/ru/privacy' : '/datenschutz'}` };
+        const html = await renderToString(Vue.createSSRApp(app, { locale, messages: { ...messages, contact_title: 'Contact and support', legal_imprint: 'Impressum', legal_privacy: 'Datenschutz', contact_support: 'Support' }, context: { contact } }));
+        assert.equal((html.match(/id="contact"/g) ?? []).length, 1);
+        assert.match(html, /id="contact-title">Contact and support<\/h2>/);
+        assert.match(html, /mailto:atapin@gmail.com/);
+        assert.match(html, /tel:\+491713517274/);
+        assert.ok(html.includes(contact.supportUrl));
+        assert.ok(html.includes(contact.imprintUrl));
+        assert.ok(html.includes(contact.privacyUrl));
+        assert.doesNotMatch(html, /info@atapin.de|<form/);
+        const catalogHtml = await renderToString(Vue.createSSRApp(app, { locale, page: 'catalog', messages, context: { contact } }));
+        assert.ok(catalogHtml.includes(`href="/${locale}#contact"`));
+        assert.ok(catalogHtml.includes(contact.imprintUrl));
+    }
+});
+
 test('home has no filter panel and all selection entry points lead to the localized catalog', async () => {
     location.search = '';
     for (const locale of ['ru', 'de']) {

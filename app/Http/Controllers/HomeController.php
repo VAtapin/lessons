@@ -18,7 +18,7 @@ final class HomeController extends Controller
             'page' => ['sometimes', 'integer', 'min:1', 'max:100000']]);
         $publicContent = $slug !== null ? $catalog->detail($slug, $locale) : $catalog->listing($locale, $filters);
 
-        return view('home', ['locale' => $locale, 'page' => 'catalog', 'context' => ['slug' => $slug, 'initialCatalog' => $publicContent],
+        return view('home', ['locale' => $locale, 'page' => 'catalog', 'context' => ['slug' => $slug, 'initialCatalog' => $publicContent, 'contact' => $this->contact($locale)],
             'publicContent' => $publicContent,
             'messages' => trans('interface'), 'studioMessages' => array_merge(trans('studio'), trans('wave'))]);
     }
@@ -29,6 +29,11 @@ final class HomeController extends Controller
         abort_unless(in_array($locale, config('lessons.ui_locales'), true), 404);
         App::setLocale($locale);
 
-        return view('home', ['locale' => $locale, 'messages' => trans('interface')]);
+        return view('home', ['locale' => $locale, 'messages' => trans('interface'), 'context' => ['contact' => $this->contact($locale)]]);
+    }
+
+    private function contact(string $locale): array
+    {
+        return config('public-site.contact') + config('public-site.links.'.$locale);
     }
 }

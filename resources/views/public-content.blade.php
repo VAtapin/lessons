@@ -64,5 +64,12 @@
             @endif
         @endif
     </main>
-    <footer class="public-footer"><a href="/{{ $locale }}/catalog">{{ $messages['open_catalog'] }}</a><p>{{ $messages['about_text'] }}</p></footer>
+    @if (($page ?? 'home') === 'home')
+        @php($contact = $context['contact'])
+        <section id="contact" class="home-contact public-content" aria-labelledby="contact-title">
+            <div><h2 id="contact-title">{{ $messages['contact_title'] }}</h2><p>{{ $messages['contact_intro'] }}</p><p>{{ $messages['contact_support_hint'] }}</p><a class="public-button" href="{{ $contact['supportUrl'] }}" rel="noreferrer">{{ $messages['contact_support'] }}</a></div>
+            <div class="contact-details"><p>{{ $messages['contact_operator'] }} <a href="{{ $contact['parentUrl'] }}" rel="noreferrer">{{ $contact['name'] }}</a></p><address>{{ $contact['address'] }}<br><a href="mailto:{{ $contact['email'] }}">{{ $contact['email'] }}</a><br><a href="{{ $contact['phoneHref'] }}">{{ $contact['phone'] }}</a></address><p><a href="{{ $contact['imprintUrl'] }}" rel="noreferrer">{{ $messages['legal_imprint'] }}</a> · <a href="{{ $contact['privacyUrl'] }}" rel="noreferrer">{{ $messages['legal_privacy'] }}</a></p></div>
+        </section>
+    @endif
+    <footer class="public-footer"><a href="/{{ $locale }}/catalog">{{ $messages['open_catalog'] }}</a><p>{{ $messages['about_text'] }}</p>@include('public-legal-links')</footer>
 </div>

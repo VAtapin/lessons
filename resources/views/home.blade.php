@@ -26,5 +26,8 @@
             </noscript>
             @endif
         </div>
+        @if (! in_array($page ?? 'home', ['home', 'catalog', 'projector', 'student', 'teacher', 'control'], true))
+            @include('public-legal-links')
+        @endif
     </body>
 </html>

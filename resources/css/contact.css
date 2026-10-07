@@ -1,0 +1,13 @@
+.home-contact { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; padding-block: 32px; border-top: 1px solid #dccaac; }
+.home-contact h2 { margin-block: 0 12px; font-size: 1.75rem; }
+.home-contact p, .home-contact address { line-height: 1.6; }
+.home-contact p { margin-block: 0 14px; }
+.home-contact address { font-style: normal; }
+.home-contact .public-button { margin-top: 6px; }
+.contact-details { padding: 20px; border: 1px solid #dccaac; border-radius: 10px; background: #fffaf0; }
+.contact-details a { text-decoration: underline; text-underline-offset: 3px; }
+.contact-details address a { display: inline-block; padding-block: 3px; }
+.contact-details > p:last-child { margin-block: 14px 0; }
+.public-legal-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 24px; padding: 18px; font-size: .9rem; }
+.footer-bottom nav { display: flex; flex-wrap: wrap; gap: 12px 24px; }
+@media (max-width: 700px) { .home-contact { grid-template-columns: 1fr; gap: 18px; padding-block: 24px; } }
