@@ -47,6 +47,7 @@ final class LessonDocumentationTest extends TestCase
 
     public function test_catalog_and_teacher_receive_formatted_plan_and_public_html_uses_it(): void
     {
+        $this->withoutVite();
         app(ListeningLessonInstaller::class)->install();
         foreach (['ru', 'de'] as $locale) {
             $slug = 'pochemu-my-ne-slyshim-drug-druga-suprugi';

@@ -419,4 +419,13 @@ $builtins[] = ['assetId' => 'builtin-listening-8', 'versionId' => 'builtin-liste
 $builtins[] = ['assetId' => 'builtin-listening-9', 'versionId' => 'builtin-listening-9-v1', 'file' => 'assets/lessons/pochemu-my-ne-slyshim-drug-druga/images/09.png', 'mime' => 'image/png', 'labelKey' => 'media_listening_9'];
 $builtins[] = ['assetId' => 'builtin-listening-10', 'versionId' => 'builtin-listening-10-v1', 'file' => 'assets/lessons/pochemu-my-ne-slyshim-drug-druga/images/10.png', 'mime' => 'image/png', 'labelKey' => 'media_listening_10'];
 
+$builtins[] = ['assetId' => 'builtin-adult-forgiveness-1', 'versionId' => 'builtin-adult-forgiveness-1-v1', 'file' => 'assets/lessons/prostit-znachit-vse-zabyt/images/01.png', 'mime' => 'image/png', 'labelKey' => 'media_adult_forgiveness_1'];
+$builtins[] = ['assetId' => 'builtin-adult-forgiveness-2', 'versionId' => 'builtin-adult-forgiveness-2-v1', 'file' => 'assets/lessons/prostit-znachit-vse-zabyt/images/02.png', 'mime' => 'image/png', 'labelKey' => 'media_adult_forgiveness_2'];
+$builtins[] = ['assetId' => 'builtin-adult-forgiveness-3', 'versionId' => 'builtin-adult-forgiveness-3-v1', 'file' => 'assets/lessons/prostit-znachit-vse-zabyt/images/03.png', 'mime' => 'image/png', 'labelKey' => 'media_adult_forgiveness_3'];
+$builtins[] = ['assetId' => 'builtin-adult-forgiveness-4', 'versionId' => 'builtin-adult-forgiveness-4-v1', 'file' => 'assets/lessons/prostit-znachit-vse-zabyt/images/04.png', 'mime' => 'image/png', 'labelKey' => 'media_adult_forgiveness_4'];
+$builtins[] = ['assetId' => 'builtin-adult-forgiveness-5', 'versionId' => 'builtin-adult-forgiveness-5-v1', 'file' => 'assets/lessons/prostit-znachit-vse-zabyt/images/05.png', 'mime' => 'image/png', 'labelKey' => 'media_adult_forgiveness_5'];
+$builtins[] = ['assetId' => 'builtin-adult-forgiveness-6', 'versionId' => 'builtin-adult-forgiveness-6-v1', 'file' => 'assets/lessons/prostit-znachit-vse-zabyt/images/06.png', 'mime' => 'image/png', 'labelKey' => 'media_adult_forgiveness_6'];
+$builtins[] = ['assetId' => 'builtin-adult-forgiveness-7', 'versionId' => 'builtin-adult-forgiveness-7-v1', 'file' => 'assets/lessons/prostit-znachit-vse-zabyt/images/07.png', 'mime' => 'image/png', 'labelKey' => 'media_adult_forgiveness_7'];
+$builtins[] = ['assetId' => 'builtin-adult-forgiveness-8', 'versionId' => 'builtin-adult-forgiveness-8-v1', 'file' => 'assets/lessons/prostit-znachit-vse-zabyt/images/08.png', 'mime' => 'image/png', 'labelKey' => 'media_adult_forgiveness_8'];
+
 return $builtins;
