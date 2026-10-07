@@ -15,6 +15,7 @@ use App\Domain\Lessons\LessonDocument;
 use App\Models\CatalogEntry;
 use App\Models\TeachingSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
@@ -89,8 +90,7 @@ final class AdultForgivenessLessonTest extends TestCase
     public function test_a_conflicting_receipt_preserves_published_content(): void
     {
         $entry = app(AdultForgivenessLessonInstaller::class)->install()['entry'];
-        $entry->source_hash = str_repeat('0', 64);
-        $entry->save();
+        DB::table('catalog_entries')->where('id', $entry->id)->update(['source_hash' => str_repeat('0', 64)]);
         $before = $entry->fresh()->getAttributes();
         try {
             app(AdultForgivenessLessonInstaller::class)->install();
@@ -128,7 +128,8 @@ final class AdultForgivenessLessonTest extends TestCase
         $answer(1, 'meaning', ['optionId' => 'forget']);
         $this->assertArrayNotHasKey('summary', $find($runtime->student($session['id'], $participant), $stageId(1).'-meaning'));
         $execute('stage', ['stageId' => $stageId(2)]);
-        $answer(2, 'roles', ['roleId' => 'role-3']);
+        $execute('role.reveal.next', ['blockId' => $stageId(2).'-roles']);
+        $answer(2, 'roles', ['roleId' => 'role-1']);
         $this->assertArrayNotHasKey('documentation', $runtime->student($session['id'], $participant));
         $this->assertArrayNotHasKey('documentation', $runtime->projector($model->projector_token));
         $this->assertStringContainsString($locale === 'ru' ? '35 Так и Отец' : '35 So wird auch Mein', $session['document']['stages'][1]['content']['notes']);

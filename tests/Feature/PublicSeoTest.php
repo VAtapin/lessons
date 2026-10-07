@@ -14,6 +14,7 @@ final class PublicSeoTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->withoutVite();
         URL::forceRootUrl('http://localhost');
     }
 

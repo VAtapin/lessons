@@ -18,6 +18,12 @@ final class LibraryDiscoveryTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->withoutVite();
+    }
+
     public function test_formats_include_existing_downloads_and_separate_legacy_documentation(): void
     {
         app(JosephLessonInstaller::class)->install();
