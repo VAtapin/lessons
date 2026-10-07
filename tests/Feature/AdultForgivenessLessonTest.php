@@ -126,7 +126,9 @@ final class AdultForgivenessLessonTest extends TestCase
         $find = fn ($dto, $id) => collect($dto['stage']['blocks'])->firstWhere('id', $id);
         $execute('begin');
         $answer(1, 'meaning', ['optionId' => 'forget']);
-        $this->assertArrayNotHasKey('summary', $find($runtime->student($session['id'], $participant), $stageId(1).'-meaning'));
+        $this->assertArrayNotHasKey('results', $find($runtime->student($session['id'], $participant), $stageId(1).'-meaning')['runtime']);
+        $execute('block.review', ['blockId' => $stageId(1).'-meaning']);
+        $this->assertSame(1, $find($runtime->projector($model->projector_token), $stageId(1).'-meaning')['runtime']['results']['totalAnswers']);
         $execute('stage', ['stageId' => $stageId(2)]);
         $execute('role.reveal.next', ['blockId' => $stageId(2).'-roles']);
         $answer(2, 'roles', ['roleId' => 'role-1']);
@@ -136,7 +138,7 @@ final class AdultForgivenessLessonTest extends TestCase
         $execute('stage', ['stageId' => $stageId(5)]);
         $answer(5, 'before', ['text' => 'A fictional reply before the new fact.']);
         $fact = $stageId(5).'-new-fact';
-        $this->assertArrayNotHasKey('text', $find($runtime->student($session['id'], $participant), $fact)['content']);
+        $this->assertSame('', $find($runtime->student($session['id'], $participant), $fact)['content']['text']);
         $execute('presentation.toggle', ['blockId' => $fact]);
         $this->assertStringContainsString($locale === 'ru' ? 'Ольга признала' : 'Olga hat', $find($runtime->student($session['id'], $participant), $fact)['content']['text']);
         $answer(5, 'after', ['text' => 'A revised fictional reply.']);
@@ -150,7 +152,7 @@ final class AdultForgivenessLessonTest extends TestCase
         $answer(6, 'apology', ['text' => 'Olga asks forgiveness and offers a realistic correction.']);
         $execute('stage', ['stageId' => $stageId(7)]);
         $repeat = $stageId(7).'-repeat';
-        $this->assertArrayNotHasKey('text', $find($runtime->projector($model->projector_token), $repeat)['content']);
+        $this->assertSame('', $find($runtime->projector($model->projector_token), $repeat)['content']['text']);
         $execute('presentation.toggle', ['blockId' => $repeat]);
         $this->assertStringContainsString($locale === 'ru' ? 'другого человека' : 'anderen Person', $find($runtime->student($session['id'], $participant), $repeat)['content']['text']);
         $answer(7, 'boundary', ['text' => 'Elena limits private details without humiliation.']);
